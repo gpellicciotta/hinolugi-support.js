@@ -1,0 +1,11 @@
+# Ignore Gradle project-specific cache directory
+.npmrc
+
+# Ignore output directories
+build
+bin
+idea-bin
+
+# Ignore env files
+**/*.env
+
