@@ -1,0 +1,22 @@
+{
+  "name": "hinolugi-support.js",
+  "version": "0.69.0",
+  "description": "General-purpose Javascript support code, both for client and server-side use",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gpellicciotta/hinolugi-support.js.git"
+  },
+  "author": "Giovanni Pellicciotta",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gpellicciotta/hinolugi-support.js/issues"
+  },
+  "homepage": "https://github.com/gpellicciotta/hinolugi-support.js#readme"
+}
