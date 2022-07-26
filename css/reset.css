@@ -1,0 +1,61 @@
+/*
+ * Reset
+ * =====
+ *
+ * Reset all CSS styles. 
+ * To be imported first before doing any custom styling.
+ */
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  box-sizing: border-box;
+}
+
+body {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+  content: '';
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Rule to fix quirks-mode inheritance behavior */
+table, caption {
+  font-size: inherit;
+  font-weight: inherit;
+  font-style: inherit;
+  font-variant: inherit;
+  color: inherit;
+  background-color: inherit;
+}
+
+li {
+  display: inline-flex;
+}
+
+html, body {
+  min-height: 100%;
+}
+
+pre {
+  font-family: monospace;
+}

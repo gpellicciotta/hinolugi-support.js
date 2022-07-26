@@ -1,0 +1,42 @@
+/*
+ * Named Colors
+ * ============
+ *
+ * CSS variables for specific colors.
+ */
+
+:root {
+   --red-components       : 219, 40, 40;
+   --red-hex              : #db2828;
+   --orange-components    : 242, 113, 28;
+   --orange-hex           : #f2711c;
+   --yellow-components    : 251, 189, 8;
+   --yellow-hex           : #fbbd08;
+   --olive-components     : 181, 204, 24;
+   --olive-hex            : #b5cc18;
+   --green-components     : 33, 186, 69;
+   --green-hex            : #21ba45;
+   --teal-components      : 0, 181, 173;
+   --teal-hex             : #00b5ad;
+   --blue-components      : 14, 110, 184;
+   --blue-hex             : #0e6eb8;
+   --violet-components    : 100, 53, 201;
+   --violet-hex           : #6435c9;
+   --purple-components    : 163, 51, 200;
+   --purple-hex           : #a333c8;
+   --pink-components      : 224, 57, 151;
+   --pink-hex             : #e03997;
+   --brown-components     : 165, 103, 63;
+   --brown-hex            : #a5673f;
+   --light-grey-components: 211, 211, 211;
+   --light-grey-hex       : #d3d3d3;
+   --grey-components      : 112, 117, 122;
+   --grey-hex             : #70757a;
+   --black-components     : 0, 0, 0;
+   --black-hex            : #000000;
+   --soft-black-components: 32, 33, 36;
+   --soft-black-hex       : #202124;
+   --white-components     : 255, 255, 255;
+   --white-hex            : #ffffff;
+  }
+
