@@ -292,7 +292,7 @@ export function play(setup, animate, fps) {
 }
 
 
-// SWIPE GESTURE
+// SWIPE GESTURES
 
 /**
  *  Register a callback function to be invoked when a double-tap has occurred
