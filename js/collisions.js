@@ -1,4 +1,5 @@
 // Game utility functions w.r.t. collisions between shapes.
+
 import {Vector} from './vector.js';
 import * as utils from './utils.js';
 

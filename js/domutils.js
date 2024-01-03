@@ -1,3 +1,5 @@
+import * as log from './log.mjs';
+
 // DOM related utility functions. These often rely on the global 'document' and 'window' objects.
 
 // ASPECT RATIO
@@ -52,13 +54,13 @@ export function ensureTrackingCanvasSize(canvasElement, determineCssSizeCallback
     };
   })();
 
-  //console.log("Ensuring to trace canvas size for " + canvasElement);
+  //log.trace("Ensuring to trace canvas size for " + canvasElement);
   // Determine actual CSS canvas size:
   let css_size = determineCssSizeCallback(canvasElement);
   // Update physical canvas size:
   canvasElement.height = css_size.height * pixelScale;
   canvasElement.width = css_size.width * pixelScale;
-  //console.log("Determined physical bounds to have width: " + canvasElement.width + " and height: " + canvasElement.height + ", since pixel-ratio: " + window.devicePixelRatio);
+  //log.trace("Determined physical bounds to have width: " + canvasElement.width + " and height: " + canvasElement.height + ", since pixel-ratio: " + window.devicePixelRatio);
 
   // Now also ensure this aspect ratio is kept despite resize operations
   window.addEventListener('resize', moderatedEventCallback(function () {
@@ -67,7 +69,7 @@ export function ensureTrackingCanvasSize(canvasElement, determineCssSizeCallback
     // Update physical canvas size:
     canvasElement.height = css_size.height * pixelScale;
     canvasElement.width = css_size.width * pixelScale;
-    //console.log("Determined physical bounds to have width: " + canvasElement.width + " and height: " + canvasElement.height + ", since pixel-ratio: " + window.devicePixelRatio);
+    //log.trace("Determined physical bounds to have width: " + canvasElement.width + " and height: " + canvasElement.height + ", since pixel-ratio: " + window.devicePixelRatio);
   }));
 }
 
@@ -95,6 +97,67 @@ export function moderatedEventCallback(callback, ms) {
     // Set to run after ms
     timer = setTimeout(callback, ms, event)
   };
+}
+
+// DOCUMENT ACTIVE AGAIN
+
+// Credits: https://stackoverflow.com/questions/9899372/pure-javascript-equivalent-of-jquerys-ready-how-to-call-a-function-when-t
+
+let lastDocumentStatus = null;
+let lastDocumentStatusCheck = null;
+let documentActivatedTimer = null;
+let documentActivatedCallbacks = [];
+
+/**
+ *  Register a callback function to be invoked when the document 
+ *  is activated (after presumeably being inactive first).
+ *
+ *  Relies on following global objects: document, window
+ *
+ *  @param callback The callback function to be invoked.
+ */
+export function onDocumentActivated(callback) {
+  if (typeof callback !== "function") {
+    throw new TypeError("callback for onDomReady(callback) must be a function");
+  }
+  // Register callback
+  documentActivatedCallbacks.push(callback);
+  // Check whether already a timer
+  if (!documentActivatedTimer) {
+    document.addEventListener("visibilitychange", checkDocumentStatus, false);
+    window.addEventListener("focus", checkDocumentStatus);    
+    lastDocumentStatus = document.hidden ? 'hidden' : 'visible';
+    lastDocumentStatusCheck = new Date().getTime();
+    documentActivatedTimer = setInterval(checkDocumentStatus, 1000);
+  }
+}
+
+function checkDocumentStatus(event) {
+  const newCheckTime = new Date().getTime();
+  if (document.hidden) {
+    lastDocumentStatus = 'hidden';
+    lastDocumentStatusCheck = newCheckTime;
+  }
+  else if (lastDocumentStatus === 'hidden') { // Transition detected
+    lastDocumentStatus = 'visible';
+    lastDocumentStatusCheck = newCheckTime;
+    fireDocumentActivated();    
+  }
+  else if ((newCheckTime - lastDocumentStatusCheck) > 2000) {
+    // We mist 2 check cycles? Assume because tab inactivation
+    lastDocumentStatus = 'visible';
+    lastDocumentStatusCheck = newCheckTime;
+    fireDocumentActivated();    
+  }
+  else {
+    lastDocumentStatusCheck = newCheckTime;
+  }
+}
+
+function fireDocumentActivated() {
+  for (let i = 0; i < documentActivatedCallbacks.length; i++) {
+    documentActivatedCallbacks[i].call(window);
+  }
 }
 
 // DOM READY
@@ -564,7 +627,7 @@ export function onMove(targetElement, minDist, moveCallback) {
       if (moved) {
         moveEnd = {x: e.pageX, y: e.pageY, time: new Date().getTime()};
         handleMove();
-        console.log("mouse up move");
+        log.trace("mouse up move");
         handleStartOrStop('end');
       }
       moveStart = null;
@@ -648,4 +711,28 @@ export function onMove(targetElement, minDist, moveCallback) {
       return false;
     }
   });
+}
+
+/**
+ *  Turn a string representation of HTML into an HTML element.
+ *  This relies on the string representating having a single root element.
+ * 
+ *  @param htmlText The HTML text to be turned into an element (tree).
+ *  @return The first (and expected only) element of the element tree created from htmlText. 
+ */
+export function htmlToElement(htmlText) {
+  let template = document.createElement("template");
+  template.innerHTML = htmlText.trim(); // Ensure the first child won't be whitespace
+  return template.content.firstChild;
+}
+
+/**
+ *  Insert an HTML element just after another HTML element.
+ * 
+ *  @param anchorHtmlEl The element to place a new element after. This element must have a parent.
+ *  @param newHtmlEl The new element to be added.
+ *  @return The element that was inserted or null.
+ */
+export function insertAfter(anchorHtmlEl, newHtmlEl) {
+  return anchorHtmlEl.insertAdjacentElement('afterend', newHtmlEl);
 }
