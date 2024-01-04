@@ -81,7 +81,7 @@ function addRevertibleEventListener(targetElement, eventType, eventCallback, opt
     targetElementListenersName: targetElementListenersName,
     targetElement: targetElement,
     eventType: eventType,
-    eventCallback, eventCallback
+    eventCallback: eventCallback
   };
   eventTypeListeners.set(eventType, eventTypeListener);  
   targetElement.addEventListener(eventTypeListener.eventType, eventTypeListener.eventCallback, options);
