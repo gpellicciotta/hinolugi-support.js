@@ -3,7 +3,7 @@
 ## v1.0.0
 Not released yet
 
-## v0.69.0
+## v0.83.0
 
 #### Available on:
 - https://github.com/gpellicciotta/hinolugi-support.js/packages/
