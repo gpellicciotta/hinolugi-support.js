@@ -15,11 +15,10 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [~] T0001 cli-logging-utility @claude Add a shared CLI logging utility that is compliant with the guidelines and maximally API-similar to what is (being) implemented in hinolugi-support.java and hinolugi-support.python
 - [ ] T0002 Add a real package-publish pipeline, so other hinolugi Javascript or web projects can depend on this library as an installed package:
 - [ ] T0003 Review Javascript code in hinolugi-counters and hinolugi-auth: list all code that seems it would benefit from being part of a common support library. For each major topic, make a separate TODO in the backlog and mark it for review by @gio.
 - [ ] A0004 Update all project files, including task and documentation files, to be in line with the latest guidelines.
-- [ ] T0005 (needs T0001 T0002 T0003 A0004) Make a full release, including making the packages available via GitHub. 
+- [ ] T0005 (needs T0002 T0003 A0004) Make a full release, including making the packages available via GitHub. 
 
 ---
 

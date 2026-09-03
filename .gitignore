@@ -9,3 +9,6 @@ idea-bin
 # Ignore env files
 **/*.env
 
+# Ignore task worktrees
+work/
+
