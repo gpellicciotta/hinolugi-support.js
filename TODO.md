@@ -15,7 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [ ] A0004 Update all project files, including task and documentation files, to be in line with the latest guidelines.
+- [~] A0004 @claude Update all project files, including task and documentation files, to be in line with the latest guidelines.
 - [ ] T0005 (needs A0004) Make a full release, including making the packages available via GitHub. 
 
 ---
