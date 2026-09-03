@@ -1,5 +1,8 @@
-# Ignore Gradle project-specific cache directory
+# Ignore npm registry credentials
 .npmrc
+
+# Ignore installed dependencies
+node_modules/
 
 # Ignore output directories
 build

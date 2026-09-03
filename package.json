@@ -10,7 +10,8 @@
     "js",
     "css",
     "README.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "LICENSE.md"
   ],
   "directories": {
     "doc": "docs"
@@ -23,7 +24,7 @@
     "url": "git+https://github.com/gpellicciotta/hinolugi-support.js.git"
   },
   "author": "Giovanni Pellicciotta",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/gpellicciotta/hinolugi-support.js/issues"
   },
