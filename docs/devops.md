@@ -86,9 +86,6 @@ ever unavailable):
 See:
 [Working with the npm registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry).
 
-**Never run the publish command unless explicitly asked** — it publishes to a shared registry that other repos
-may come to depend on.
-
 ### 3.2. Tagging a Release
 Once a version is actually verified released (published and resolvable):
 ```bash
