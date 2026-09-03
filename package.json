@@ -2,7 +2,16 @@
   "name": "@gpellicciotta/hinolugi-support.js",
   "version": "0.82.0-pre",
   "description": "General-purpose Javascript support code, both for client and server-side use",
-  "main": "index.js",
+  "type": "module",
+  "exports": {
+    "./*.mjs": "./js/*.mjs"
+  },
+  "files": [
+    "js",
+    "css",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "directories": {
     "doc": "docs"
   },
@@ -18,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/gpellicciotta/hinolugi-support.js/issues"
   },
-  "homepage": "https://github.com/gpellicciotta/hinolugi-support.js#readme"
+  "homepage": "https://github.com/gpellicciotta/hinolugi-support.js#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
 }
