@@ -15,7 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [ ] T0005 Make a full release, including making the packages available via GitHub. 
+- [~] T0005 full-release @claude — Make a full release, including making the packages available via GitHub.
 
 ---
 
