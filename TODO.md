@@ -15,7 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [ ] T0003 Review Javascript code in hinolugi-counters and hinolugi-auth: list all code that seems it would benefit from being part of a common support library. For each major topic, make a separate TODO in the backlog and mark it for review by @gio.
+- [~] T0003 review-js-common-library-candidates @claude — Review Javascript code in hinolugi-counters and hinolugi-auth: list all code that seems it would benefit from being part of a common support library. For each major topic, make a separate TODO in the backlog and mark it for review by @gio.
 - [ ] A0004 Update all project files, including task and documentation files, to be in line with the latest guidelines.
 - [ ] T0005 (needs T0003 A0004) Make a full release, including making the packages available via GitHub. 
 
