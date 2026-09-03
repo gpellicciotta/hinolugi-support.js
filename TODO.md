@@ -15,7 +15,10 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [~] T0005 full-release @claude — Make a full release, including making the packages available via GitHub.
+- [?] T0005 full-release @claude — Make a full release, including making the packages available via GitHub.
+      Version freeze (v0.82.0) prepped on `task/T0005-full-release`; publishing the GitHub Release and
+      pushing the release tag need explicit human authorization per `docs/devops.md`/`CLAUDE.md` — see
+      `tasks/T0005-full-release.md` Progress Log.
 
 ---
 
