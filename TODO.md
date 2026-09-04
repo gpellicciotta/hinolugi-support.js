@@ -9,13 +9,11 @@ An overview of all tasks and their planning.
 > Owner: `@name` shown only when active/blocked/needs-review.
 > Dependencies: `(needs Tnnnn)` shown only when unresolved.
 
-**Next ID:** 0013
+**Next ID:** 0014
 
 ---
 
 ## Next Milestone
-
-- [ ] T0005 full-release @claude — Make a full release, including making the packages available via GitHub. **[Decided]** Human allows pushing/publishing.
 
 ---
 
@@ -70,3 +68,10 @@ An overview of all tasks and their planning.
       app-specific (`APP_ACTIONS` names, `API_BASE_URL`). Lower-confidence than A0006-A0011 since a clean
       split needs a design decision on how to structure a "shared defaults + app-specific overrides" shape
       without over-coupling the two webapps' dev-mode switches. @gio please review before this is picked up.
+- [ ] A0013 `docs/devops.md`'s Release Process (section 3, step 2) has the freeze-and-reopen edits land in
+      one commit, so no commit ever has `package.json`'s `version` at the plain frozen value (e.g. `0.82.0`,
+      no `-pre`) — HEAD jumps straight from `0.82.0-pre` to `0.82.1-pre`. Since the publish path is a
+      GitHub-Release-triggered CI job that runs `npm publish` against whatever `package.json` says at the
+      released commit, tagging/releasing HEAD as-is would publish the wrong version under the release name.
+      T0005 worked around this with an extra pin/unpin commit pair; fix the documented process (e.g. a
+      dedicated frozen-version commit before reopening `-pre`) so future releases don't need the workaround.
