@@ -15,7 +15,6 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [~] A0014 [owner: @claude] Update all task and documentation files to be in line with the latest guidelines
 - [ ] T0015 Review all Javascript code and tidy it up to have the same style and be well documented
 - [ ] A0006 `webapp/js/utils/utils.mjs` (general-purpose helpers: deep-clone, date/number formatting, string
       utils, etc.) is ~95% byte-identical between `hinolugi-auth` and `hinolugi-counters` (after normalizing
@@ -73,9 +72,11 @@ An overview of all tasks and their planning.
       released commit, tagging/releasing HEAD as-is would publish the wrong version under the release name.
       T0005 worked around this with an extra pin/unpin commit pair; fix the documented process (e.g. a
       dedicated frozen-version commit before reopening `-pre`) so future releases don't need the workaround.
-- [ ] T0016 [needs: T0015 A0014 A0013 A0012 A0011 A0010 A0009 A0008 A0007 A0006] Make a release that can be consumed by other projects (like hinolugi-counters and hinolugi-auth). Also make sure the release process is well documented in devops.md
+- [ ] T0016 [needs: T0015 A0013 A0012 A0011 A0010 A0009 A0008 A0007 A0006] Make a release that can be consumed by other projects (like hinolugi-counters and hinolugi-auth). Also make sure the release process is well documented in devops.md
 
 ---
 
 ### Backlog
+
+*(Currently no tasks)*
 

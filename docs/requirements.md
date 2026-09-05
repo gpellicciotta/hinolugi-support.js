@@ -4,7 +4,7 @@ Functional and technical requirements for the `hinolugi-support.js` project.
 
 ---
 
-## 1. High-Level Goals
+## High-Level Goals
 
 - Provide general-purpose JavaScript support code, for both client-side (browser) and server-side (Node.js)
   use, with as few third-party dependencies as possible.
@@ -14,43 +14,43 @@ Functional and technical requirements for the `hinolugi-support.js` project.
 
 ---
 
-## 2. Functional Requirements
+## Functional Requirements
 
-### 2.1. CLI Logging (Node.js)
+### CLI Logging (Node.js)
 - Provide `LogLevel`, `formatSeverityIndicator`/`formatLogMessage`, and a `CliLogger` class implementing the
   guideline-compliant CLI log format, API-similar to the `LogLevel`/`Log` (Java) and `LogLevel`/`CliLogger`
   (Python) implementations in the sibling support libraries (`js/cli-log.mjs`).
 
-### 2.2. Browser Logging and Eventing
+### Browser Logging and Eventing
 - Provide a browser-safe, handler-based event logger (`js/log.mjs`) and a general event registration/firing
   mechanism (`js/events.mjs`), independent of any DOM or global-object dependency where possible.
 
-### 2.3. DOM and Forms
+### DOM and Forms
 - Provide DOM-related utility functions that rely on the global `document`/`window` objects (`js/domutils.mjs`).
 - Provide form-related validation/marking helper functions (`js/formutils.mjs`).
 - Provide a drag-to-reorder utility for container items (`js/reorder.mjs`).
 - Provide a dialog component (`js/dialog.mjs`).
 
-### 2.4. General Utilities
+### General Utilities
 - Provide general-purpose helper functions with no global-object or DOM dependency (`js/utils.mjs`).
 - Provide `Vector` and `Matrix` classes for 2D/3D math (`js/vector.mjs`, `js/matrix.mjs`).
 - Provide Perlin noise generation (`js/noise.mjs`).
 
-### 2.5. Canvas and Games
+### Canvas and Games
 - Provide canvas-drawing utility functions relying only on the Canvas API (`js/canvas.mjs`).
 - Provide collision-detection utility functions between shapes, for simple games (`js/collisions.mjs`).
 - Provide decorative canvas effects: fireworks (`js/fireworks.mjs`) and snowflakes (`js/snowflakes.mjs`).
 
-### 2.6. Word Lists
+### Word Lists
 - Provide Dutch and English word lists for word-based games or utilities (`js/dutchwords.mjs`,
   `js/englishwords.mjs`).
 
-### 2.7. Styling
+### Styling
 - Provide a CSS reset (`css/reset.css`) and a shared color palette (`css/colors.css`).
 
 ---
 
-## 3. Technical Requirements
+## Technical Requirements
 
 - **Module Format**: ECMAScript modules (`.mjs`), consumed via subpath imports (e.g.
   `@gpellicciotta/hinolugi-support.js/cli-log.mjs`).

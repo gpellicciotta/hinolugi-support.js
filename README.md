@@ -13,7 +13,7 @@ See also:
 Add a `.npmrc` in the consuming project (or in the user's npm config) pointing the `@gpellicciotta` scope at
 GitHub Packages:
 
-```
+```ini
 @gpellicciotta:registry=https://npm.pkg.github.com
 ```
 

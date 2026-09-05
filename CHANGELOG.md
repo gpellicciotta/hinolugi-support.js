@@ -7,7 +7,9 @@ All notable changes to this project are documented here.
 
 ## v0.82.1-pre
 
-## v0.82.0 [2026-09-04]
+- Docs: Bring `TODO.md`, `CHANGELOG.md`, `docs/`, and `tasks/*.md` in line with the latest dev-guidelines.
+
+## v0.82.0 [released: 2026-09-04]
 
 - JS: Add `js/cli-log.mjs`, a guideline-compliant CLI logging utility API-similar to the `LogLevel`/`Log`
   (Java) and `LogLevel`/`CliLogger` (Python) implementations in the sibling support libraries.

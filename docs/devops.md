@@ -4,7 +4,7 @@ Practical guidance on building, testing, developing, and releasing `hinolugi-sup
 
 ---
 
-## 1. Prerequisites and Environment
+## Prerequisites and Environment
 
 - **Node.js**: a current LTS release, providing `node:test`/`node:assert` and native ESM (`.mjs`) support.
 - **npm**: bundled with Node.js; used for dependency installs and running scripts.
@@ -12,15 +12,15 @@ Practical guidance on building, testing, developing, and releasing `hinolugi-sup
 
 ---
 
-## 2. Development Workflows
+## Development Workflows
 
-### 2.1. Initial Bootstrap
+### Initial Bootstrap
 ```bash
 npm install
 npm test
 ```
 
-### 2.2. Testing
+### Testing
 ```bash
 # Run the full test suite
 npm test
@@ -29,7 +29,7 @@ npm test
 node --test tests/
 ```
 
-### 2.3. Task Coordination Protocol
+### Task Coordination Protocol
 All non-trivial task work follows the protocol in
 [Coordinating Work Guidelines](https://github.com/gpellicciotta/dev-guidelines/blob/main/guidelines/coordinating-work-guidelines.md):
 1. **Claim**: Update the task line in `TODO.md` on `master` from `[ ]` to `[~] @owner`, commit, push.
@@ -45,7 +45,7 @@ All non-trivial task work follows the protocol in
 
 ---
 
-## 3. Release Process
+## Release Process
 
 Ongoing work accumulates under the top `CHANGELOG.md` heading while it carries a `-pre` SemVer suffix (e.g.
 `## v0.82.0-pre`), which must always match `version` in `package.json` (the single source of truth for the
@@ -61,12 +61,14 @@ minor, or patch number — the moment a change lands that needs it.
 3. Run `npm test` for a clean verification, and `npm pack --dry-run` to confirm the published tarball contains
    exactly the intended files.
 4. Commit the changes, then publish a GitHub Release for the frozen version — this triggers
-   `.github/workflows/publish.yml`, which publishes to GitHub Packages automatically (see 3.1).
+   `.github/workflows/publish.yml`, which publishes to GitHub Packages automatically (see Publishing to
+   GitHub Packages below).
 5. Once the package is verified resolvable from GitHub Packages, mark the entry `[released: {{date}}]` and tag
-   the release (see 3.2). A frozen version that never gets published is an accepted terminal state, not
+   the release (see Tagging a Release below). A frozen version that never gets published is an accepted
+   terminal state, not
    something requiring cleanup.
 
-### 3.1. Publishing to GitHub Packages
+### Publishing to GitHub Packages
 
 `.github/workflows/publish.yml` publishes a build of this package to
 [GitHub Packages](https://github.com/gpellicciotta/hinolugi-support.js/packages/) whenever a GitHub Release is
@@ -77,7 +79,7 @@ Manual fallback (e.g. for testing packaging locally with `npm publish --dry-run`
 ever unavailable):
 1. Ensure `package.json`'s `name` is formatted as `@{{git-user}}/{{project-name}}`.
 2. Ensure there is an `.npmrc` file (ignored by git, never committed) containing:
-   ```
+   ```ini
    @{{git-user}}:registry=https://npm.pkg.github.com
    //npm.pkg.github.com/:_authToken={{access token}}
    ```
@@ -86,7 +88,7 @@ ever unavailable):
 See:
 [Working with the npm registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry).
 
-### 3.2. Tagging a Release
+### Tagging a Release
 Once a version is actually verified released (published and resolvable):
 ```bash
 git tag -a v0.82.0 -m "Release v0.82.0"
@@ -96,7 +98,7 @@ Tag pushes are an outbound action and need the same explicit approval as any oth
 
 ---
 
-## 4. Continuous Integration
+## Continuous Integration
 
 `.github/workflows/publish.yml` runs the test suite (`npm test`) before publishing on `release: published`.
 There is currently no separate push/PR-triggered CI workflow in this repository.
