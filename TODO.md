@@ -9,16 +9,14 @@ An overview of all tasks and their planning.
 > Owner: `@name` shown only when active/blocked/needs-review.
 > Dependencies: `(needs Tnnnn)` shown only when unresolved.
 
-**Next ID:** 0014
+**Next ID:** 0016
 
 ---
 
 ## Next Milestone
 
----
-
-### Backlog
-
+- [~] A0014 [owner: @claude] Update all task and documentation files to be in line with the latest guidelines
+- [ ] T0015 Review all Javascript code and tidy it up to have the same style and be well documented
 - [ ] A0006 `webapp/js/utils/utils.mjs` (general-purpose helpers: deep-clone, date/number formatting, string
       utils, etc.) is ~95% byte-identical between `hinolugi-auth` and `hinolugi-counters` (after normalizing
       CRLF-vs-LF line endings, only 88 of ~1300 lines differ). The divergent lines are a handful of
@@ -68,10 +66,16 @@ An overview of all tasks and their planning.
       app-specific (`APP_ACTIONS` names, `API_BASE_URL`). Lower-confidence than A0006-A0011 since a clean
       split needs a design decision on how to structure a "shared defaults + app-specific overrides" shape
       without over-coupling the two webapps' dev-mode switches. @gio please review before this is picked up.
-- [ ] A0013 `docs/devops.md`'s Release Process (section 3, step 2) has the freeze-and-reopen edits land in
+- [ ] A0013 `docs/devops.md`'s Release Process section, step 2, has the freeze-and-reopen edits land in
       one commit, so no commit ever has `package.json`'s `version` at the plain frozen value (e.g. `0.82.0`,
       no `-pre`) — HEAD jumps straight from `0.82.0-pre` to `0.82.1-pre`. Since the publish path is a
       GitHub-Release-triggered CI job that runs `npm publish` against whatever `package.json` says at the
       released commit, tagging/releasing HEAD as-is would publish the wrong version under the release name.
       T0005 worked around this with an extra pin/unpin commit pair; fix the documented process (e.g. a
       dedicated frozen-version commit before reopening `-pre`) so future releases don't need the workaround.
+- [ ] T0016 [needs: T0015 A0014 A0013 A0012 A0011 A0010 A0009 A0008 A0007 A0006] Make a release that can be consumed by other projects (like hinolugi-counters and hinolugi-auth). Also make sure the release process is well documented in devops.md
+
+---
+
+### Backlog
+
