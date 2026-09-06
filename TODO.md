@@ -21,10 +21,11 @@ An overview of all tasks and their planning.
       after normalizing line endings). Candidate: move into this library alongside A0008's framework core,
       since these are the generic app-shell layer, not app-specific views. @gio please review before this is
       picked up.
-- [ ] A0010 `webapp/js/utils/changelog-parser.mjs` (parses a `CHANGELOG.md` into structured data for the
+- [!] A0010 [owner: @claude] [blocked: awaiting @gio's review/approval of the move before implementation] `webapp/js/utils/changelog-parser.mjs` (parses a `CHANGELOG.md` into structured data for the
       About view) is near-byte-identical between the two webapps (15 differing lines out of ~150, after
-      normalizing line endings) - the differences look like inconsequential wording. Candidate: move into
-      this library. @gio please review before this is picked up.
+      normalizing line endings). NOT just wording: counters' switch statement is missing the `'clients'`
+      (plural) case that auth has, so `Clients:`-prefixed entries misclassify as `'feature'` there today.
+      @gio must decide which behavior is canonical before this is merged into the shared library.
 - [ ] A0011 REST client HTTP transport + typed error hierarchy (JS) — `clients/js/src/http.mjs`
       (`buildUrl`/`basicAuthHeader`/`bearerAuthHeader`/`sendRequest`, a `fetch`-based transport that maps
       non-2xx responses onto an `ApiError` hierarchy) and `clients/js/src/errors.mjs`
