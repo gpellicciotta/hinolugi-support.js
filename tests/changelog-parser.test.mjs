@@ -126,10 +126,10 @@ All notable changes are documented here.
       const content = fs.readFileSync(changelogPath, 'utf8');
       const releases = parseChangelog(content);
       assert.ok(releases.length > 0);
-      assert.ok(releases[0].entries.length > 0);
       assert.ok(releases[0].version);
       assert.ok(releases[0].tag);
       assert.strictEqual(releases[0].isLatest, true);
+      assert.ok(releases.some((r) => r.entries.length > 0));
     }
   });
 });

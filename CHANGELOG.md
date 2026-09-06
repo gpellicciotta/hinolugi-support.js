@@ -5,7 +5,9 @@ All notable changes to this project are documented here.
 > See [coordinating work guidelines](https://github.com/gpellicciotta/dev-guidelines/blob/main/guidelines/coordinating-work-guidelines.md)
 > for the versioning and changelog conventions used across the HiNoLuGi projects.
 
-## v0.83.0 [2026-09-06]
+## v0.83.1-pre
+
+## v0.83.0 [released: 2026-09-06]
 
 - Docs: Document release procedures and consumer dependency configuration in devops.md.
 - DevEx: Expose CSS stylesheets and package metadata exports in package.json.
