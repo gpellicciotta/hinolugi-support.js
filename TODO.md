@@ -15,7 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [ ] A0007 `webapp/js/utils/formutils.mjs` (form-field validation/marking helpers) — `hinolugi-counters`'s
+- [~] A0007 [owner: @claude] `webapp/js/utils/formutils.mjs` (form-field validation/marking helpers) — `hinolugi-counters`'s
       version (96 lines) is a strict subset of `hinolugi-auth`'s (179 lines): every function counters has
       (`markInvalid`/`markValid`/`disable`/enable-type field helpers) is byte-identical in auth, which
       additionally has `reset`, `removeValidityMarks`, `validateInputField`, `validateEmailField`, and a
