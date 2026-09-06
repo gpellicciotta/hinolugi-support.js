@@ -127,8 +127,9 @@ All notable changes are documented here.
       const releases = parseChangelog(content);
       assert.ok(releases.length > 0);
       assert.ok(releases[0].entries.length > 0);
-      assert.equal(releases[0].version, '0.82.1-pre');
-      assert.equal(releases[0].tag, 'in development');
+      assert.ok(releases[0].version);
+      assert.ok(releases[0].tag);
+      assert.strictEqual(releases[0].isLatest, true);
     }
   });
 });

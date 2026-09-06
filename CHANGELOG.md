@@ -5,8 +5,10 @@ All notable changes to this project are documented here.
 > See [coordinating work guidelines](https://github.com/gpellicciotta/dev-guidelines/blob/main/guidelines/coordinating-work-guidelines.md)
 > for the versioning and changelog conventions used across the HiNoLuGi projects.
 
-## v0.82.1-pre
+## v0.83.0 [2026-09-06]
 
+- Docs: Document release procedures and consumer dependency configuration in devops.md.
+- DevEx: Expose CSS stylesheets and package metadata exports in package.json.
 - BackEnd: Add shared REST client HTTP transport and typed error hierarchy modules.
 - BackEnd: Add changelog-parser module for parsing repository changelogs into structured release objects.
 - FrontEnd: Add app-shell scaffolding modules including AppView, AppInternalsView, AppMenu, HomeView, and Installer.

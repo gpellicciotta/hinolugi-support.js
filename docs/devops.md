@@ -56,63 +56,179 @@ All non-trivial task work follows the protocol in
 
 ## Release Process
 
-Ongoing work accumulates under the top `CHANGELOG.md` heading while it carries a `-pre` SemVer suffix (e.g.
-`## v0.82.0-pre`), which must always match `version` in `package.json` (the single source of truth for the
-published package) exactly, `-pre` included. Escalate that heading/version together — to the next major,
-minor, or patch number — the moment a change lands that needs it.
+Ongoing work accumulates under the top `CHANGELOG.md` heading while carrying a `-pre` SemVer suffix.
+The version in `CHANGELOG.md` must match `version` in `package.json` exactly.
+Escalate the heading and version together whenever landing breaking, feature, or patch changes.
 
-1. Confirm the top `CHANGELOG.md` heading's version and `package.json`'s `version` already agree (both carry
-   the same `-pre` suffix) — this should already be true from ongoing work, not something decided here.
-2. Freeze, in its own commit: replace the heading's `-pre` suffix with `[{{date}}]`, and drop `-pre` from
-   `package.json`'s `version` so both again match exactly (without the suffix). Commit only this change —
-   do not reopen `-pre` in the same commit — so this commit is the one place in history where `package.json`
-   carries the plain released version (e.g. `0.82.0`). Note its SHA; it is the commit published, tagged, and
-   released below, not necessarily `HEAD`.
-3. Reopen, in the very next commit: add the next patch version's `## vX.Y.Z-pre` heading above the frozen
-   entry (empty, ready for the next round of ongoing work) and bump `package.json`'s `version` to match.
-4. Run `npm test` for a clean verification, and `npm pack --dry-run` to confirm the published tarball contains
-   exactly the intended files.
-5. Push both commits, then create a GitHub Release: give it the intended tag name (e.g. `v0.82.0`) and set
-   its target explicitly to the frozen commit's SHA from step 2 (not the branch's default tip, which by now
-   is the reopened `-pre` commit). Publishing the Release creates that tag at the chosen target and triggers
-   `.github/workflows/publish.yml`, which publishes to GitHub Packages automatically (see Publishing to
-   GitHub Packages below).
-6. Once the package is verified resolvable from GitHub Packages, mark the entry `[released: {{date}}]`. A
-   frozen version that never gets published is an accepted terminal state, not something requiring cleanup.
+### Step 1: Verify Prerequisites
 
-### Publishing to GitHub Packages
+Confirm the test suite passes cleanly and verify tarball contents:
 
-`.github/workflows/publish.yml` publishes a build of this package to
-[GitHub Packages](https://github.com/gpellicciotta/hinolugi-support.js/packages/) whenever a GitHub Release is
-published, authenticating with the workflow's own `GITHUB_TOKEN` (`permissions: packages: write`) — no stored
-secret or one-time registry-side registration needed.
+```bash
+npm test
+npm pack --dry-run
+```
 
-Manual fallback (e.g. for testing packaging locally with `npm publish --dry-run`, or if the Actions pipeline is
-ever unavailable):
-1. Ensure `package.json`'s `name` is formatted as `@{{git-user}}/{{project-name}}`.
+Ensure git working tree is clean and aligned with mainline:
+
+```bash
+git status
+```
+
+### Step 2: Freeze Release Version
+
+Update `CHANGELOG.md` and `package.json` in a dedicated freeze commit.
+Replace the `-pre` suffix in `CHANGELOG.md` with `[{{date}}]`.
+Drop `-pre` from `package.json`'s `version` field.
+Do not reopen `-pre` in this commit.
+
+```bash
+git add CHANGELOG.md package.json
+git commit -m "Freeze v0.83.0 release version."
+```
+
+Capture the commit SHA of this freeze commit:
+
+```bash
+git rev-parse HEAD
+```
+
+### Step 3: Reopen Next Development Version
+
+Add the next patch pre-release heading in `CHANGELOG.md` above the frozen version.
+Bump `package.json` to the corresponding `-pre` version.
+
+```bash
+git add CHANGELOG.md package.json
+git commit -m "Reopen v0.83.1-pre development version."
+```
+
+Push both commits to mainline:
+
+```bash
+git push origin master
+```
+
+### Step 4: Publish GitHub Release
+
+Create the GitHub Release pointing explicitly to the frozen commit SHA:
+
+```bash
+gh release create v0.83.0 --target <frozen-commit-sha> --title "v0.83.0" --notes "Release v0.83.0"
+```
+
+Publishing the release creates tag `v0.83.0` at the target commit.
+This triggers `.github/workflows/publish.yml` to publish to GitHub Packages automatically.
+
+Monitor the publish workflow execution:
+
+```bash
+gh run list --workflow=publish.yml --limit 5
+gh run watch <run-id>
+```
+
+### Step 5: Verify Package Publication
+
+Verify the package version is visible in GitHub Packages:
+
+```bash
+npm view @gpellicciotta/hinolugi-support.js versions --registry https://npm.pkg.github.com
+```
+
+Once verified, update `CHANGELOG.md` to mark the release finalized:
+
+```markdown
+## v0.83.0 [released: 2026-09-06]
+```
+
+Commit and push this documentation update:
+
+```bash
+git commit -m "Mark v0.83.0 released in changelog." CHANGELOG.md
+git push origin master
+```
+
+### Manual Publishing Fallback
+
+Use this fallback if the Actions pipeline is unavailable:
+1. Ensure `package.json`'s `name` is formatted as `@gpellicciotta/hinolugi-support.js`.
 2. Ensure there is an `.npmrc` file (ignored by git, never committed) containing:
    ```ini
-   @{{git-user}}:registry=https://npm.pkg.github.com
+   @gpellicciotta:registry=https://npm.pkg.github.com
    //npm.pkg.github.com/:_authToken={{access token}}
    ```
 3. Run `npm publish --dry-run`, then `npm publish`.
 
-See:
-[Working with the npm registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry).
+### Manual Tagging Fallback
 
-### Tagging a Release
-Publishing a GitHub Release (see step 5 above) already creates its tag at the target commit you gave it — no
-further tagging is needed in that case. Use the manual form below only if you must create/push the tag
-yourself, e.g. after the manual publish fallback, or if a Release was published without an explicit target:
+Publishing a GitHub Release already creates its tag at the specified target commit.
+If tag creation fails or manual fallback was used, create and push the tag manually:
+
 ```bash
-git tag -a v0.82.0 <frozen-commit-sha> -m "Release v0.82.0"
-git push origin v0.82.0
+git tag -a v0.83.0 <frozen-commit-sha> -m "Release v0.83.0"
+git push origin v0.83.0
 ```
-Tag pushes are an outbound action and need the same explicit approval as any other push.
+
+---
+
+## Consuming in Downstream Projects
+
+Downstream projects (`hinolugi-counters`, `hinolugi-auth`, etc.) consume packages from GitHub Packages.
+
+### Registry Configuration
+
+Create or update `.npmrc` in the consumer project root:
+
+```ini
+@gpellicciotta:registry=https://npm.pkg.github.com
+```
+
+To install packages in CI or authenticated contexts:
+
+```ini
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
+### Adding Dependency
+
+Add the package under `dependencies` in consumer's `package.json`:
+
+```json
+{
+  "dependencies": {
+    "@gpellicciotta/hinolugi-support.js": "^0.83.0"
+  }
+}
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+### Importing Modules and Styles
+
+Import JavaScript modules using subpath exports:
+
+```javascript
+import { CliLogger } from '@gpellicciotta/hinolugi-support.js/cli-log.mjs';
+import { sendRequest, buildUrl } from '@gpellicciotta/hinolugi-support.js/http.mjs';
+import { ApiError, mapError } from '@gpellicciotta/hinolugi-support.js/errors.mjs';
+import { parseChangelog } from '@gpellicciotta/hinolugi-support.js/changelog-parser.mjs';
+```
+
+Import CSS stylesheets directly:
+
+```css
+@import '@gpellicciotta/hinolugi-support.js/css/reset.css';
+@import '@gpellicciotta/hinolugi-support.js/css/colors.css';
+```
 
 ---
 
 ## Continuous Integration
 
-`.github/workflows/publish.yml` runs the test suite (`npm test`) before publishing on `release: published`.
-There is currently no separate push/PR-triggered CI workflow in this repository.
+`.github/workflows/publish.yml` runs formatting check and test suite before publishing on release.
+Publishing occurs automatically when a release is published in GitHub Releases.
+

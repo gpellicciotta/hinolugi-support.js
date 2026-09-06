@@ -15,7 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [~] T0016 [owner: @gemini] Make a release consumable by downstream projects and document the release process in devops.md
+*(Currently no tasks)*
 
 ---
 
