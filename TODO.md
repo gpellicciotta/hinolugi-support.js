@@ -15,7 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [ ] A0008 SPA component/DOM/event framework core — `webapp/js/utils/component.mjs` (base `Component`
+- [~] A0008 [owner: @claude] SPA component/DOM/event framework core — `webapp/js/utils/component.mjs` (base `Component`
       lifecycle class), `dialog.mjs`, `domutils.mjs` (738 lines), `events.mjs` (global event bus, byte-for-byte
       identical already), `log.mjs` (byte-for-byte identical already), and `reorder.mjs` (drag-reorder helper)
       are all near-byte-identical between the two webapps (0-10 differing lines each, after normalizing line
