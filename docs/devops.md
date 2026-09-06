@@ -111,10 +111,17 @@ git push origin master
 
 ### Step 4: Publish GitHub Release
 
+Extract that version's `CHANGELOG.md` section as the release notes body; never pass a placeholder
+`--notes` string:
+
+```bash
+npm run release-notes -- v0.83.0 > release-notes.md
+```
+
 Create the GitHub Release pointing explicitly to the frozen commit SHA:
 
 ```bash
-gh release create v0.83.0 --target <frozen-commit-sha> --title "v0.83.0" --notes "Release v0.83.0"
+gh release create v0.83.0 --target <frozen-commit-sha> --title "v0.83.0" --notes-file release-notes.md
 ```
 
 Publishing the release creates tag `v0.83.0` at the target commit.

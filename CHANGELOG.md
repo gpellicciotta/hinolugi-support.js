@@ -7,6 +7,9 @@ All notable changes to this project are documented here.
 
 ## v0.83.1-pre
 
+- DevEx: Add `scripts/extract-release-notes.mjs` and `npm run release-notes` to generate GitHub Release notes from CHANGELOG.md.
+- Docs: Fix Release Process Step 4 to use extracted CHANGELOG.md notes instead of a placeholder `--notes` string.
+
 ## v0.83.0 [released: 2026-09-06]
 
 - Docs: Document release procedures and consumer dependency configuration in devops.md.

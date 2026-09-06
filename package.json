@@ -21,8 +21,9 @@
   },
   "scripts": {
     "test": "node --test",
-    "format": "prettier --write \"js/**/*.mjs\" \"tests/**/*.mjs\"",
-    "format:check": "prettier --check \"js/**/*.mjs\" \"tests/**/*.mjs\""
+    "format": "prettier --write \"js/**/*.mjs\" \"tests/**/*.mjs\" \"scripts/**/*.mjs\"",
+    "format:check": "prettier --check \"js/**/*.mjs\" \"tests/**/*.mjs\" \"scripts/**/*.mjs\"",
+    "release-notes": "node scripts/extract-release-notes.mjs"
   },
   "repository": {
     "type": "git",
