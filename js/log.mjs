@@ -1,6 +1,7 @@
 import * as utils from './utils.mjs';
 
-// General logging functions that don't rely on any global objects or the DOM
+// General, DOM-independent, browser-safe event logging functions. This is a separate, unrelated
+// module from the Node-only `cli-log.mjs`, which targets simple CLI tools rather than event handlers.
 
 export const ERROR_LEVEL = 1000;
 export const WARNING_LEVEL = 900;
@@ -16,7 +17,7 @@ const logHandlers = [];
  */
 export function addLogHandler(callback) {
   if (typeof callback !== 'function') {
-    throw new TypeError("callback for addLogEventListener(callback) must be a function");
+    throw new TypeError('callback for addLogEventListener(callback) must be a function');
   }
   logHandlers.push(callback);
 }
@@ -29,22 +30,22 @@ export function addLogHandler(callback) {
  *  @return True when a callback was actually removed, false if not.
  */
 export function removeLogHandler(callback) {
-    if (typeof callback !== 'function') {
-      throw new TypeError("callback for removeLogHandler(callback) must be a function");
+  if (typeof callback !== 'function') {
+    throw new TypeError('callback for removeLogHandler(callback) must be a function');
+  }
+  for (let i = 0; i < logHandlers.length; i++) {
+    if (logHandlers[i] === callback) {
+      logHandlers.splice(i, 1);
+      return true;
     }
-    for (let i = 0; i < logHandlers.length; i++) {
-      if (logHandlers[i] === callback) {
-        logHandlers.splice(i, 1);
-        return true;
-      }
-    }
-    return false;
+  }
+  return false;
 }
 
 /**
  *  A default log event handler that will emit all log events to the console.
  *  Will be used whenever there are no other registered handlers.
- * 
+ *
  *  @param logEvent The log event to be handled.
  */
 export function defaultHandler(logEvent) {
@@ -56,12 +57,10 @@ export function defaultHandler(logEvent) {
   if (logEvent.level >= ERROR_LEVEL) {
     logPrefix = `${logPrefix}[error] `;
     logFn = console.error;
-  }
-  else if (logEvent.level >= WARNING_LEVEL) {
+  } else if (logEvent.level >= WARNING_LEVEL) {
     logPrefix = `${logPrefix}[warning] `;
     logFn = console.warn;
-  }
-  else if (logEvent.level <= TRACE_LEVEL) {
+  } else if (logEvent.level <= TRACE_LEVEL) {
     logPrefix = `${logPrefix}[trace] `;
     logFn = console.debug;
   }
@@ -71,26 +70,30 @@ export function defaultHandler(logEvent) {
   logFn(logPrefix + logEvent.message, ...logEvent.args);
 }
 
+/** @return The lowercase level name ('error', 'warning', 'trace', or 'info' as the default) for a numeric `level`. */
 export function levelToLevelName(level) {
   let levelName = 'info';
   if (level >= ERROR_LEVEL) {
     levelName = 'error';
-  }
-  else if (level >= WARNING_LEVEL) {
+  } else if (level >= WARNING_LEVEL) {
     levelName = 'warning';
-  }
-  else if (level <= TRACE_LEVEL) {
+  } else if (level <= TRACE_LEVEL) {
     levelName = 'trace';
   }
   return levelName;
 }
 
+/** @return The numeric level for a level `name` ('error', 'warning', 'info', or 'trace'), or 0 if unrecognized. */
 export function levelNameToLevel(name) {
   switch (name.toLowerCase().trim()) {
-    case 'error':   return ERROR_LEVEL;
-    case 'warning': return WARNING_LEVEL;
-    case 'info':    return INFO_LEVEL;
-    case 'trace':   return TRACE_LEVEL;
+    case 'error':
+      return ERROR_LEVEL;
+    case 'warning':
+      return WARNING_LEVEL;
+    case 'info':
+      return INFO_LEVEL;
+    case 'trace':
+      return TRACE_LEVEL;
   }
   return 0;
 }
@@ -102,43 +105,49 @@ let logEventId = 0;
  */
 function fireLogEvent(logEvent) {
   let calls = 0;
-  let callbacks = logHandlers.slice(); // Take a copy
+  const callbacks = logHandlers.slice(); // Take a copy
   if (callbacks.length === 0) {
     defaultHandler(logEvent);
-  }
-  else {
+  } else {
     for (let i = 0; i < callbacks.length; i++) {
       try {
         callbacks[i].call(null, logEvent);
         calls += 1;
-      }
-      catch (err) {
+      } catch (err) {
         const errLogEvent = {
           id: ++logEventId,
           time: new Date(),
           name: logEvent.name,
           level: ERROR_LEVEL,
           message: 'Log event handler failed for event %O: %O',
-          args: [logEvent, err]
+          args: [logEvent, err],
         };
-        defaultHandler(err);        
+        defaultHandler(errLogEvent);
       }
     }
   }
   return calls;
 }
 
+/** A named logger that dispatches log events to registered handlers (or `defaultHandler` if none). */
 export class Logger {
   constructor(name, minLevel) {
     this.name = name || '';
     this.minLevel = minLevel;
   }
 
+  /**
+   *  Get or update this logger's configuration.
+   *
+   *  @param props If omitted, returns the current config. Otherwise, an object optionally
+   *               containing 'name' and 'min-level' (or 'minLevel') to update.
+   *  @return The current `{ name, 'min-level' }` config when called without arguments.
+   */
   config(props) {
     if (!props) {
       return {
-        'name': this.name,
-        'min-level': this.minLevel
+        name: this.name,
+        'min-level': this.minLevel,
       };
     }
     if (props.hasOwnProperty('name')) {
@@ -147,19 +156,16 @@ export class Logger {
     if (props.hasOwnProperty('min-level')) {
       if (props['min-level']) {
         this.minLevel = +props['min-level'];
+      } else {
+        this.minLevel = null;
       }
-      else {
+    } else if (props.hasOwnProperty('minLevel')) {
+      if (props['minLevel']) {
+        this.minLevel = +props['minLevel'];
+      } else {
         this.minLevel = null;
       }
     }
-    else if (props.hasOwnProperty('minLevel')) {
-      if (props['minLevel']) {
-        this.minLevel = +props['minLevel'];
-      }
-      else {
-        this.minLevel = null;
-      }      
-    }    
   }
 
   error(logMsgFormat, ...logMsgArgs) {
@@ -178,25 +184,29 @@ export class Logger {
     this.log(TRACE_LEVEL, logMsgFormat, ...logMsgArgs);
   }
 
+  /** Log a message at `logLevel`, if at or above this logger's (or the global logger's) minimum level. */
   log(logLevel, logMsgFormat, ...logMsgArgs) {
-    const actualMinLevel = this.minLevel || globalLogger.minLevel || INFO_LEVEL
+    const actualMinLevel = this.minLevel || globalLogger.minLevel || INFO_LEVEL;
     if (actualMinLevel > logLevel) {
       return;
     }
-    let logEvent = {
+    const logEvent = {
       id: ++logEventId,
       time: new Date(),
       name: this.name,
-      level: logLevel, 
+      level: logLevel,
       message: logMsgFormat,
-      args: logMsgArgs
+      args: logMsgArgs,
     };
     fireLogEvent(logEvent);
   }
 }
 
-let globalLogger = new Logger('', INFO_LEVEL);
+const globalLogger = new Logger('', INFO_LEVEL);
 
+// Module-level convenience functions delegating to a shared, unnamed global Logger instance.
+
+/** Get or update the global logger's configuration. See `Logger.config`. */
 export function config(props) {
   return globalLogger.config(props);
 }
@@ -217,6 +227,7 @@ export function trace(logMsgFormat, ...logMsgArgs) {
   globalLogger.log(TRACE_LEVEL, logMsgFormat, ...logMsgArgs);
 }
 
+/** Log a message at `logLevel` via the global logger. See `Logger.log`. */
 export function log(logLevel, logMsgFormat, ...logMsgArgs) {
   globalLogger.log(logLevel, logMsgFormat, ...logMsgArgs);
 }

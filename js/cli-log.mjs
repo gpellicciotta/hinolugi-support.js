@@ -11,6 +11,7 @@ import * as utils from './utils.mjs';
 // scoping decision as the Python sibling). This is a Node-only module (uses `node:fs`); the DOM-independent,
 // browser-safe event logger in `log.mjs` is a separate, unrelated module.
 
+/** Named severity levels for `CliLogger`, ordered from most (NONE) to least (ALL) restrictive. */
 export class LogLevel {
   static NONE = Infinity;
   static ERROR = 1000;
@@ -107,7 +108,8 @@ export function formatLogMessage(message, { level, origin, timestamp, forFile = 
 
   if (origin) {
     let origClean = origin.trim();
-    const isWrapped = (origClean.startsWith('<') && origClean.endsWith('>')) || (origClean.startsWith('[') && origClean.endsWith(']'));
+    const isWrapped =
+      (origClean.startsWith('<') && origClean.endsWith('>')) || (origClean.startsWith('[') && origClean.endsWith(']'));
     if (!isWrapped) {
       origClean = `<${origClean}>`;
     }
@@ -159,7 +161,12 @@ export class CliLogger {
     // Debug level filtering: only written to file when debugEnabled is true; never to stdout/stderr
     if (level && level.trim().toUpperCase() === 'DEBUG') {
       if (this.debugEnabled) {
-        const fileText = formatLogMessage(message, { level: 'DEBUG', origin: effectiveOrigin, timestamp: ts, forFile: true });
+        const fileText = formatLogMessage(message, {
+          level: 'DEBUG',
+          origin: effectiveOrigin,
+          timestamp: ts,
+          forFile: true,
+        });
         this.#writeFile(fileText);
       }
       return;
@@ -203,7 +210,12 @@ export class CliLogger {
   logStart(name, version, argv, config, { origin } = {}) {
     const configLines = Object.entries(config || {}).map(([k, v]) => `- ${k.padEnd(24)}: ${v}`);
     const cmdLine = argv.join(' ');
-    const msgParts = [`Starting ${name} v${version}`, 'with following configuration:', `- Full command line given : ${cmdLine}`, ...configLines];
+    const msgParts = [
+      `Starting ${name} v${version}`,
+      'with following configuration:',
+      `- Full command line given : ${cmdLine}`,
+      ...configLines,
+    ];
     this.log(msgParts.join('\n'), { level: 'INFO', origin, toStdout: this.verbose });
   }
 

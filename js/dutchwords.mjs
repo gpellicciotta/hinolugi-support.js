@@ -3,7 +3,7 @@
 /**
  *  @return An array of a subset of all dutch words that can be considered 'simple'.
  */
-export var SIMPLE_DUTCH_WORDS = ["aan","aanbod","aanraken","aanval","aap","aardappel","aarde","aardig","acht","achter","actief","activiteit",
+export const SIMPLE_DUTCH_WORDS = ["aan","aanbod","aanraken","aanval","aap","aardappel","aarde","aardig","acht","achter","actief","activiteit",
   "ademen","af","afgelopen","afhangen","afmaken","afname","afspraak","afval","al","algemeen","alleen","alles","als","alsjeblieft",
   "altijd","ander","andere","anders","angst","antwoord","antwoorden","appel","arm","auto","avond","avondeten","baan","baby",
   "bad","bal","bang","bank","basis","bed","bedekken","bedreiging","bedreven","been","beer","beest","beetje","begin","begrijpen",
@@ -79,7 +79,7 @@ export var SIMPLE_DUTCH_WORDS = ["aan","aanbod","aanraken","aanval","aap","aarda
 /**
  *  @return An array of all dutch words.
  */
-export var DUTCH_WORDS = ["'s",
+export const DUTCH_WORDS = ["'s",
 "'s anderendaags",
 "'s avonds",
 "'s middags",

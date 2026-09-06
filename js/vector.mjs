@@ -1,15 +1,18 @@
-// Vector class
+// 2D vector class and construction helpers.
 
+/** Construct a Vector from a polar angle (radians) and magnitude (default 1). */
 export function vectorFromPolar(angle, magnitude = 1) {
-  let x = magnitude * Math.cos(angle);
-  let y = magnitude * Math.sin(angle);
+  const x = magnitude * Math.cos(angle);
+  const y = magnitude * Math.sin(angle);
   return new Vector(x, y);
 }
 
+/** Construct a Vector from cartesian x/y coordinates. */
 export function vectorFromCartesian(x, y) {
   return new Vector(x, y);
 }
 
+/** An immutable-by-convention 2D vector; all arithmetic methods return a new Vector. */
 export class Vector {
   constructor(x, y) {
     this.x = x;
@@ -20,9 +23,10 @@ export class Vector {
     return new Vector(this.x, this.y);
   }
 
+  /** @throws {Error} If `vector` is not a Vector instance. */
   checkVector(vector) {
     if (!(vector instanceof Vector)) {
-      throw new Error("Vector expected but received " + typeof(vector));
+      throw new Error(`Vector expected but received ${typeof vector}`);
     }
   }
 
@@ -35,7 +39,7 @@ export class Vector {
    */
   dot(other) {
     this.checkVector(other);
-    return (this.x * other.x) + (this.y * other.y);
+    return this.x * other.x + this.y * other.y;
   }
 
   plus(other) {
@@ -55,9 +59,10 @@ export class Vector {
   }
 
   get magnitude() {
-    return Math.sqrt((this.x * this.x) + (this.y * this.y));
+    return Math.sqrt(this.x * this.x + this.y * this.y);
   }
 
+  /** Returns a new Vector with the same angle as this one but magnitude `m`. */
   withMagnitude(m) {
     return vectorFromPolar(this.angle, m);
   }
@@ -66,23 +71,25 @@ export class Vector {
     return Math.atan2(this.y, this.x);
   }
 
+  /** Returns a new Vector with the same magnitude as this one but angle `a` (radians). */
   withAngle(a) {
     return vectorFromPolar(a, this.magnitude);
   }
 
+  /** Returns a unit-length copy of this vector, or this vector itself if its magnitude is zero. */
   normalized() {
-    let m = this.magnitude;
-    if (m != 0) {
+    const m = this.magnitude;
+    if (m !== 0) {
       return this.divide(m);
     }
     return this;
   }
 
   equal(other) {
-    return other && (this.x === other.x) && (this.y === other.y);
+    return other && this.x === other.x && this.y === other.y;
   }
 
   toString() {
-    return "(x:" + this.x + ", y:" + this.y + ")=(m:" + this.magnitude + ", a:" + this.angle + ")";
+    return `(x:${this.x}, y:${this.y})=(m:${this.magnitude}, a:${this.angle})`;
   }
 }

@@ -13,9 +13,9 @@ import * as log from './log.mjs';
  */
 export function getCssPixelSize(canvasElement) {
   // The + prefix casts it to an integer; the slice method gets rid of "px"
-  let css_height = +getComputedStyle(canvasElement).getPropertyValue("height").slice(0, -2);
-  let css_width = +getComputedStyle(canvasElement).getPropertyValue("width").slice(0, -2);
-  return { width: css_width, height: css_height };
+  const cssHeight = +getComputedStyle(canvasElement).getPropertyValue('height').slice(0, -2);
+  const cssWidth = +getComputedStyle(canvasElement).getPropertyValue('width').slice(0, -2);
+  return { width: cssWidth, height: cssHeight };
 }
 
 /**
@@ -39,38 +39,38 @@ export function getCssPixelSize(canvasElement) {
  *  @param pixelScale The ratio of the resolution in physical pixels to the resolution in CSS pixels for the current display device.
  *                    This value could also be interpreted as the ratio of pixel sizes: the size of one CSS pixel to the size of one physical pixel.
  *                    If undefined, window.devicePixelRatio will be used.
-  */
+ */
 export function ensureTrackingCanvasSize(canvasElement, determineCssSizeCallback, pixelScale) {
   determineCssSizeCallback = determineCssSizeCallback || getCssPixelSize;
   pixelScale = pixelScale || window.devicePixelRatio;
 
   // Ensure a correctly scaled context will be returned, always
-  canvasElement.getContext = (function() {
-    var origGetContext = canvasElement.getContext;
+  canvasElement.getContext = (function () {
+    const origGetContext = canvasElement.getContext;
     return function (type) {
-      let ctx = origGetContext.apply(canvasElement, [type]);
+      const ctx = origGetContext.apply(canvasElement, [type]);
       ctx.scale(pixelScale, pixelScale);
       return ctx;
     };
   })();
 
-  //log.trace("Ensuring to trace canvas size for " + canvasElement);
   // Determine actual CSS canvas size:
-  let css_size = determineCssSizeCallback(canvasElement);
+  const cssSize = determineCssSizeCallback(canvasElement);
   // Update physical canvas size:
-  canvasElement.height = css_size.height * pixelScale;
-  canvasElement.width = css_size.width * pixelScale;
-  //log.trace("Determined physical bounds to have width: " + canvasElement.width + " and height: " + canvasElement.height + ", since pixel-ratio: " + window.devicePixelRatio);
+  canvasElement.height = cssSize.height * pixelScale;
+  canvasElement.width = cssSize.width * pixelScale;
 
   // Now also ensure this aspect ratio is kept despite resize operations
-  window.addEventListener('resize', moderatedEventCallback(function () {
-    // Determine actual CSS canvas size:
-    let css_size = determineCssSizeCallback(canvasElement);
-    // Update physical canvas size:
-    canvasElement.height = css_size.height * pixelScale;
-    canvasElement.width = css_size.width * pixelScale;
-    //log.trace("Determined physical bounds to have width: " + canvasElement.width + " and height: " + canvasElement.height + ", since pixel-ratio: " + window.devicePixelRatio);
-  }));
+  window.addEventListener(
+    'resize',
+    moderatedEventCallback(function () {
+      // Determine actual CSS canvas size:
+      const cssSize = determineCssSizeCallback(canvasElement);
+      // Update physical canvas size:
+      canvasElement.height = cssSize.height * pixelScale;
+      canvasElement.width = cssSize.width * pixelScale;
+    }),
+  );
 }
 
 // TIMING RELATED
@@ -85,17 +85,18 @@ export function ensureTrackingCanvasSize(canvasElement, determineCssSizeCallback
  *                 Any intermediate invocations due to the event triggering, will not lead to callback being invoked.
  */
 export function moderatedEventCallback(callback, ms) {
-  if (typeof callback !== "function") {
-    throw new TypeError("callback for moderatedEventCallback(callback, afterMs) must be a function");
+  if (typeof callback !== 'function') {
+    throw new TypeError('callback for moderatedEventCallback(callback, afterMs) must be a function');
   }
   ms = ms || 100;
   let timer;
-  return function(event) {
-    if (timer) {  // If already and still set: clear
+  return function (event) {
+    if (timer) {
+      // If already and still set: clear
       clearTimeout(timer);
     }
     // Set to run after ms
-    timer = setTimeout(callback, ms, event)
+    timer = setTimeout(callback, ms, event);
   };
 }
 
@@ -106,10 +107,10 @@ export function moderatedEventCallback(callback, ms) {
 let lastDocumentStatus = null;
 let lastDocumentStatusCheck = null;
 let documentActivatedTimer = null;
-let documentActivatedCallbacks = [];
+const documentActivatedCallbacks = [];
 
 /**
- *  Register a callback function to be invoked when the document 
+ *  Register a callback function to be invoked when the document
  *  is activated (after presumeably being inactive first).
  *
  *  Relies on following global objects: document, window
@@ -117,39 +118,37 @@ let documentActivatedCallbacks = [];
  *  @param callback The callback function to be invoked.
  */
 export function onDocumentActivated(callback) {
-  if (typeof callback !== "function") {
-    throw new TypeError("callback for onDomReady(callback) must be a function");
+  if (typeof callback !== 'function') {
+    throw new TypeError('callback for onDomReady(callback) must be a function');
   }
   // Register callback
   documentActivatedCallbacks.push(callback);
   // Check whether already a timer
   if (!documentActivatedTimer) {
-    document.addEventListener("visibilitychange", checkDocumentStatus, false);
-    window.addEventListener("focus", checkDocumentStatus);    
+    document.addEventListener('visibilitychange', checkDocumentStatus, false);
+    window.addEventListener('focus', checkDocumentStatus);
     lastDocumentStatus = document.hidden ? 'hidden' : 'visible';
     lastDocumentStatusCheck = new Date().getTime();
     documentActivatedTimer = setInterval(checkDocumentStatus, 1000);
   }
 }
 
-function checkDocumentStatus(event) {
+function checkDocumentStatus() {
   const newCheckTime = new Date().getTime();
   if (document.hidden) {
     lastDocumentStatus = 'hidden';
     lastDocumentStatusCheck = newCheckTime;
-  }
-  else if (lastDocumentStatus === 'hidden') { // Transition detected
+  } else if (lastDocumentStatus === 'hidden') {
+    // Transition detected
     lastDocumentStatus = 'visible';
     lastDocumentStatusCheck = newCheckTime;
-    fireDocumentActivated();    
-  }
-  else if ((newCheckTime - lastDocumentStatusCheck) > 2000) {
+    fireDocumentActivated();
+  } else if (newCheckTime - lastDocumentStatusCheck > 2000) {
     // We mist 2 check cycles? Assume because tab inactivation
     lastDocumentStatus = 'visible';
     lastDocumentStatusCheck = newCheckTime;
-    fireDocumentActivated();    
-  }
-  else {
+    fireDocumentActivated();
+  } else {
     lastDocumentStatusCheck = newCheckTime;
   }
 }
@@ -180,29 +179,31 @@ let globalDomReadyEventHandlerInstalled = false;
  *  @param callback The callback function to be invoked.
  */
 export function onDomReady(callback) {
-  if (typeof callback !== "function") {
-    throw new TypeError("callback for onDomReady(callback) must be a function");
+  if (typeof callback !== 'function') {
+    throw new TypeError('callback for onDomReady(callback) must be a function');
   }
-  if (domReadyHasFired) { // If ready has already fired, then just schedule the callback to fire asynchronously, but right away
-    setTimeout(function() { callback(); }, 1);
+  if (domReadyHasFired) {
+    // If ready has already fired, then just schedule the callback to fire asynchronously, but right away
+    setTimeout(function () {
+      callback();
+    }, 1);
     return;
   }
   // Register callback
   domReadyCallbacks.push(callback);
   // Check status of DOM:
   //   if document already ready to go, schedule the ready function to run
-  if (document.readyState === "complete") {
+  if (document.readyState === 'complete') {
     setTimeout(fireDomReady, 1);
-  }
-  else if (!globalDomReadyEventHandlerInstalled) {
+  } else if (!globalDomReadyEventHandlerInstalled) {
     // otherwise if we don't have event handlers installed, install them
     if (document.addEventListener) {
       // Use window load event (since DOMContentLoaded doesn't guarantee that all CSS or other resources have been fully loaded)
-      window.addEventListener("load", fireDomReady, false);
+      window.addEventListener('load', fireDomReady, false);
     } else {
       // must be IE
-      document.attachEvent("onreadystatechange", onReadyStateChange);
-      window.attachEvent("onload", fireDomReady);
+      document.attachEvent('onreadystatechange', onReadyStateChange);
+      window.attachEvent('onload', fireDomReady);
     }
     globalDomReadyEventHandlerInstalled = true;
   }
@@ -212,7 +213,7 @@ export function onDomReady(callback) {
  *  Invoked from window or document event.
  */
 function onReadyStateChange() {
-  if (document.readyState === "complete") {
+  if (document.readyState === 'complete') {
     fireDomReady();
   }
 }
@@ -221,8 +222,9 @@ function onReadyStateChange() {
  *  Invoked when DOM is determined to be ready: will invoke all registered callbacks.
  */
 function fireDomReady() {
-  if (domReadyHasFired) { // Don't call more than once
-    return ;
+  if (domReadyHasFired) {
+    // Don't call more than once
+    return;
   }
   domReadyHasFired = true; // Guard against being called more than once
   for (let i = 0; i < domReadyCallbacks.length; i++) {
@@ -237,7 +239,7 @@ function fireDomReady() {
 
 // ANIMATION
 
-let animFrameCallbacks = [];
+const animFrameCallbacks = [];
 let globalAnimFrameEventHandlerInstalled = false;
 
 /**
@@ -246,7 +248,7 @@ let globalAnimFrameEventHandlerInstalled = false;
  *  @param id The function ID returned from onAnimFrame.
  */
 export function cancelAnimFrame(id) {
-  if ((id >= 0) && (id < animFrameCallbacks.length)) {
+  if (id >= 0 && id < animFrameCallbacks.length) {
     animFrameCallbacks[id] = null;
   }
 }
@@ -262,11 +264,13 @@ export function cancelAnimFrame(id) {
 export function requestAnimationFrame(callback) {
   if (!window.requestAnimationFrame) {
     window.requestAnimationFrame = (function () {
-      return window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame ||
-          function (cb) {
-            return window.setTimeout(cb, 1000 / 60);
-          };
+      return (
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        function (cb) {
+          return window.setTimeout(cb, 1000 / 60);
+        }
+      );
     })();
   }
   return window.requestAnimationFrame(callback);
@@ -281,27 +285,31 @@ export function requestAnimationFrame(callback) {
  *  @return An ID for the callback that can be used in cancelAnimFrame.
  */
 export function onAnimFrame(callback, fps) {
-  if (typeof callback !== "function") {
-    throw new TypeError("callback for onAnimFrame(callback, fps) must be a function");
+  if (typeof callback !== 'function') {
+    throw new TypeError('callback for onAnimFrame(callback, fps) must be a function');
   }
   // Register callback
-  let millisBetweenFrames = 1000 / (fps || 60);
-  let idx = -1 + animFrameCallbacks.push({
-    fn: callback,
-    fps: fps,
-    millisBetweenFrames: millisBetweenFrames,
-    lastFireTime: 0
-  });
+  const millisBetweenFrames = 1000 / (fps || 60);
+  const idx =
+    -1 +
+    animFrameCallbacks.push({
+      fn: callback,
+      fps: fps,
+      millisBetweenFrames: millisBetweenFrames,
+      lastFireTime: 0,
+    });
   if (!globalAnimFrameEventHandlerInstalled) {
     // Ensure the requestAnimFrame function is available on all browsers
     if (!window.requestAnimationFrame) {
       window.requestAnimationFrame = (function () {
-        return window.webkitRequestAnimationFrame ||
-               window.mozRequestAnimationFrame ||
-               function (callback) {
-                 window.setTimeout(callback, 1000 / 60);
-               };
-        })();
+        return (
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame ||
+          function (callback) {
+            window.setTimeout(callback, 1000 / 60);
+          }
+        );
+      })();
     }
     globalAnimFrameEventHandlerInstalled = true;
     // Ensure the animation starts rolling
@@ -315,9 +323,10 @@ export function onAnimFrame(callback, fps) {
  */
 function fireAnimFrame(fireTime) {
   for (let i = 0; i < animFrameCallbacks.length; i++) {
-    let cb = animFrameCallbacks[i];
-    if (cb && (fireTime >= cb.lastFireTime + cb.millisBetweenFrames)) {
-      window.setTimeout(function() { // Asynchronously so all callbacks can work in parallel
+    const cb = animFrameCallbacks[i];
+    if (cb && fireTime >= cb.lastFireTime + cb.millisBetweenFrames) {
+      window.setTimeout(function () {
+        // Asynchronously so all callbacks can work in parallel
         cb.lastFireTime = fireTime;
         cb.fn.call(window);
       }, 1);
@@ -340,20 +349,19 @@ function fireAnimFrame(fireTime) {
  *             Defaults to 60 if not specified.
  */
 export function play(setup, animate, fps) {
-  if (typeof setup !== "function") {
-    throw new TypeError("setup for play(setup, animate, fps) must be a function");
+  if (typeof setup !== 'function') {
+    throw new TypeError('setup for play(setup, animate, fps) must be a function');
   }
-  if (typeof animate !== "function") {
-    throw new TypeError("animate for play(setup, animate, fps) must be a function");
+  if (typeof animate !== 'function') {
+    throw new TypeError('animate for play(setup, animate, fps) must be a function');
   }
-  onDomReady(function() {
-    let ctx = setup.call(window);
-    onAnimFrame(function() {
+  onDomReady(function () {
+    const ctx = setup.call(window);
+    onAnimFrame(function () {
       animate.call(window, ctx);
     }, fps);
   });
 }
-
 
 // SWIPE GESTURES
 
@@ -367,17 +375,20 @@ export function play(setup, animate, fps) {
  *  @param dblTapCallback The callback function to be invoked whenever the double-tap has happened.
  */
 export function onDoubleTap(targetElement, dblTapCallback) {
-  if (typeof dblTapCallback !== "function") {
-    throw new TypeError("callback for onDoubleTap(dblTapCallback) must be a function");
+  if (typeof dblTapCallback !== 'function') {
+    throw new TypeError('callback for onDoubleTap(dblTapCallback) must be a function');
   }
   let tapTimer = null;
-  targetElement.addEventListener('touchstart', function (e) { // Double-tap
+  targetElement.addEventListener('touchstart', function () {
+    // Double-tap
     //e.preventDefault(); // Don't zoom
-    if (tapTimer == null) { // No tap yet
+    if (tapTimer == null) {
+      // No tap yet
       tapTimer = setTimeout(function () {
         tapTimer = null;
       }, 500); // Set timer, but erase after .5s
-    } else { // Already one tap (and not auto-erased so within .5s of first tap)
+    } else {
+      // Already one tap (and not auto-erased so within .5s of first tap)
       clearTimeout(tapTimer);
       tapTimer = null;
       dblTapCallback.call(/* this: */ window);
@@ -399,8 +410,8 @@ export function onDoubleTap(targetElement, dblTapCallback) {
  *  @param dblTapCallback The callback function to be invoked whenever a double-tap has been detected.
  */
 export function onSwipe(targetElement, swipeCallback, dblTapCallback = null) {
-  if (typeof swipeCallback !== "function") {
-    throw new TypeError("swipeCallback for onSwipe(targetElement, swipeCallback, dblTapCallback) must be a function");
+  if (typeof swipeCallback !== 'function') {
+    throw new TypeError('swipeCallback for onSwipe(targetElement, swipeCallback, dblTapCallback) must be a function');
   }
 
   const MAX_SWIPE_TIME = 700; // ms
@@ -412,34 +423,35 @@ export function onSwipe(targetElement, swipeCallback, dblTapCallback = null) {
   const MAX_DBLTAP_TIME = 500; // ms
   let tapTimer = null;
 
-  let handleGesture = function() {
+  const handleGesture = function () {
     // Check gesture didn't take too long
-    let elapsed = touchEnd.time - touchStart.time;
+    const elapsed = touchEnd.time - touchStart.time;
     if (elapsed > MAX_SWIPE_TIME) {
       touchStart = null;
       touchEnd = null;
-      return ;
+      return;
     }
     // Check x and y distance
     let swipeDir = null;
-    let distX = touchEnd.x - touchStart.x;
-    let distY = touchEnd.y - touchStart.y;
+    const distX = touchEnd.x - touchStart.x;
+    const distY = touchEnd.y - touchStart.y;
     let dist;
-    if ((Math.abs(distX) > MIN_DIST) && (Math.abs(distY) < MAX_PERPENDICULAR_DIST)) { // horizontal gesture
-      swipeDir = (distX < 0) ? 'left' : 'right'; // if dist traveled is negative, it indicates left swipe
+    if (Math.abs(distX) > MIN_DIST && Math.abs(distY) < MAX_PERPENDICULAR_DIST) {
+      // horizontal gesture
+      swipeDir = distX < 0 ? 'left' : 'right'; // if dist traveled is negative, it indicates left swipe
       dist = Math.abs(distX);
-    }
-    else if ((Math.abs(distY) > MIN_DIST) && (Math.abs(distX) < MAX_PERPENDICULAR_DIST)) { // vertical gesture
-      swipeDir = (distY < 0) ? 'up' : 'down'; // if dist traveled is negative, it indicates up swipe
+    } else if (Math.abs(distY) > MIN_DIST && Math.abs(distX) < MAX_PERPENDICULAR_DIST) {
+      // vertical gesture
+      swipeDir = distY < 0 ? 'up' : 'down'; // if dist traveled is negative, it indicates up swipe
       dist = Math.abs(distY);
     }
     // Invoke callback
     if (dist) {
-      let arg = {
+      const arg = {
         dir: swipeDir,
         dist: dist,
         start: touchStart,
-        end: touchEnd
+        end: touchEnd,
       };
       swipeCallback.call(/* this: */ window, arg);
     }
@@ -448,13 +460,17 @@ export function onSwipe(targetElement, swipeCallback, dblTapCallback = null) {
     touchEnd = null;
   };
 
-  targetElement.addEventListener('touchstart', function(e) {
-    if (tapTimer == null) { // No tap yet
-      tapTimer = setTimeout(function () { tapTimer = null; }, MAX_DBLTAP_TIME); // Set timer, but erase after ...
+  targetElement.addEventListener('touchstart', function (e) {
+    if (tapTimer == null) {
+      // No tap yet
+      tapTimer = setTimeout(function () {
+        tapTimer = null;
+      }, MAX_DBLTAP_TIME); // Set timer, but erase after ...
       // But also treat as possible start of swipe gesture:
-      let touchObj = e.touches[0];
+      const touchObj = e.touches[0];
       touchStart = { x: touchObj.pageX, y: touchObj.pageY, time: new Date().getTime() };
-    } else { // Already one tap (and not auto-erased so within .5s of first tap)
+    } else {
+      // Already one tap (and not auto-erased so within .5s of first tap)
       clearTimeout(tapTimer);
       tapTimer = null;
       touchStart = null;
@@ -466,52 +482,52 @@ export function onSwipe(targetElement, swipeCallback, dblTapCallback = null) {
     return false;
   });
 
-  targetElement.addEventListener('mousedown', function(e) {
+  targetElement.addEventListener('mousedown', function (e) {
     touchStart = { x: e.pageX, y: e.pageY, time: new Date().getTime() };
     return false;
   });
 
-  targetElement.addEventListener('touchend', function(e) {
+  targetElement.addEventListener('touchend', function (e) {
     if (touchStart) {
-      let touchObj = e.changedTouches[0];
+      const touchObj = e.changedTouches[0];
       if (touchObj) {
-        touchEnd = {x: touchObj.pageX, y: touchObj.pageY, time: new Date().getTime()};
+        touchEnd = { x: touchObj.pageX, y: touchObj.pageY, time: new Date().getTime() };
       }
       handleGesture();
       return false;
     }
   });
 
-  targetElement.addEventListener('mouseup', function(e) {
+  targetElement.addEventListener('mouseup', function (e) {
     if (touchStart) {
-      touchEnd = { x: e.pageX, y: e.pageY, time: new Date().getTime()};
+      touchEnd = { x: e.pageX, y: e.pageY, time: new Date().getTime() };
       handleGesture();
       return false;
     }
   });
 
-  targetElement.addEventListener('touchleave', function(e) {
+  targetElement.addEventListener('touchleave', function () {
     touchStart = null;
     touchEnd = null;
     return false;
   });
 
-  targetElement.addEventListener('touchmove', function(e){
+  targetElement.addEventListener('touchmove', function (e) {
     //e.preventDefault(); // Prevent scrolling when inside element
-    let touchObj = e.touches[0];
+    const touchObj = e.touches[0];
     if (touchObj) {
-      touchEnd = {x: touchObj.pageX, y: touchObj.pageY, time: new Date().getTime()};
+      touchEnd = { x: touchObj.pageX, y: touchObj.pageY, time: new Date().getTime() };
     }
     return false;
   });
 
-  targetElement.addEventListener('touchcancel', function(e) {
+  targetElement.addEventListener('touchcancel', function () {
     touchStart = null;
     touchEnd = null;
     return false;
   });
 
-  targetElement.addEventListener('mouseleave', function(e) {
+  targetElement.addEventListener('mouseleave', function () {
     touchStart = null;
     touchEnd = null;
     return false;
@@ -538,8 +554,8 @@ export function onSwipe(targetElement, swipeCallback, dblTapCallback = null) {
 export function onMove(targetElement, minDist, moveCallback) {
   const MIN_DIST = 25; // px
 
-  if (typeof moveCallback !== "function") {
-    throw new TypeError("moveCallback for onMove(targetElement, minDist, moveCallback) must be a function");
+  if (typeof moveCallback !== 'function') {
+    throw new TypeError('moveCallback for onMove(targetElement, minDist, moveCallback) must be a function');
   }
   minDist = minDist || MIN_DIST;
 
@@ -547,46 +563,45 @@ export function onMove(targetElement, minDist, moveCallback) {
   let moved = false;
   let moveEnd = null;
 
-  let handleMove = function() {
+  const handleMove = function () {
     // Check x and y distance
-    let swipeDir = null;
-    let horDist = Math.abs(moveEnd.x - moveStart.x);
-    let vertDist = Math.abs(moveEnd.y - moveStart.y);
+    const horDist = Math.abs(moveEnd.x - moveStart.x);
+    const vertDist = Math.abs(moveEnd.y - moveStart.y);
     let dist = null;
     let dir = null;
-    if (horDist > vertDist) { // Horizontal move dominates
+    if (horDist > vertDist) {
+      // Horizontal move dominates
       if (horDist >= minDist) {
         dist = horDist;
         if (moveEnd.x > moveStart.x) {
           dir = 'right';
-        }
-        else {
+        } else {
           dir = 'left';
         }
       }
-    }
-    else { // Vertical move dominates
+    } else {
+      // Vertical move dominates
       if (vertDist >= minDist) {
         dist = vertDist;
         if (moveEnd.y > moveStart.y) {
           dir = 'down';
-        }
-        else {
+        } else {
           dir = 'up';
         }
       }
     }
     // Invoke callback
     if (dist) {
-      if (!moved) { // First real move, so also invoke callback with 'start'
+      if (!moved) {
+        // First real move, so also invoke callback with 'start'
         handleStartOrStop('start');
       }
       // Invoke callback
-      let arg = {
+      const arg = {
         dir: dir,
         dist: dist,
         start: moveStart,
-        end: moveEnd
+        end: moveEnd,
       };
       // Prepare for next move:
       moveStart = moveEnd;
@@ -596,25 +611,25 @@ export function onMove(targetElement, minDist, moveCallback) {
     }
   };
 
-  let handleStartOrStop = function(startOrStop) {
+  const handleStartOrStop = function (startOrStop) {
     // Invoke callback
-    let arg = {
+    const arg = {
       dir: startOrStop,
       dist: null,
       start: startOrStop === 'start' ? moveStart : moveEnd,
-      end: startOrStop === 'start' ? moveStart : moveEnd
+      end: startOrStop === 'start' ? moveStart : moveEnd,
     };
     moveCallback.call(/* this: */ window, arg);
   };
 
   // Start on 'mousedown' and then check minDist on each 'mousemove' and on 'mouseup'
 
-  targetElement.addEventListener('mousedown', function(e) {
+  targetElement.addEventListener('mousedown', function (e) {
     moveStart = { x: e.pageX, y: e.pageY, time: new Date().getTime() };
     return false;
   });
 
-  targetElement.addEventListener('mousemove', function(e){
+  targetElement.addEventListener('mousemove', function (e) {
     if (moveStart) {
       moveEnd = { x: e.pageX, y: e.pageY, time: new Date().getTime() };
       handleMove();
@@ -622,12 +637,12 @@ export function onMove(targetElement, minDist, moveCallback) {
     }
   });
 
-  targetElement.addEventListener('mouseup', function(e) {
+  targetElement.addEventListener('mouseup', function (e) {
     if (moveStart) {
       if (moved) {
-        moveEnd = {x: e.pageX, y: e.pageY, time: new Date().getTime()};
+        moveEnd = { x: e.pageX, y: e.pageY, time: new Date().getTime() };
         handleMove();
-        log.trace("mouse up move");
+        log.trace('mouse up move');
         handleStartOrStop('end');
       }
       moveStart = null;
@@ -637,7 +652,7 @@ export function onMove(targetElement, minDist, moveCallback) {
     }
   });
 
-  targetElement.addEventListener('mouseleave', function(e) {
+  targetElement.addEventListener('mouseleave', function () {
     if (moveStart) {
       if (moved) {
         handleStartOrStop('end');
@@ -651,32 +666,32 @@ export function onMove(targetElement, minDist, moveCallback) {
 
   // Start on 'touchstart' and then check minDist on each 'touchmove' and on 'touchend'
 
-  targetElement.addEventListener('touchstart', function(e) {
-    let touchObj = e.touches[0];
+  targetElement.addEventListener('touchstart', function (e) {
+    const touchObj = e.touches[0];
     if (touchObj) {
-      moveStart = {x: touchObj.pageX, y: touchObj.pageY, time: new Date().getTime()};
+      moveStart = { x: touchObj.pageX, y: touchObj.pageY, time: new Date().getTime() };
     }
     return false;
   });
 
-  targetElement.addEventListener('touchmove', function(e){
+  targetElement.addEventListener('touchmove', function (e) {
     if (moveStart) {
       //e.preventDefault(); // Prevent scrolling when inside element
-      let touchObj = e.touches[0];
+      const touchObj = e.touches[0];
       if (touchObj) {
-        moveEnd = {x: touchObj.pageX, y: touchObj.pageY, time: new Date().getTime()};
+        moveEnd = { x: touchObj.pageX, y: touchObj.pageY, time: new Date().getTime() };
         handleMove();
       }
       return false;
     }
   });
 
-  targetElement.addEventListener('touchend', function(e) {
+  targetElement.addEventListener('touchend', function (e) {
     if (moveStart) {
       if (moved) {
-        let touchObj = e.changedTouches[0];
+        const touchObj = e.changedTouches[0];
         if (touchObj) {
-          moveEnd = {x: touchObj.pageX, y: touchObj.pageY, time: new Date().getTime()};
+          moveEnd = { x: touchObj.pageX, y: touchObj.pageY, time: new Date().getTime() };
           handleMove();
           handleStartOrStop('end');
         }
@@ -688,7 +703,7 @@ export function onMove(targetElement, minDist, moveCallback) {
     }
   });
 
-  targetElement.addEventListener('touchleave', function(e) {
+  targetElement.addEventListener('touchleave', function () {
     if (moveStart) {
       if (moved) {
         handleStartOrStop('end');
@@ -700,7 +715,7 @@ export function onMove(targetElement, minDist, moveCallback) {
     }
   });
 
-  targetElement.addEventListener('touchcancel', function(e) {
+  targetElement.addEventListener('touchcancel', function () {
     if (moveStart) {
       if (moved) {
         handleStartOrStop('end');
@@ -716,19 +731,19 @@ export function onMove(targetElement, minDist, moveCallback) {
 /**
  *  Turn a string representation of HTML into an HTML element.
  *  This relies on the string representating having a single root element.
- * 
+ *
  *  @param htmlText The HTML text to be turned into an element (tree).
- *  @return The first (and expected only) element of the element tree created from htmlText. 
+ *  @return The first (and expected only) element of the element tree created from htmlText.
  */
 export function htmlToElement(htmlText) {
-  let template = document.createElement("template");
+  const template = document.createElement('template');
   template.innerHTML = htmlText.trim(); // Ensure the first child won't be whitespace
   return template.content.firstChild;
 }
 
 /**
  *  Insert an HTML element just after another HTML element.
- * 
+ *
  *  @param anchorHtmlEl The element to place a new element after. This element must have a parent.
  *  @param newHtmlEl The new element to be added.
  *  @return The element that was inserted or null.

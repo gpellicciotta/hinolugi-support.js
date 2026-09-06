@@ -5,8 +5,7 @@ import * as log from './log.mjs';
 /**
  *  A class with objects capable of keeping track of and firing typed events.
  */
-export class EventEmitter 
-{
+export class EventEmitter {
   constructor() {
     this.eventListeners = {};
   }
@@ -19,10 +18,10 @@ export class EventEmitter
    */
   addEventListener(eventType, callback) {
     if (typeof eventType !== 'string') {
-      throw new TypeError("eventType for addEventListener(eventType, callback) must be a string");
+      throw new TypeError('eventType for addEventListener(eventType, callback) must be a string');
     }
     if (typeof callback !== 'function') {
-      throw new TypeError("callback for addEventListener(eventType, callback) must be a function");
+      throw new TypeError('callback for addEventListener(eventType, callback) must be a function');
     }
     if (!(eventType in this.eventListeners)) {
       this.eventListeners[eventType] = [];
@@ -40,12 +39,12 @@ export class EventEmitter
    */
   removeEventListener(eventType, callback) {
     if (typeof callback !== 'function') {
-      throw new TypeError("callback for removeEventListener(eventType, callback) must be a function");
+      throw new TypeError('callback for removeEventListener(eventType, callback) must be a function');
     }
     if (!(eventType in this.eventListeners)) {
       return false;
     }
-    let typedSpecificCallbacks = this.eventListeners[eventType];
+    const typedSpecificCallbacks = this.eventListeners[eventType];
     for (let i = 0; i < typedSpecificCallbacks.length; i++) {
       if (typedSpecificCallbacks[i] === callback) {
         typedSpecificCallbacks.splice(i, 1);
@@ -68,14 +67,13 @@ export class EventEmitter
       return 0;
     }
     let calls = 0;
-    let typedSpecificCallbacks = this.eventListeners[event.type].slice(); // Take a copy
+    const typedSpecificCallbacks = this.eventListeners[event.type].slice(); // Take a copy
     for (let i = 0; i < typedSpecificCallbacks.length; i++) {
       try {
         typedSpecificCallbacks[i].call(thisObject, event);
         calls += 1;
-      }
-      catch (err) {
-        log.trace("Callback failed for event: %O: %O", event, err);
+      } catch (err) {
+        log.trace('Callback failed for event: %O: %O', event, err);
       }
     }
     return calls;

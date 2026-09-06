@@ -61,6 +61,7 @@ Functional and technical requirements for the `hinolugi-support.js` project.
   [general-guidelines.md](https://github.com/gpellicciotta/dev-guidelines/blob/main/guidelines/general-guidelines.md).
 - **Packaging**: npm package published to GitHub Packages via an automated GitHub Actions workflow, triggered
   by a published GitHub Release.
-- **Code Standards**: 2-space indentation, UTF-8 encoding, US English.
+- **Code Standards**: 2-space indentation, UTF-8 encoding, US English, formatted with Prettier
+  (`npm run format`/`format:check`); exported functions and classes are documented with JSDoc comments.
 - **Versioning**: [Semantic Versioning](https://semver.org/); backward-incompatible changes bump the major
   version and get an explicit breaking-change note in `CHANGELOG.md`.

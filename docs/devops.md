@@ -29,6 +29,15 @@ npm test
 node --test tests/
 ```
 
+### Formatting
+```bash
+# Check formatting (CI-safe, no writes)
+npm run format:check
+
+# Reformat all source files with Prettier
+npm run format
+```
+
 ### Task Coordination Protocol
 All non-trivial task work follows the protocol in
 [Coordinating Work Guidelines](https://github.com/gpellicciotta/dev-guidelines/blob/main/guidelines/coordinating-work-guidelines.md):

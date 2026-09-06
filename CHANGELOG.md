@@ -8,6 +8,11 @@ All notable changes to this project are documented here.
 ## v0.82.1-pre
 
 - Docs: Bring `TODO.md`, `CHANGELOG.md`, `docs/`, and `tasks/*.md` in line with the latest dev-guidelines.
+- BackEnd: Fix `log.mjs` logging the raw exception instead of a leveled error event when a handler throws.
+- BackEnd: Fix `fireworks.mjs`'s `stop()` never actually removing its window resize listener.
+- BackEnd: Remove dead duplicated code and unused debug/scratch functions across the JS library.
+- Docs: Document previously-undocumented exported functions and classes across the JS library with JSDoc.
+- DevEx: Format all JS source with Prettier; add `npm run format`/`format:check` and enforce it in CI.
 
 ## v0.82.0 [released: 2026-09-04]
 

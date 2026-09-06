@@ -2,6 +2,8 @@ import { EventEmitter } from './events.mjs';
 import { Logger } from './log.mjs';
 import * as formutils from './formutils.mjs';
 
+// Modal dialog component with pluggable content/buttons, driven by DOM data-attributes.
+
 /**
  *  Type representing a modal dialog that can be attached/de-attached from the DOM.
  *
@@ -10,8 +12,7 @@ import * as formutils from './formutils.mjs';
  *    - app: the app it belongs to
  *    - domParentEl: when attached, the DOM element it is attached to.
  */
-export default class Dialog extends EventEmitter
-{
+export default class Dialog extends EventEmitter {
   /**
    *  Create the component.
    *
@@ -20,7 +21,7 @@ export default class Dialog extends EventEmitter
    *  @param title The question to be answered.
    *  @param answers The possible answers, with the value they represent.
    */
-  constructor(id, app, title="What is your answer?", answers = { "Yes": true, "No": false }) {
+  constructor(id, app, title = 'What is your answer?', answers = { Yes: true, No: false }) {
     super();
     this.id = id;
     this.log = new Logger(`${id}`);
@@ -51,9 +52,8 @@ export default class Dialog extends EventEmitter
   }
 
   createDialogButtons() {
-    const dlg = this;
     let buttonHtml = '';
-    for (let answer in this.answers) {
+    for (const answer in this.answers) {
       buttonHtml += `
         <button data-answer="${answer}">${answer}</button>
       `;
@@ -62,49 +62,49 @@ export default class Dialog extends EventEmitter
   }
 
   createDialogOverlay() {
-    let overlay = document.createElement("div");
+    const overlay = document.createElement('div');
     overlay.id = `${this.id}-overlay`;
-    overlay.classList.add("dialog-overlay", "disabled");
+    overlay.classList.add('dialog-overlay', 'disabled');
     return overlay;
   }
 
   createDialog() {
-    let dialogTemplate = document.createElement("template");
+    const dialogTemplate = document.createElement('template');
     dialogTemplate.innerHTML = this.createDialogUIHtml();
-    let dialog = dialogTemplate.content.querySelector("#" + this.id).cloneNode(true);
-    dialog.classList.add("dialog");
+    const dialog = dialogTemplate.content.querySelector('#' + this.id).cloneNode(true);
+    dialog.classList.add('dialog');
     return dialog;
   }
 
   onClick(event) {
     if (event && event.target) {
       let eventTarget = event.target;
-      if (!eventTarget.hasAttribute("data-answer")) {
-        eventTarget = eventTarget.closest("[data-answer]");
+      if (!eventTarget.hasAttribute('data-answer')) {
+        eventTarget = eventTarget.closest('[data-answer]');
       }
       if (eventTarget) {
         event.preventDefault();
-        let answerId = eventTarget.dataset.answer;
-        let answerValue = this.answers[answerId];
+        const answerId = eventTarget.dataset.answer;
+        const answerValue = this.answers[answerId];
         this.close(answerValue);
       }
     }
   }
-  
+
   async open() {
     let attachedOverlay = document.querySelector(`#${this.id}-overlay`);
     if (!attachedOverlay) {
       document.body.appendChild(this.overlay);
       attachedOverlay = document.querySelector(`#${this.id}-overlay`);
     }
-    let ce = this.onClick.bind(this);
+    const ce = this.onClick.bind(this);
     this.registeredEvents.push({ target: this.dialog, type: 'click', callback: ce });
     this.dialog.addEventListener('click', ce);
     this.result = null;
     formutils.enable(this.overlay);
-    this.dispatchEvent({type: 'open', dialog: this});
+    this.dispatchEvent({ type: 'open', dialog: this });
     const dlg = this;
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const callback = (e) => {
         dlg.removeEventListener('close', callback);
         resolve(e.result);
@@ -117,7 +117,7 @@ export default class Dialog extends EventEmitter
     this.result = answer;
     formutils.disable(this.overlay);
     this.dispatchEvent({ type: 'close', dialog: this, result: this.result });
-    for (let er of this.registeredEvents) {
+    for (const er of this.registeredEvents) {
       er.target.removeEventListener(er.type, er.callback);
     }
     document.body.removeChild(this.overlay);

@@ -17,7 +17,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "format": "prettier --write \"js/**/*.mjs\" \"tests/**/*.mjs\"",
+    "format:check": "prettier --check \"js/**/*.mjs\" \"tests/**/*.mjs\""
   },
   "repository": {
     "type": "git",
@@ -31,5 +33,8 @@
   "homepage": "https://github.com/gpellicciotta/hinolugi-support.js#readme",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
+  },
+  "devDependencies": {
+    "prettier": "3.9.6"
   }
 }

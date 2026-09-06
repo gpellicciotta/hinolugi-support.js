@@ -82,7 +82,12 @@ describe('formatLogMessage', () => {
   });
 
   test('aligns continuation lines under the first line and drops blank lines', () => {
-    const out = formatLogMessage('line one\n\nline two', { level: 'WARN', origin: 'demo', timestamp: ts, forFile: false });
+    const out = formatLogMessage('line one\n\nline two', {
+      level: 'WARN',
+      origin: 'demo',
+      timestamp: ts,
+      forFile: false,
+    });
     const lines = out.split('\n');
     const expectedPrefix = '**[WARN]** ' + ' <demo> '; // indicator's own pad + join separator + origin + trailing separator
     assert.equal(lines[0], expectedPrefix + 'line one');
@@ -101,8 +106,14 @@ describe('CliLogger', () => {
     const errChunks = [];
     const origOut = process.stdout.write;
     const origErr = process.stderr.write;
-    process.stdout.write = (chunk) => { outChunks.push(chunk); return true; };
-    process.stderr.write = (chunk) => { errChunks.push(chunk); return true; };
+    process.stdout.write = (chunk) => {
+      outChunks.push(chunk);
+      return true;
+    };
+    process.stderr.write = (chunk) => {
+      errChunks.push(chunk);
+      return true;
+    };
     try {
       fn();
     } finally {
