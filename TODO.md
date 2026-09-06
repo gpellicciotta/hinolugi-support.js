@@ -58,14 +58,7 @@ An overview of all tasks and their planning.
       (`API_BASE_URL`, `APP_ACTIONS`, `APP_MENU_ACTIONS`, `APP_ACTION_BAR_ACTIONS`, and counters-only
       `AUTH_SERVICE_BASE_URL`/`AUTH_APP_NAME`/`AUTH_APP_LOGO_URL`/`FEEDBACK_MAIL_ADDRESS`). @gio please
       accept/reject/adjust this shape before it is picked up.
-- [~] A0013 [owner: @claude] `docs/devops.md`'s Release Process section, step 2, has the freeze-and-reopen edits land in
-      one commit, so no commit ever has `package.json`'s `version` at the plain frozen value (e.g. `0.82.0`,
-      no `-pre`) — HEAD jumps straight from `0.82.0-pre` to `0.82.1-pre`. Since the publish path is a
-      GitHub-Release-triggered CI job that runs `npm publish` against whatever `package.json` says at the
-      released commit, tagging/releasing HEAD as-is would publish the wrong version under the release name.
-      T0005 worked around this with an extra pin/unpin commit pair; fix the documented process (e.g. a
-      dedicated frozen-version commit before reopening `-pre`) so future releases don't need the workaround.
-- [ ] T0016 [needs: A0013 A0012 A0011 A0010 A0009] Make a release that can be consumed by other projects (like hinolugi-counters and hinolugi-auth). Also make sure the release process is well documented in devops.md
+- [ ] T0016 [needs: A0012 A0011 A0010 A0009] Make a release that can be consumed by other projects (like hinolugi-counters and hinolugi-auth). Also make sure the release process is well documented in devops.md
 
 ---
 

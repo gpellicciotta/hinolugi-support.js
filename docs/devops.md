@@ -63,19 +63,22 @@ minor, or patch number — the moment a change lands that needs it.
 
 1. Confirm the top `CHANGELOG.md` heading's version and `package.json`'s `version` already agree (both carry
    the same `-pre` suffix) — this should already be true from ongoing work, not something decided here.
-2. Freeze: replace the heading's `-pre` suffix with `[{{date}}]`, and drop `-pre` from `package.json`'s
-   `version` so both again match exactly (without the suffix). In the same commit, add the next patch
-   version's `## vX.Y.Z-pre` heading above it (empty, ready for the next round of ongoing work) and bump
-   `package.json`'s `version` to match.
-3. Run `npm test` for a clean verification, and `npm pack --dry-run` to confirm the published tarball contains
+2. Freeze, in its own commit: replace the heading's `-pre` suffix with `[{{date}}]`, and drop `-pre` from
+   `package.json`'s `version` so both again match exactly (without the suffix). Commit only this change —
+   do not reopen `-pre` in the same commit — so this commit is the one place in history where `package.json`
+   carries the plain released version (e.g. `0.82.0`). Note its SHA; it is the commit published, tagged, and
+   released below, not necessarily `HEAD`.
+3. Reopen, in the very next commit: add the next patch version's `## vX.Y.Z-pre` heading above the frozen
+   entry (empty, ready for the next round of ongoing work) and bump `package.json`'s `version` to match.
+4. Run `npm test` for a clean verification, and `npm pack --dry-run` to confirm the published tarball contains
    exactly the intended files.
-4. Commit the changes, then publish a GitHub Release for the frozen version — this triggers
+5. Push both commits, then create a GitHub Release: give it the intended tag name (e.g. `v0.82.0`) and set
+   its target explicitly to the frozen commit's SHA from step 2 (not the branch's default tip, which by now
+   is the reopened `-pre` commit). Publishing the Release creates that tag at the chosen target and triggers
    `.github/workflows/publish.yml`, which publishes to GitHub Packages automatically (see Publishing to
    GitHub Packages below).
-5. Once the package is verified resolvable from GitHub Packages, mark the entry `[released: {{date}}]` and tag
-   the release (see Tagging a Release below). A frozen version that never gets published is an accepted
-   terminal state, not
-   something requiring cleanup.
+6. Once the package is verified resolvable from GitHub Packages, mark the entry `[released: {{date}}]`. A
+   frozen version that never gets published is an accepted terminal state, not something requiring cleanup.
 
 ### Publishing to GitHub Packages
 
@@ -98,9 +101,11 @@ See:
 [Working with the npm registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry).
 
 ### Tagging a Release
-Once a version is actually verified released (published and resolvable):
+Publishing a GitHub Release (see step 5 above) already creates its tag at the target commit you gave it — no
+further tagging is needed in that case. Use the manual form below only if you must create/push the tag
+yourself, e.g. after the manual publish fallback, or if a Release was published without an explicit target:
 ```bash
-git tag -a v0.82.0 -m "Release v0.82.0"
+git tag -a v0.82.0 <frozen-commit-sha> -m "Release v0.82.0"
 git push origin v0.82.0
 ```
 Tag pushes are an outbound action and need the same explicit approval as any other push.
