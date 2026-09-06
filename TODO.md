@@ -42,12 +42,22 @@ An overview of all tasks and their planning.
       Candidate: add a shared transport + error-hierarchy module generic enough for both JS REST clients,
       but @gio must confirm the merged `sendRequest` preserves auth's `options.headers` merging behavior
       before this is implemented — wire-format-adjacent code, needs care.
-- [ ] A0012 `webapp/js/constants.mjs` is only partially shared: roughly half its lines (55 of ~105, after
+- [!] A0012 [owner: @claude] [blocked: awaiting @gio's review/approval of the shared-defaults-vs-overrides design before implementation] `webapp/js/constants.mjs` is only partially shared: roughly half its lines (55 of ~105, after
       normalizing line endings) are generic dev-mode switches (e.g. `RUN_MODE`-style toggles, notification
       durations) that look identical in shape between the two webapps, while the rest is genuinely
-      app-specific (`APP_ACTIONS` names, `API_BASE_URL`). Lower-confidence than A0007-A0011 since a clean
-      split needs a design decision on how to structure a "shared defaults + app-specific overrides" shape
-      without over-coupling the two webapps' dev-mode switches. @gio please review before this is picked up.
+      app-specific (`APP_ACTIONS` names, `API_BASE_URL`). Confirmed by reading both files: the shared half
+      is identical in name/shape (only literal values differ, e.g. `RUN_MODE` is `'test'` vs `'normal'`),
+      no functional bug like A0011's. Blocked purely because the task text asks for a design decision:
+      how to structure a "shared defaults + app-specific overrides" shape without over-coupling the two
+      webapps' dev-mode switches, since that shape becomes an implicit API contract both webapps depend on.
+      Strawman for @gio to accept/reject: a `constants.defaults.mjs` in this shared library exporting the
+      ~9 identical dev-mode switches (`WAIT_UI_DELAY_TIME`, `SERVER_SYNC_TIME`, `SLOW_MODE`,
+      `UNSTABLE_NETWORK_MODE`, `OAUTH_IN_SEPARATE_WINDOW`, `RUN_MODE`, `DEFAULT_PAGE_SIZE`,
+      `DEFAULT_LOG_LEVEL`, `CURRENT_DATE`/`AUTO_LOGIN_*`/`AUTO_NAVIGATE_URL` toggles) as one plain object,
+      with each webapp's own `constants.mjs` spread-overriding it alongside its app-specific exports
+      (`API_BASE_URL`, `APP_ACTIONS`, `APP_MENU_ACTIONS`, `APP_ACTION_BAR_ACTIONS`, and counters-only
+      `AUTH_SERVICE_BASE_URL`/`AUTH_APP_NAME`/`AUTH_APP_LOGO_URL`/`FEEDBACK_MAIL_ADDRESS`). @gio please
+      accept/reject/adjust this shape before it is picked up.
 - [ ] A0013 `docs/devops.md`'s Release Process section, step 2, has the freeze-and-reopen edits land in
       one commit, so no commit ever has `package.json`'s `version` at the plain frozen value (e.g. `0.82.0`,
       no `-pre`) — HEAD jumps straight from `0.82.0-pre` to `0.82.1-pre`. Since the publish path is a
