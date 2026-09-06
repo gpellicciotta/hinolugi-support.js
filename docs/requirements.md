@@ -33,6 +33,7 @@ Functional and technical requirements for the `hinolugi-support.js` project.
 
 ### General Utilities
 - Provide general-purpose helper functions with no global-object or DOM dependency (`js/utils.mjs`).
+- Provide changelog parsing from markdown into structured release objects (`js/changelog-parser.mjs`).
 - Provide `Vector` and `Matrix` classes for 2D/3D math (`js/vector.mjs`, `js/matrix.mjs`).
 - Provide Perlin noise generation (`js/noise.mjs`).
 
