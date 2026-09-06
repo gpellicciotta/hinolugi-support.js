@@ -7,6 +7,8 @@ All notable changes to this project are documented here.
 
 ## v0.82.1-pre
 
+- BackEnd: Add `escapeHtml`, `isValidPassword`, and `validPasswordDescription` to `utils.mjs`, completing its
+  merge of `hinolugi-auth`/`hinolugi-counters`'s near-duplicate webapp utility functions.
 - Docs: Bring `TODO.md`, `CHANGELOG.md`, `docs/`, and `tasks/*.md` in line with the latest dev-guidelines.
 - BackEnd: Fix `log.mjs` logging the raw exception instead of a leveled error event when a handler throws.
 - BackEnd: Fix `fireworks.mjs`'s `stop()` never actually removing its window resize listener.

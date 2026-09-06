@@ -15,13 +15,6 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [~] A0006 [owner: @claude] `webapp/js/utils/utils.mjs` (general-purpose helpers: deep-clone, date/number formatting, string
-      utils, etc.) is ~95% byte-identical between `hinolugi-auth` and `hinolugi-counters` (after normalizing
-      CRLF-vs-LF line endings, only 88 of ~1300 lines differ). The divergent lines are a handful of
-      functions each side has that the other doesn't: auth-only `areEqual`/`areArraysEqual`,
-      `isValidPassword`/`validPasswordDescription`, `hslToString`; counters-only `escapeHtml`. Candidate:
-      add this library's own `utils.mjs` with the union of both sides' functions, have both webapps import
-      it instead of maintaining near-duplicate 1300-line files. @gio please review before this is picked up.
 - [ ] A0007 `webapp/js/utils/formutils.mjs` (form-field validation/marking helpers) — `hinolugi-counters`'s
       version (96 lines) is a strict subset of `hinolugi-auth`'s (179 lines): every function counters has
       (`markInvalid`/`markValid`/`disable`/enable-type field helpers) is byte-identical in auth, which
@@ -61,7 +54,7 @@ An overview of all tasks and their planning.
 - [ ] A0012 `webapp/js/constants.mjs` is only partially shared: roughly half its lines (55 of ~105, after
       normalizing line endings) are generic dev-mode switches (e.g. `RUN_MODE`-style toggles, notification
       durations) that look identical in shape between the two webapps, while the rest is genuinely
-      app-specific (`APP_ACTIONS` names, `API_BASE_URL`). Lower-confidence than A0006-A0011 since a clean
+      app-specific (`APP_ACTIONS` names, `API_BASE_URL`). Lower-confidence than A0007-A0011 since a clean
       split needs a design decision on how to structure a "shared defaults + app-specific overrides" shape
       without over-coupling the two webapps' dev-mode switches. @gio please review before this is picked up.
 - [ ] A0013 `docs/devops.md`'s Release Process section, step 2, has the freeze-and-reopen edits land in
@@ -71,7 +64,7 @@ An overview of all tasks and their planning.
       released commit, tagging/releasing HEAD as-is would publish the wrong version under the release name.
       T0005 worked around this with an extra pin/unpin commit pair; fix the documented process (e.g. a
       dedicated frozen-version commit before reopening `-pre`) so future releases don't need the workaround.
-- [ ] T0016 [needs: A0013 A0012 A0011 A0010 A0009 A0008 A0007 A0006] Make a release that can be consumed by other projects (like hinolugi-counters and hinolugi-auth). Also make sure the release process is well documented in devops.md
+- [ ] T0016 [needs: A0013 A0012 A0011 A0010 A0009 A0008 A0007] Make a release that can be consumed by other projects (like hinolugi-counters and hinolugi-auth). Also make sure the release process is well documented in devops.md
 
 ---
 

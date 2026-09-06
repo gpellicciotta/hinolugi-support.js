@@ -51,6 +51,24 @@ export function deepClone(obj) {
 }
 
 /**
+ *  Escape a string's HTML-significant characters so it is safe to interpolate into markup.
+ *
+ *  @param str The (possibly user-supplied) string to escape.
+ *  @return The escaped string, safe to interpolate.
+ */
+export function escapeHtml(str) {
+  if (str === null || str === undefined) {
+    return '';
+  }
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
  *  Check whether a string is a valid email address.
  *
  *  @param str The email address to check.
@@ -64,6 +82,24 @@ export function isValidEmailAddress(email) {
     return false;
   }
   return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+}
+
+/**
+ *  Check whether a string is a valid password.
+ *
+ *  @param password The password to check.
+ *  @return True if deemed valid, false otherwise.
+ */
+export function isValidPassword(password) {
+  if (!password || password.length < 6) {
+    return false;
+  }
+  return true;
+}
+
+/** @return A human-readable description of what constitutes a valid password. */
+export function validPasswordDescription() {
+  return 'minimally 6 letters';
 }
 
 /**
