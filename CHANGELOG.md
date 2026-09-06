@@ -7,6 +7,7 @@ All notable changes to this project are documented here.
 
 ## v0.82.1-pre
 
+- BackEnd: Add shared REST client HTTP transport and typed error hierarchy modules.
 - BackEnd: Add changelog-parser module for parsing repository changelogs into structured release objects.
 - FrontEnd: Add app-shell scaffolding modules including AppView, AppInternalsView, AppMenu, HomeView, and Installer.
 - Docs: Fix Release Process to freeze and reopen `-pre` in separate commits, tagging the frozen one.

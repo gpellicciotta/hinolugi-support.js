@@ -46,6 +46,11 @@ Functional and technical requirements for the `hinolugi-support.js` project.
 - Provide Dutch and English word lists for word-based games or utilities (`js/dutchwords.mjs`,
   `js/englishwords.mjs`).
 
+### REST Client Transport and Errors
+- Provide a typed error hierarchy (`ApiError`, `AuthenticationError`, `ValidationError`, `NotFoundError`, `ConflictError`, `mapError`) for REST API responses (`js/errors.mjs`).
+- Provide an HTTP transport module (`buildUrl`, `basicAuthHeader`, `bearerAuthHeader`, `sendRequest`, `toWireDate`, `fromWireDate`, `parseDate`) for fetch-based API clients (`js/http.mjs`).
+- See [REST Client Upgrade Guide](specs/client-upgrade-guide.md) for downstream migration details.
+
 ### Styling
 - Provide a CSS reset (`css/reset.css`) and a shared color palette (`css/colors.css`).
 

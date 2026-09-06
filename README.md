@@ -27,6 +27,8 @@ Each module is importable as a subpath, e.g.:
 
 ```js
 import { CliLogger } from '@gpellicciotta/hinolugi-support.js/cli-log.mjs';
+import { sendRequest, buildUrl } from '@gpellicciotta/hinolugi-support.js/http.mjs';
+import { ApiError, mapError } from '@gpellicciotta/hinolugi-support.js/errors.mjs';
 ```
 
 ## Publishing

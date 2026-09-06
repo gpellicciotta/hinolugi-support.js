@@ -12,6 +12,12 @@ Overview of all documentation for the `hinolugi-support.js` project.
 
 ---
 
+## Specifications
+
+- [REST Client Upgrade Guide](specs/client-upgrade-guide.md): Migration instructions for `hinolugi-auth` and `hinolugi-counters` client libraries.
+
+---
+
 ## Guidelines
 
 This project follows the cross-project
