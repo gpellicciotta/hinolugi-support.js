@@ -7,6 +7,8 @@ All notable changes to this project are documented here.
 
 ## v0.82.1-pre
 
+- BackEnd: Add `reset`, `removeValidityMarks`, `validateInputField`, `validateEmailField`,
+  `validatePasswordField`, and a `readOnly` toggle to `formutils.mjs`, merging in `hinolugi-auth`'s superset.
 - BackEnd: Add `escapeHtml`, `isValidPassword`, and `validPasswordDescription` to `utils.mjs`, completing its
   merge of `hinolugi-auth`/`hinolugi-counters`'s near-duplicate webapp utility functions.
 - Docs: Bring `TODO.md`, `CHANGELOG.md`, `docs/`, and `tasks/*.md` in line with the latest dev-guidelines.

@@ -15,13 +15,6 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [~] A0007 [owner: @claude] `webapp/js/utils/formutils.mjs` (form-field validation/marking helpers) — `hinolugi-counters`'s
-      version (96 lines) is a strict subset of `hinolugi-auth`'s (179 lines): every function counters has
-      (`markInvalid`/`markValid`/`disable`/enable-type field helpers) is byte-identical in auth, which
-      additionally has `reset`, `removeValidityMarks`, `validateInputField`, `validateEmailField`, and a
-      `readOnly` toggle in `disable`/`enable`. Candidate: add auth's superset version to this library's
-      `utils` module; counters would gain the extra validation helpers for free. @gio please review before
-      this is picked up.
 - [ ] A0008 SPA component/DOM/event framework core — `webapp/js/utils/component.mjs` (base `Component`
       lifecycle class), `dialog.mjs`, `domutils.mjs` (738 lines), `events.mjs` (global event bus, byte-for-byte
       identical already), `log.mjs` (byte-for-byte identical already), and `reorder.mjs` (drag-reorder helper)
@@ -64,7 +57,7 @@ An overview of all tasks and their planning.
       released commit, tagging/releasing HEAD as-is would publish the wrong version under the release name.
       T0005 worked around this with an extra pin/unpin commit pair; fix the documented process (e.g. a
       dedicated frozen-version commit before reopening `-pre`) so future releases don't need the workaround.
-- [ ] T0016 [needs: A0013 A0012 A0011 A0010 A0009 A0008 A0007] Make a release that can be consumed by other projects (like hinolugi-counters and hinolugi-auth). Also make sure the release process is well documented in devops.md
+- [ ] T0016 [needs: A0013 A0012 A0011 A0010 A0009 A0008] Make a release that can be consumed by other projects (like hinolugi-counters and hinolugi-auth). Also make sure the release process is well documented in devops.md
 
 ---
 

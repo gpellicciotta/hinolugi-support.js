@@ -1,3 +1,5 @@
+import * as utils from './utils.mjs';
+
 // Form related utility functions.
 
 /** @return True if `el` does not have the 'disabled' class. */
@@ -11,8 +13,8 @@ export function isDisabled(el) {
 }
 
 /**
- *  Disable an element: add the 'disabled' class and set its title to `disableText`,
- *  remembering the previous title so `enable` can restore it.
+ *  Disable an element: add the 'disabled' class, mark it read-only, and set its title to
+ *  `disableText`, remembering the previous title so `enable` can restore it.
  *
  *  @param el The element to disable.
  *  @param disableText Title to show while disabled. Defaults to `el.dataset.disabledText`
@@ -32,11 +34,12 @@ export function disable(el, disableText) {
     el.setAttribute('title', disabledText);
   }
   el.classList.add('disabled');
+  el.readOnly = true;
 }
 
 /**
- *  Re-enable an element previously disabled via `disable`: remove the 'disabled' class
- *  and restore (or override with `enableText`) its title.
+ *  Re-enable an element previously disabled via `disable`: remove the 'disabled' class,
+ *  clear read-only, and restore (or override with `enableText`) its title.
  *
  *  @param el The element to enable.
  *  @param enableText Title to restore. Defaults to the title remembered by `disable`.
@@ -48,6 +51,23 @@ export function enable(el, enableText) {
     el.dataset.enabledText = enabledText;
   }
   el.classList.remove('disabled');
+  el.readOnly = false;
+}
+
+/** Reset `el` to its empty, enabled, unmarked state: clears its value, removes validity marks, and re-enables it. */
+export function reset(el) {
+  el.value = null;
+  removeValidityMarks(el);
+  enable(el);
+}
+
+/** Remove both the 'valid' and 'invalid' classes from the closest '.input-group' ancestor of `el`. */
+export function removeValidityMarks(el) {
+  const inputGroupEl = el.closest('.input-group');
+  if (inputGroupEl) {
+    inputGroupEl.classList.remove('invalid');
+    inputGroupEl.classList.remove('valid');
+  }
 }
 
 /** Mark the closest '.input-group' ancestor of `el` as valid. */
@@ -74,6 +94,84 @@ export function markInvalid(el, errorText) {
     }
     inputGroupEl.classList.remove('valid');
     inputGroupEl.classList.add('invalid');
+  }
+}
+
+/**
+ *  Validate a required, free-form input field and mark it valid/invalid accordingly.
+ *
+ *  @param inputEl The input element to validate.
+ *  @return True if the field's value is acceptable.
+ */
+export function validateInputField(inputEl) {
+  const valueAvailable = inputEl.value.trim();
+  if (!valueAvailable) {
+    if (inputEl.hasAttribute('required')) {
+      markInvalid(inputEl, 'An email address is mandatory');
+      return false;
+    } else {
+      removeValidityMarks(inputEl);
+      return true;
+    }
+  }
+  if (!utils.isValidEmailAddress(valueAvailable)) {
+    markInvalid(inputEl, 'This is not a valid email address');
+    return false;
+  } else {
+    markValid(inputEl);
+    return true;
+  }
+}
+
+/**
+ *  Validate an email input field and mark it valid/invalid accordingly.
+ *
+ *  @param emailInputEl The email input element to validate.
+ *  @return True if the field's value is a valid email address (or empty and not required).
+ */
+export function validateEmailField(emailInputEl) {
+  const valueAvailable = emailInputEl.value.trim();
+  if (!valueAvailable) {
+    if (emailInputEl.hasAttribute('required')) {
+      markInvalid(emailInputEl, 'An email address is mandatory');
+      return false;
+    } else {
+      removeValidityMarks(emailInputEl);
+      return true;
+    }
+  }
+  if (!utils.isValidEmailAddress(valueAvailable)) {
+    markInvalid(emailInputEl, 'This is not a valid email address');
+    return false;
+  } else {
+    markValid(emailInputEl);
+    return true;
+  }
+}
+
+/**
+ *  Validate a password input field and mark it valid/invalid accordingly.
+ *
+ *  @param passwordInputEl The password input element to validate.
+ *  @return True if the field's value is a valid password (or empty and not required).
+ */
+export function validatePasswordField(passwordInputEl) {
+  const valueAvailable = passwordInputEl.value.trim();
+  if (!valueAvailable) {
+    if (passwordInputEl.hasAttribute('required')) {
+      markInvalid(passwordInputEl, 'A password is mandatory');
+      return false;
+    } else {
+      removeValidityMarks(passwordInputEl);
+      return true;
+    }
+  }
+  if (!utils.isValidPassword(valueAvailable)) {
+    markInvalid(passwordInputEl, 'A valid password needs: ' + utils.validPasswordDescription());
+    return false;
+  } else {
+    markValid(passwordInputEl);
+    return true;
   }
 }
 
