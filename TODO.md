@@ -26,17 +26,22 @@ An overview of all tasks and their planning.
       normalizing line endings). NOT just wording: counters' switch statement is missing the `'clients'`
       (plural) case that auth has, so `Clients:`-prefixed entries misclassify as `'feature'` there today.
       @gio must decide which behavior is canonical before this is merged into the shared library.
-- [ ] A0011 REST client HTTP transport + typed error hierarchy (JS) — `clients/js/src/http.mjs`
+- [!] A0011 [owner: @claude] [blocked: awaiting @gio's decision on canonical `sendRequest` header handling before implementation] REST client HTTP transport + typed error hierarchy (JS) — `clients/js/src/http.mjs`
       (`buildUrl`/`basicAuthHeader`/`bearerAuthHeader`/`sendRequest`, a `fetch`-based transport that maps
       non-2xx responses onto an `ApiError` hierarchy) and `clients/js/src/errors.mjs`
       (`ApiError`/`AuthenticationError`/`ValidationError`/`NotFoundError`/`ConflictError` + a status-code-to-
       exception `mapError` function) are the same structural shape in both `hinolugi-auth` and
-      `hinolugi-counters` clients, differing mainly in parameter naming and counters' extra
-      `redirect`/`credentials` handling (23 of ~75 lines differ in `errors.mjs`, 69 of ~115 in `http.mjs`,
-      after normalizing line endings). This mirrors the already-flagged Python equivalent
-      (`hinolugi-support.python`'s backlog T0007/T0008). Candidate: add a shared transport + error-hierarchy
-      module to this library, generic enough for both JS REST clients to depend on instead of hand-copying.
-      @gio please review before this is picked up — wire-format-adjacent code, needs care.
+      `hinolugi-counters` clients. `errors.mjs`'s 23/~75 differing lines are cosmetic (naming/comments only,
+      `mapError` logic identical) — safe to merge as-is. `http.mjs` (69/~115 differing lines) has a real
+      functional gap, NOT just counters' extra `redirect`/`credentials` handling: auth's `sendRequest` merges
+      an `options.headers` extra-headers map into the request (used by `client.mjs`'s `validateAuthToken` to
+      send `X-App-Secret`), while counters' `sendRequest` has no `headers` option at all. If the shared
+      module is built from counters' shape (plausible, since it's the superset for redirect/credentials),
+      auth's app-secret header would be silently dropped, breaking that endpoint's app authentication.
+      This mirrors the already-flagged Python equivalent (`hinolugi-support.python`'s backlog T0007/T0008).
+      Candidate: add a shared transport + error-hierarchy module generic enough for both JS REST clients,
+      but @gio must confirm the merged `sendRequest` preserves auth's `options.headers` merging behavior
+      before this is implemented — wire-format-adjacent code, needs care.
 - [ ] A0012 `webapp/js/constants.mjs` is only partially shared: roughly half its lines (55 of ~105, after
       normalizing line endings) are generic dev-mode switches (e.g. `RUN_MODE`-style toggles, notification
       durations) that look identical in shape between the two webapps, while the rest is genuinely
