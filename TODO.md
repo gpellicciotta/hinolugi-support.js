@@ -15,50 +15,10 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [!] A0009 [owner: @claude] [blocked: awaiting @gio's review/approval of the move before implementation] App-shell scaffolding — `webapp/js/view/app-view.mjs` (base `AppView` class every view extends),
-      `app-internals-view.mjs`, `app-menu.mjs`, `home-view.mjs`, and `webapp/js/model/installer.mjs` (PWA
-      install-prompt handling) are near-byte-identical between the two webapps (2-10 differing lines each,
-      after normalizing line endings). Candidate: move into this library alongside A0008's framework core,
-      since these are the generic app-shell layer, not app-specific views. @gio please review before this is
-      picked up.
-- [!] A0010 [owner: @claude] [blocked: awaiting @gio's review/approval of the move before implementation] `webapp/js/utils/changelog-parser.mjs` (parses a `CHANGELOG.md` into structured data for the
-      About view) is near-byte-identical between the two webapps (15 differing lines out of ~150, after
-      normalizing line endings). NOT just wording: counters' switch statement is missing the `'clients'`
-      (plural) case that auth has, so `Clients:`-prefixed entries misclassify as `'feature'` there today.
-      @gio must decide which behavior is canonical before this is merged into the shared library.
-- [!] A0011 [owner: @claude] [blocked: awaiting @gio's decision on canonical `sendRequest` header handling before implementation] REST client HTTP transport + typed error hierarchy (JS) — `clients/js/src/http.mjs`
-      (`buildUrl`/`basicAuthHeader`/`bearerAuthHeader`/`sendRequest`, a `fetch`-based transport that maps
-      non-2xx responses onto an `ApiError` hierarchy) and `clients/js/src/errors.mjs`
-      (`ApiError`/`AuthenticationError`/`ValidationError`/`NotFoundError`/`ConflictError` + a status-code-to-
-      exception `mapError` function) are the same structural shape in both `hinolugi-auth` and
-      `hinolugi-counters` clients. `errors.mjs`'s 23/~75 differing lines are cosmetic (naming/comments only,
-      `mapError` logic identical) — safe to merge as-is. `http.mjs` (69/~115 differing lines) has a real
-      functional gap, NOT just counters' extra `redirect`/`credentials` handling: auth's `sendRequest` merges
-      an `options.headers` extra-headers map into the request (used by `client.mjs`'s `validateAuthToken` to
-      send `X-App-Secret`), while counters' `sendRequest` has no `headers` option at all. If the shared
-      module is built from counters' shape (plausible, since it's the superset for redirect/credentials),
-      auth's app-secret header would be silently dropped, breaking that endpoint's app authentication.
-      This mirrors the already-flagged Python equivalent (`hinolugi-support.python`'s backlog T0007/T0008).
-      Candidate: add a shared transport + error-hierarchy module generic enough for both JS REST clients,
-      but @gio must confirm the merged `sendRequest` preserves auth's `options.headers` merging behavior
-      before this is implemented — wire-format-adjacent code, needs care.
-- [!] A0012 [owner: @claude] [blocked: awaiting @gio's review/approval of the shared-defaults-vs-overrides design before implementation] `webapp/js/constants.mjs` is only partially shared: roughly half its lines (55 of ~105, after
-      normalizing line endings) are generic dev-mode switches (e.g. `RUN_MODE`-style toggles, notification
-      durations) that look identical in shape between the two webapps, while the rest is genuinely
-      app-specific (`APP_ACTIONS` names, `API_BASE_URL`). Confirmed by reading both files: the shared half
-      is identical in name/shape (only literal values differ, e.g. `RUN_MODE` is `'test'` vs `'normal'`),
-      no functional bug like A0011's. Blocked purely because the task text asks for a design decision:
-      how to structure a "shared defaults + app-specific overrides" shape without over-coupling the two
-      webapps' dev-mode switches, since that shape becomes an implicit API contract both webapps depend on.
-      Strawman for @gio to accept/reject: a `constants.defaults.mjs` in this shared library exporting the
-      ~9 identical dev-mode switches (`WAIT_UI_DELAY_TIME`, `SERVER_SYNC_TIME`, `SLOW_MODE`,
-      `UNSTABLE_NETWORK_MODE`, `OAUTH_IN_SEPARATE_WINDOW`, `RUN_MODE`, `DEFAULT_PAGE_SIZE`,
-      `DEFAULT_LOG_LEVEL`, `CURRENT_DATE`/`AUTO_LOGIN_*`/`AUTO_NAVIGATE_URL` toggles) as one plain object,
-      with each webapp's own `constants.mjs` spread-overriding it alongside its app-specific exports
-      (`API_BASE_URL`, `APP_ACTIONS`, `APP_MENU_ACTIONS`, `APP_ACTION_BAR_ACTIONS`, and counters-only
-      `AUTH_SERVICE_BASE_URL`/`AUTH_APP_NAME`/`AUTH_APP_LOGO_URL`/`FEEDBACK_MAIL_ADDRESS`). @gio please
-      accept/reject/adjust this shape before it is picked up.
-- [ ] T0016 [needs: A0012 A0011 A0010 A0009] Make a release that can be consumed by other projects (like hinolugi-counters and hinolugi-auth). Also make sure the release process is well documented in devops.md
+- [~] A0009 [owner: @gemini] App-shell scaffolding — `webapp/js/view/app-view.mjs` (base `AppView` class every view extends), `app-internals-view.mjs`, `app-menu.mjs`, `home-view.mjs`, and `webapp/js/model/installer.mjs` (PWA install-prompt handling) are near-byte-identical between the two webapps (2-10 differing lines each, after normalizing line endings). Move into this library alongside A0008's framework core, since these are the generic app-shell layer, not app-specific views.
+- [ ] T0010 Add an equivalent of `webapp/js/utils/changelog-parser.mjs` which parses a `CHANGELOG.md` into structured data
+- [ ] T0011 Add a shared transport + error-hierarchy module generic enough for both JS REST clients, with `sendRequest` preserving auth's `options.headers` merging behavior. Also document in detail how upgrades of both libraries will have to be performed.
+- [ ] T0016 [needs: T0010 T0010 A0011 A0009] Make a release that can be consumed by other projects (like hinolugi-counters and hinolugi-auth). Also make sure the release process is well documented in devops.md
 
 ---
 
