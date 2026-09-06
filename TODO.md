@@ -15,7 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [ ] A0006 `webapp/js/utils/utils.mjs` (general-purpose helpers: deep-clone, date/number formatting, string
+- [~] A0006 [owner: @claude] `webapp/js/utils/utils.mjs` (general-purpose helpers: deep-clone, date/number formatting, string
       utils, etc.) is ~95% byte-identical between `hinolugi-auth` and `hinolugi-counters` (after normalizing
       CRLF-vs-LF line endings, only 88 of ~1300 lines differ). The divergent lines are a handful of
       functions each side has that the other doesn't: auth-only `areEqual`/`areArraysEqual`,
