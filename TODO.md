@@ -9,13 +9,13 @@ An overview of all tasks and their planning.
 > Owner: `@name` shown only when active/blocked/needs-review.
 > Dependencies: `(needs Tnnnn)` shown only when unresolved.
 
-**Next ID:** 0016
+**Next ID:** 0017
 
 ---
 
 ## Next Milestone
 
-- [ ] T0016 Make a release that can be consumed by other projects (like hinolugi-counters and hinolugi-auth). Also make sure the release process is well documented in devops.md
+- [~] T0016 [owner: @gemini] Make a release consumable by downstream projects and document the release process in devops.md
 
 ---
 
