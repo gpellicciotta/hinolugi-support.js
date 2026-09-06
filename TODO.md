@@ -58,7 +58,7 @@ An overview of all tasks and their planning.
       (`API_BASE_URL`, `APP_ACTIONS`, `APP_MENU_ACTIONS`, `APP_ACTION_BAR_ACTIONS`, and counters-only
       `AUTH_SERVICE_BASE_URL`/`AUTH_APP_NAME`/`AUTH_APP_LOGO_URL`/`FEEDBACK_MAIL_ADDRESS`). @gio please
       accept/reject/adjust this shape before it is picked up.
-- [ ] A0013 `docs/devops.md`'s Release Process section, step 2, has the freeze-and-reopen edits land in
+- [~] A0013 [owner: @claude] `docs/devops.md`'s Release Process section, step 2, has the freeze-and-reopen edits land in
       one commit, so no commit ever has `package.json`'s `version` at the plain frozen value (e.g. `0.82.0`,
       no `-pre`) — HEAD jumps straight from `0.82.0-pre` to `0.82.1-pre`. Since the publish path is a
       GitHub-Release-triggered CI job that runs `npm publish` against whatever `package.json` says at the
