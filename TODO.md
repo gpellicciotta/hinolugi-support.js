@@ -15,14 +15,6 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [~] A0008 [owner: @claude] SPA component/DOM/event framework core — `webapp/js/utils/component.mjs` (base `Component`
-      lifecycle class), `dialog.mjs`, `domutils.mjs` (738 lines), `events.mjs` (global event bus, byte-for-byte
-      identical already), `log.mjs` (byte-for-byte identical already), and `reorder.mjs` (drag-reorder helper)
-      are all near-byte-identical between the two webapps (0-10 differing lines each, after normalizing line
-      endings — see `hinolugi-auth/webapp/js/utils/` vs `hinolugi-counters/webapp/js/utils/`). This is the
-      framework-level plumbing both SPAs' component model is built on. Candidate: move this whole set into
-      this library as a small framework-core module. @gio please review before this is picked up — this is
-      the highest-leverage candidate since every view in both apps depends on `component.mjs`.
 - [ ] A0009 App-shell scaffolding — `webapp/js/view/app-view.mjs` (base `AppView` class every view extends),
       `app-internals-view.mjs`, `app-menu.mjs`, `home-view.mjs`, and `webapp/js/model/installer.mjs` (PWA
       install-prompt handling) are near-byte-identical between the two webapps (2-10 differing lines each,
@@ -57,7 +49,7 @@ An overview of all tasks and their planning.
       released commit, tagging/releasing HEAD as-is would publish the wrong version under the release name.
       T0005 worked around this with an extra pin/unpin commit pair; fix the documented process (e.g. a
       dedicated frozen-version commit before reopening `-pre`) so future releases don't need the workaround.
-- [ ] T0016 [needs: A0013 A0012 A0011 A0010 A0009 A0008] Make a release that can be consumed by other projects (like hinolugi-counters and hinolugi-auth). Also make sure the release process is well documented in devops.md
+- [ ] T0016 [needs: A0013 A0012 A0011 A0010 A0009] Make a release that can be consumed by other projects (like hinolugi-counters and hinolugi-auth). Also make sure the release process is well documented in devops.md
 
 ---
 

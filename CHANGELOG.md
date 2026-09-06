@@ -7,6 +7,8 @@ All notable changes to this project are documented here.
 
 ## v0.82.1-pre
 
+- BackEnd: Add `component.mjs`'s `Component` base class (SPA DOM lifecycle, overlays, long-running-op
+  helper), the missing piece of the `hinolugi-auth`/`hinolugi-counters` framework-core module.
 - BackEnd: Add `reset`, `removeValidityMarks`, `validateInputField`, `validateEmailField`,
   `validatePasswordField`, and a `readOnly` toggle to `formutils.mjs`, merging in `hinolugi-auth`'s superset.
 - BackEnd: Add `escapeHtml`, `isValidPassword`, and `validPasswordDescription` to `utils.mjs`, completing its
