@@ -15,7 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [ ] A0009 App-shell scaffolding — `webapp/js/view/app-view.mjs` (base `AppView` class every view extends),
+- [!] A0009 [owner: @claude] [blocked: awaiting @gio's review/approval of the move before implementation] App-shell scaffolding — `webapp/js/view/app-view.mjs` (base `AppView` class every view extends),
       `app-internals-view.mjs`, `app-menu.mjs`, `home-view.mjs`, and `webapp/js/model/installer.mjs` (PWA
       install-prompt handling) are near-byte-identical between the two webapps (2-10 differing lines each,
       after normalizing line endings). Candidate: move into this library alongside A0008's framework core,
