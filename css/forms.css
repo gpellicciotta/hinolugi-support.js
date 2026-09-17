@@ -1,0 +1,258 @@
+/*
+ * Form Layout & Input Controls
+ * =============================
+ *
+ * Standard styling for form elements, input-groups, contextual help reveals, and validation states.
+ */
+
+@import "colors.css";
+@import "style.css";
+
+:root {
+  --form-bg-color                    : transparent;
+  --form-border-color                : transparent;
+  --form-text-color                  : var(--blue-hex);
+
+  --form-element-bg-color            : var(--white-hex);
+  --form-element-border-color        : var(--dark-grey-hex);
+  --form-element-text-color          : var(--soft-black-hex);
+
+  --form-element-hover-bg-color      : white;
+  --form-element-hover-border-color  : var(--blue-hex);
+  --form-element-hover-text-color    : var(--blue-hex);
+
+  --form-element-active-bg-color     : var(--blue-hex);
+  --form-element-active-border-color : var(--blue-hex);
+  --form-element-active-text-color   : white;
+
+  --form-element-focus-border-color  : var(--black-hex);
+
+  --form-element-invalid-color       : var(--red-hex);
+  --form-element-valid-color         : var(--green-hex);
+  --form-element-help-color          : var(--blue-hex);
+
+  --form-button-bg-color             : var(--blue-hex);
+  --form-button-border-color         : var(--blue-hex);
+  --form-button-text-color           : white;
+
+  --form-button-hover-bg-color       : white;
+  --form-button-hover-border-color   : var(--blue-hex);
+  --form-button-hover-text-color     : var(--black-hex);
+
+  --form-button-active-bg-color      : rgba(var(--blue-components), 75%);
+  --form-button-active-border-color  : var(--blue-hex);
+  --form-button-active-text-color    : white;
+
+  --form-button-disabled-bg-color    : var(--grey-hex);
+  --form-button-disabled-border-color: var(--dark-grey-hex);
+  --form-button-disabled-text-color  : var(--dark-grey-hex);
+
+  --form-button-focus-border-color   : var(--black-hex);
+}
+
+form,
+.form-group,
+fieldset {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-content: center;
+  align-items: stretch;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  box-sizing: border-box;
+}
+
+fieldset {
+  border: 1px solid rgba(var(--dark-grey-components), 0.2);
+  border-radius: var(--card-border-radius, 8px);
+  padding: 1rem;
+}
+
+legend {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-text-color, var(--soft-black-hex));
+  padding: 0 0.5rem;
+}
+
+/* 4-Row Input Group Grid Layout */
+.input-group {
+  display: grid;
+  grid-template: "label help-icon state"
+                 "help  help      help"
+                 "input input     input"
+                 "error error     error";
+  grid-template-columns: 1fr min-content min-content;
+  grid-template-rows: min-content min-content min-content min-content;
+  align-items: center;
+  gap: 0.25rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input-group > label {
+  grid-area: label;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--primary-text-color, var(--soft-black-hex));
+}
+
+.input-group > .help-icon {
+  grid-area: help-icon;
+  font-size: 1rem;
+  color: var(--muted-text-color, var(--dark-grey-hex));
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+
+.input-group > .help-icon:hover {
+  color: var(--form-element-help-color, var(--blue-hex));
+}
+
+.input-group.help > .help-icon {
+  color: var(--form-element-help-color, var(--blue-hex));
+}
+
+.input-group > .help-text {
+  grid-area: help;
+  display: none;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--form-element-help-color, var(--blue-hex));
+  padding: 0.25rem 0;
+  line-height: 1.35;
+}
+
+.input-group.help > .help-text {
+  display: block;
+}
+
+.input-group > input,
+.input-group > textarea,
+.input-group > select {
+  grid-area: input;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.6rem;
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: var(--form-element-bg-color);
+  color: var(--form-element-text-color);
+  border: 1px solid var(--form-element-border-color);
+  border-radius: var(--control-border-radius, 4px);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input-group > input:focus,
+.input-group > textarea:focus,
+.input-group > select:focus {
+  outline: none;
+  border-color: var(--form-element-focus-border-color, var(--blue-hex));
+  box-shadow: 0 0 0 2px rgba(14, 110, 184, 0.2);
+}
+
+.input-group > .valid-icon,
+.input-group > .error-icon {
+  grid-area: state;
+  display: none;
+  font-size: 1rem;
+  padding: 0 0.25rem;
+}
+
+.input-group > .error-text {
+  grid-area: error;
+  display: none;
+  font-size: 0.85rem;
+  color: var(--form-element-invalid-color, var(--red-hex));
+  padding: 0.2rem 0;
+}
+
+/* Valid State */
+.input-group.valid > .valid-icon {
+  display: inline-block;
+  color: var(--form-element-valid-color, var(--green-hex));
+}
+
+.input-group.valid > input,
+.input-group.valid > textarea,
+.input-group.valid > select {
+  border-color: var(--form-element-valid-color, var(--green-hex));
+}
+
+/* Invalid State */
+.input-group.invalid > .error-icon {
+  display: inline-block;
+  color: var(--form-element-invalid-color, var(--red-hex));
+}
+
+.input-group.invalid > .error-text {
+  display: block;
+}
+
+.input-group.invalid > input,
+.input-group.invalid > textarea,
+.input-group.invalid > select {
+  border-color: var(--form-element-invalid-color, var(--red-hex));
+}
+
+/* Read-Only Audit Inputs */
+input[readonly].time-value,
+input[readonly].last-update-time {
+  border: 1px solid transparent;
+  background-color: transparent;
+  color: var(--muted-text-color, var(--dark-grey-hex));
+  font-style: italic;
+  font-size: 0.85rem;
+  padding: 0.25rem 0;
+}
+
+input[readonly]:focus {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Button Group */
+.button-group,
+.preferences-button-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.button,
+button,
+input[type="submit"],
+input[type="button"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: var(--control-border-radius, 4px);
+  cursor: pointer;
+  border: 1px solid var(--form-button-border-color);
+  background-color: var(--form-button-bg-color);
+  color: var(--form-button-text-color);
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.button:hover,
+button:hover {
+  background-color: var(--form-button-hover-bg-color);
+  color: var(--form-button-hover-text-color);
+  border-color: var(--form-button-hover-border-color);
+}
+
+.button:disabled,
+button:disabled {
+  background-color: var(--form-button-disabled-bg-color);
+  color: var(--form-button-disabled-text-color);
+  border-color: var(--form-button-disabled-border-color);
+  cursor: not-allowed;
+}

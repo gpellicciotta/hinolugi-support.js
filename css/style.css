@@ -1,0 +1,162 @@
+/*
+ * Overall Style Preferences & Design Tokens
+ * =========================================
+ *
+ * CSS variable assignments for colors, typography, elevation, and layout.
+ */
+
+@import "colors.css";
+
+:root {
+  /* Color scheme support */
+  color-scheme: light dark;
+
+  /* Z-levels / Elevation */
+  --base-z-level                         : 0;
+  --header-z-level                       : 10;
+  --dialog-overlay-z-level               : 100;
+  --dialog-z-level                       : 101;
+  --progress-z-level                     : 300;
+  --tooltip-z-level                      : 400;
+  --chrome-z-level                       : 500;
+  --notification-z-level                 : 600;
+  --splash-screen-z-level                : 900;
+
+  /* Light mode (default) color tokens */
+  --app-screen-bg-color                  : var(--light-grey-hex);
+  --primary-text-color                   : var(--soft-black-hex);
+  --primary-text-color-components        : var(--soft-black-components);
+  --primary-background-color             : var(--white-hex);
+  --primary-background-color-components  : var(--white-components);
+  --secondary-text-color                 : var(--white-hex);
+  --secondary-text-color-components      : var(--white-components);
+  --secondary-background-color           : var(--blue-hex);
+  --secondary-background-color-components: var(--blue-components);
+  --ternary-text-color                   : var(--white-hex);
+  --ternary-text-color-components        : var(--white-components);
+  --ternary-background-color             : var(--soft-black-hex);
+  --ternary-background-color-components  : var(--soft-black-components);
+  --card-border-color                    : rgba(var(--dark-grey-components), 0.2);
+  --card-shadow                          : var(--shadow-md);
+  --muted-text-color                     : var(--dark-grey-hex);
+
+  /* Form element tokens */
+  --form-element-bg-color                : var(--white-hex);
+  --form-element-border-color            : var(--dark-grey-hex);
+  --form-element-text-color              : var(--soft-black-hex);
+
+  /* Fonts */
+  --normal-font-family                   : Roboto, Helvetica, Arial, sans-serif;
+  --monospace-font-family                : "Roboto Mono", Consolas, monospace;
+  --font-family-base                     : Roboto, Helvetica, Arial, sans-serif;
+  --font-family-mono                     : "Roboto Mono", Consolas, monospace;
+
+  /* View Container Widths */
+  --view-max-width-form                  : 42rem;
+  --view-max-width-card                  : 46rem;
+  --view-max-width-wide                  : 68rem;
+
+  /* Border Radius Tokens */
+  --border-radius-sm                     : 4px;
+  --border-radius-md                     : 8px;
+  --border-radius-lg                     : 12px;
+  --border-radius-pill                   : 1.25em;
+  --border-radius-circle                 : 50%;
+  --control-border-radius                : var(--border-radius-sm);
+  --card-border-radius                   : var(--border-radius-md);
+  --radius-sm                            : var(--border-radius-sm);
+  --radius-md                            : var(--border-radius-md);
+  --radius-lg                            : var(--border-radius-lg);
+
+  /* Elevation & Shadow Tokens */
+  --shadow-sm                            : 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md                            : 0 1px 4px rgba(0, 0, 0, 0.08);
+  --shadow-lg                            : 0 4px 12px rgba(0, 0, 0, 0.12);
+
+  /* Semantic status colors */
+  --color-success                        : var(--green-hex);
+  --color-warning                        : var(--orange-hex);
+  --color-danger                         : var(--red-hex);
+}
+
+/* Dark mode: system preference fallback */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --app-screen-bg-color                  : #121316;
+    --primary-text-color                   : #e4e6eb;
+    --primary-text-color-components        : 228, 230, 235;
+    --primary-background-color             : #1e2024;
+    --primary-background-color-components  : 30, 32, 36;
+    --secondary-text-color                 : #ffffff;
+    --secondary-text-color-components      : 255, 255, 255;
+    --secondary-background-color           : #1a56db;
+    --secondary-background-color-components: 26, 86, 219;
+    --ternary-text-color                   : #e4e6eb;
+    --ternary-text-color-components        : 228, 230, 235;
+    --ternary-background-color             : #16181b;
+    --ternary-background-color-components  : 22, 24, 27;
+    --card-border-color                    : rgba(255, 255, 255, 0.12);
+    --card-shadow                          : 0 1px 4px rgba(0, 0, 0, 0.45);
+    --muted-text-color                     : #9ca3af;
+    --form-element-bg-color                : #2b2e34;
+    --form-element-border-color            : #4b5563;
+    --form-element-text-color              : #f3f4f6;
+  }
+}
+
+/* Explicit Dark Theme */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --app-screen-bg-color                  : #121316;
+  --primary-text-color                   : #e4e6eb;
+  --primary-text-color-components        : 228, 230, 235;
+  --primary-background-color             : #1e2024;
+  --primary-background-color-components  : 30, 32, 36;
+  --secondary-text-color                 : #ffffff;
+  --secondary-text-color-components      : 255, 255, 255;
+  --secondary-background-color           : #1a56db;
+  --secondary-background-color-components: 26, 86, 219;
+  --ternary-text-color                   : #e4e6eb;
+  --ternary-text-color-components        : 228, 230, 235;
+  --ternary-background-color             : #16181b;
+  --ternary-background-color-components  : 22, 24, 27;
+  --card-border-color                    : rgba(255, 255, 255, 0.12);
+  --card-shadow                          : 0 1px 4px rgba(0, 0, 0, 0.45);
+  --muted-text-color                     : #9ca3af;
+  --form-element-bg-color                : #2b2e34;
+  --form-element-border-color            : #4b5563;
+  --form-element-text-color              : #f3f4f6;
+}
+
+/* Explicit Light Theme */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --app-screen-bg-color                  : var(--light-grey-hex);
+  --primary-text-color                   : var(--soft-black-hex);
+  --primary-text-color-components        : var(--soft-black-components);
+  --primary-background-color             : var(--white-hex);
+  --primary-background-color-components  : var(--white-components);
+  --secondary-text-color                 : var(--white-hex);
+  --secondary-text-color-components      : var(--white-components);
+  --secondary-background-color           : var(--blue-hex);
+  --secondary-background-color-components: var(--blue-components);
+  --ternary-text-color                   : var(--white-hex);
+  --ternary-text-color-components        : var(--white-components);
+  --ternary-background-color             : var(--soft-black-hex);
+  --ternary-background-color-components  : var(--soft-black-components);
+  --card-border-color                    : rgba(var(--dark-grey-components), 0.2);
+  --card-shadow                          : var(--shadow-md);
+  --muted-text-color                     : var(--dark-grey-hex);
+  --form-element-bg-color                : var(--white-hex);
+  --form-element-border-color            : var(--dark-grey-hex);
+  --form-element-text-color              : var(--soft-black-hex);
+}
+
+body {
+  font-family: var(--font-family-base, Roboto, Helvetica, Arial, sans-serif);
+}
+
+a * {
+  pointer-events: none; /* All clicks on child elements appear to originate from the <a> element */
+}

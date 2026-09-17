@@ -1,0 +1,220 @@
+/*
+ * Component Base & Reusable UI States
+ * =====================================
+ *
+ * Basic styling for component containers, overlays, empty states, and skeleton shimmer loaders.
+ */
+
+@import "style.css";
+
+.component {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.component > .error-overlay {
+  display: none;
+  grid-template: "logo title"
+                 "descr descr";
+  grid-template-columns: max-content auto;
+  grid-template-rows: min-content max-content;
+  padding: 1em;
+}
+
+.error-overlay .logo {
+  grid-area: logo;
+  padding-left: 1rem;
+  padding-right: 2rem;
+  font-size: 20vmin;
+}
+
+.error-overlay .title {
+  grid-area: title;
+  font-size: 300%;
+  padding-bottom: 1em;
+}
+
+.error-overlay .description {
+  grid-area: descr;
+  text-align: center;
+}
+
+@media only screen and (min-width: 481px) {
+  .component > .error-overlay {
+    grid-template: "logo title"
+                   "logo descr";
+  }
+}
+
+.component.wait-overlay > .error-overlay {
+  display: none;
+}
+
+.component.error-overlay > .error-overlay {
+  display: grid;
+}
+
+.component.error-overlay > .main {
+  display: none;
+}
+
+.component > .wait-overlay {
+  display: none;
+}
+
+.component.wait-overlay > .wait-overlay {
+  display: none; /* Replaced by top progress bar and button loading states */
+}
+
+.component.error-overlay > .wait-overlay {
+  display: none;
+}
+
+.component.wait-overlay > .main {
+  /* Keep main view fully visible and interactive during background refreshes */
+  opacity: 0.94;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/*
+ * Skeleton Loading Placeholders
+ * =============================
+ * Shimmering placeholders for cold-start initial rendering before API data arrives.
+ */
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 37%, #f1f5f9 63%);
+  background-size: 400% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+  border-radius: var(--border-radius-sm, 4px);
+  color: transparent !important;
+  pointer-events: none;
+  user-select: none;
+}
+
+.skeleton-text {
+  height: 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+}
+
+.skeleton-text.title {
+  height: 1.5rem;
+  width: 50%;
+  margin-bottom: 0.75rem;
+}
+
+.skeleton-text.subtitle {
+  height: 0.85rem;
+  width: 75%;
+}
+
+.skeleton-box {
+  width: 100%;
+  height: 90px;
+  border-radius: var(--card-border-radius, 8px);
+}
+
+.skeleton-card {
+  background: var(--white-hex, #ffffff);
+  border: 1px solid var(--grey-hex, #e2e8f0);
+  border-radius: var(--card-border-radius, 8px);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+}
+
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--grey-hex, #e2e8f0);
+}
+
+.skeleton-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/*
+ * Empty State
+ * ===========
+ * Shared component style for blank views, zero-item catalogues, and empty collection sections.
+ */
+
+.empty-state {
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 125%;
+  text-align: center;
+}
+
+td.empty-state {
+  display: table-cell;
+}
+
+.empty-state * {
+  font-size: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 1em;
+  flex-wrap: wrap;
+}
+
+.empty-state a[data-action],
+.empty-state .action-button {
+  display: inline-flex;
+  flex-direction: row;
+  gap: 0.5em;
+  justify-content: center;
+  align-items: center;
+
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  background-color: var(--secondary-background-color);
+  color: var(--secondary-text-color);
+  border: 1px solid var(--secondary-background-color);
+  border-radius: var(--control-border-radius, 4px);
+  margin-bottom: 1em;
+}
+
+@media (hover: hover) {
+  .empty-state a[data-action]:hover,
+  .empty-state .action-button:hover {
+    background-color: var(--secondary-text-color);
+    color: var(--secondary-background-color);
+    border: 1px solid var(--secondary-background-color);
+  }
+}
+
+.empty-state a[data-action]:active,
+.empty-state .action-button:active {
+  background-color: var(--black-hex);
+  color: var(--secondary-text-color);
+  border: 1px solid var(--secondary-background-color);
+}
+
+.empty-state.disabled {
+  display: none;
+}

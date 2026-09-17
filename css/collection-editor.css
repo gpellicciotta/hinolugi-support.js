@@ -1,0 +1,199 @@
+/*
+ * Sub-List Collection Editor Styles
+ * =================================
+ *
+ * Reusable styling for embedded sub-list / collection item editors across HiNoLuGi applications.
+ */
+
+@import "colors.css";
+@import "forms.css";
+@import "style.css";
+
+/* 1. Header Input Strip */
+.collection-editor-header,
+.counter-edit-or-create-view #webhooks-header,
+.food-item-edit-or-create-view #units-header {
+  width: 100%;
+  display: grid;
+  justify-content: flex-start;
+  justify-items: center;
+  align-items: center;
+  column-gap: 0.5rem;
+  background-color: var(--dark-grey-hex);
+  padding: 1rem 0.5rem;
+  border-top-left-radius: var(--card-border-radius, 8px);
+  border-top-right-radius: var(--card-border-radius, 8px);
+  box-sizing: border-box;
+}
+
+/* Header Action Areas */
+.collection-editor-header .delete-action,
+.counter-edit-or-create-view .delete-action,
+.food-item-edit-or-create-view .delete-action {
+  grid-area: delete;
+}
+
+.collection-editor-header .add-action,
+.counter-edit-or-create-view .add-action,
+.food-item-edit-or-create-view .add-action {
+  grid-area: add;
+}
+
+/* Header Inline Inputs */
+.collection-editor-header input,
+.counter-edit-or-create-view #webhooks-header > .webhook-url,
+.food-item-edit-or-create-view #units-header > .unit-name,
+.food-item-edit-or-create-view #units-header > .unit-value {
+  width: 100%;
+  padding: 0;
+  background-color: var(--primary-background-color);
+  border: 0.5rem solid var(--primary-background-color);
+  border-radius: var(--control-border-radius, 4px);
+  box-sizing: border-box;
+}
+
+/* Header Buttons */
+.collection-editor-header > .button,
+.counter-edit-or-create-view #webhooks-header > .button,
+.food-item-edit-or-create-view #units-header > .button {
+  height: 2em;
+  width: 2em;
+  text-align: center;
+  padding: 0.25rem;
+  border: none;
+
+  --form-button-bg-color: transparent;
+  --form-button-text-color: var(--secondary-text-color);
+  --form-button-active-bg-color: transparent;
+  --form-button-active-text-color: var(--soft-black-hex);
+  --form-button-disabled-bg-color: transparent;
+  --form-button-disabled-text-color: var(--grey-hex);
+  --form-button-hover-bg-color: transparent;
+  --form-button-hover-text-color: var(--blue-hex);
+}
+
+.collection-editor-header > .button.delete-action,
+.counter-edit-or-create-view #webhooks-header > .button.delete-action,
+.food-item-edit-or-create-view #units-header > .button.delete-action {
+  --form-button-hover-text-color: var(--red-hex);
+}
+
+.collection-editor-header > .button.add-action,
+.counter-edit-or-create-view #webhooks-header > .button.add-action,
+.food-item-edit-or-create-view #units-header > .button.add-action {
+  --form-button-hover-text-color: var(--green-hex);
+}
+
+.collection-editor-header > .button > svg,
+.collection-editor-header > .button > i,
+.counter-edit-or-create-view #webhooks-header > .button > svg,
+.counter-edit-or-create-view #webhooks-header > .button > i,
+.food-item-edit-or-create-view #units-header > .button > svg,
+.food-item-edit-or-create-view #units-header > .button > i {
+  width: 100%;
+  height: 100%;
+}
+
+/* 2. Collection Items List Container */
+.collection-editor-list,
+.counter-edit-or-create-view #webhooks-list,
+.food-item-edit-or-create-view #units-list {
+  width: 100%;
+  display: flex;
+  gap: 0;
+  flex-direction: column;
+  justify-content: flex-start;
+  justify-items: center;
+  align-items: stretch;
+  border-bottom-left-radius: var(--card-border-radius, 8px);
+  border-bottom-right-radius: var(--card-border-radius, 8px);
+  overflow: hidden;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.collection-editor-list.disabled,
+.counter-edit-or-create-view #webhooks-list.disabled,
+.food-item-edit-or-create-view #units-list.disabled {
+  display: none;
+}
+
+/* 3. Collection Item Row */
+.collection-editor-list > li,
+.counter-edit-or-create-view #webhooks-list > li.webhook,
+.food-item-edit-or-create-view #units-list > li.unit {
+  width: 100%;
+  display: grid;
+  padding: 0.5rem;
+  column-gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.collection-editor-list .delete-action,
+.collection-editor-list .action-bar,
+.counter-edit-or-create-view #webhooks-list .delete-action,
+.food-item-edit-or-create-view #units-list .action-bar {
+  grid-area: delete;
+  justify-self: center;
+  align-self: center;
+}
+
+.collection-editor-list .toggle-action,
+.collection-editor-list .item-actions,
+.counter-edit-or-create-view #webhooks-list .toggle-action {
+  grid-area: actions;
+  justify-self: center;
+  align-self: center;
+}
+
+.collection-editor-list .button,
+.counter-edit-or-create-view #webhooks-list .button,
+.food-item-edit-or-create-view #units-list .button {
+  text-align: center;
+  padding: 0.25em;
+
+  --form-button-bg-color: transparent;
+  --form-button-border-color: transparent;
+  --form-button-text-color: var(--secondary-text-color);
+
+  --form-button-hover-bg-color: var(--white-hex);
+  --form-button-hover-border-color: var(--white-hex);
+  --form-button-hover-text-color: var(--black-hex);
+}
+
+.collection-editor-list .button.action-button,
+.counter-edit-or-create-view #webhooks-list .button.action-button {
+  color: var(--secondary-text-color);
+}
+
+.collection-editor-list .button.action-button svg,
+.collection-editor-list .button.action-button i,
+.counter-edit-or-create-view #webhooks-list .button.action-button svg,
+.counter-edit-or-create-view #webhooks-list .button.action-button i {
+  width: 1.25em;
+  height: 1.25em;
+}
+
+/* 4. Tags / Badges inside Collection Items */
+.collection-editor-list .tags,
+.counter-edit-or-create-view #webhooks-list .tags {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  font-size: x-small;
+  flex-shrink: 0;
+}
+
+.collection-editor-list .tags > *,
+.counter-edit-or-create-view #webhooks-list .tags > * {
+  white-space: nowrap;
+  background-color: var(--secondary-background-color);
+  color: var(--secondary-text-color);
+  padding: 0.25em 0.75em;
+  border-radius: var(--border-radius-pill, 1.25em);
+}

@@ -1,0 +1,265 @@
+/*
+ * Catalogue View Shared Styles
+ * =============================
+ *
+ * Shared styling for catalogue-style views across HiNoLuGi applications.
+ */
+
+@import "colors.css";
+@import "forms.css";
+@import "style.css";
+
+/* 1. Root Container Layout */
+.catalogue-view,
+.counters-list-view,
+.food-items-list-view,
+.recycle-bin-view,
+.applications-list-view,
+.users-list-view,
+.sessions-list-view {
+  width: 100%;
+  max-width: var(--view-max-width-form, 42rem);
+  display: grid;
+  grid-template: "header"
+                 "list";
+  grid-template-rows: min-content auto;
+  grid-template-columns: 1fr;
+  justify-content: center;
+  align-content: start;
+  box-sizing: border-box;
+}
+
+/* 2. Catalogue Header & Search Toolbar */
+.catalogue-view > header,
+.counters-list-view > header,
+.food-items-list-view > header,
+.recycle-bin-view > header,
+.applications-list-view > header,
+.users-list-view > header,
+.sessions-list-view > header {
+  grid-area: header;
+  width: 100%;
+  display: grid;
+  gap: 0.25rem;
+  grid-template-columns: 1fr min-content;
+  justify-content: stretch;
+  align-items: center;
+}
+
+.catalogue-view > header.disabled,
+.counters-list-view > header.disabled,
+.food-items-list-view > header.disabled,
+.recycle-bin-view > header.disabled,
+.applications-list-view > header.disabled,
+.users-list-view > header.disabled,
+.sessions-list-view > header.disabled {
+  display: none;
+}
+
+.catalogue-view > header > .icon-input,
+.counters-list-view > header > .icon-input,
+.food-items-list-view > header > .icon-input,
+.recycle-bin-view > header > .icon-input,
+.applications-list-view > header > .icon-input,
+.users-list-view > header > .icon-input,
+.sessions-list-view > header > .icon-input {
+  margin: 0;
+}
+
+.catalogue-view > header > .action-button,
+.counters-list-view > header > .action-button,
+.food-items-list-view > header > .action-button,
+.recycle-bin-view > header > .action-button,
+.applications-list-view > header > .action-button,
+.users-list-view > header > .action-button,
+.sessions-list-view > header > .action-button {
+  height: 2.75em;
+  width: 2.75em;
+  max-width: 3rem;
+  text-align: center;
+  background-color: var(--secondary-text-color);
+  color: var(--secondary-background-color);
+  border: 1px solid var(--secondary-background-color);
+  border-radius: var(--control-border-radius, 4px);
+}
+
+.catalogue-view > header > .action-button svg,
+.catalogue-view > header > .action-button i,
+.counters-list-view > header > .action-button svg,
+.counters-list-view > header > .action-button i,
+.food-items-list-view > header > .action-button svg,
+.food-items-list-view > header > .action-button i,
+.recycle-bin-view > header > .action-button svg,
+.recycle-bin-view > header > .action-button i,
+.applications-list-view > header > .action-button svg,
+.applications-list-view > header > .action-button i,
+.users-list-view > header > .action-button svg,
+.users-list-view > header > .action-button i,
+.sessions-list-view > header > .action-button svg,
+.sessions-list-view > header > .action-button i {
+  width: 100%;
+  height: 100%;
+  font-size: inherit;
+  background-color: inherit;
+  color: inherit;
+  pointer-events: none;
+}
+
+/* 3. Catalogue Items List Container */
+.catalogue-view > .catalogue-list,
+.counters-list-view > .counters-list,
+.food-items-list-view > .food-items-list,
+.recycle-bin-view > .items-list,
+.applications-list-view > .applications-list,
+.users-list-view > .users-list,
+.sessions-list-view > .sessions-list {
+  grid-area: list;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  display: grid;
+  grid-template-rows: min-content;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  justify-content: stretch;
+  justify-items: stretch;
+  align-content: start;
+}
+
+.catalogue-view > .catalogue-list.disabled,
+.counters-list-view > .counters-list.disabled,
+.food-items-list-view > .food-items-list.disabled,
+.recycle-bin-view > .items-list.disabled,
+.applications-list-view > .applications-list.disabled,
+.users-list-view > .users-list.disabled,
+.sessions-list-view > .sessions-list.disabled {
+  display: none;
+}
+
+/* 4. Catalogue List Item Card Base Styles */
+.catalogue-view .catalogue-list > .catalogue-item,
+.counters-list-view .counters-list > .counter,
+.food-items-list-view .food-items-list > .food-item,
+.recycle-bin-view .items-list > .item,
+.applications-list-view .applications-list > .application,
+.users-list-view .users-list > .user,
+.sessions-list-view .sessions-list > .session {
+  padding: 0.75rem 1rem;
+  background-color: var(--form-element-bg-color);
+  color: var(--form-element-color, var(--primary-text-color));
+  border: 1px solid rgba(var(--dark-grey-components), 0.2);
+  border-radius: var(--card-border-radius, 8px);
+  box-shadow: var(--card-shadow, 0 1px 3px rgba(0, 0, 0, 0.06));
+}
+
+.catalogue-view .catalogue-list > .catalogue-item.dragging,
+.counters-list-view .counters-list > .counter.dragging,
+.food-items-list-view .food-items-list > .food-item.dragging,
+.recycle-bin-view .items-list > .item.dragging {
+  background-color: rgba(var(--ternary-background-color-components), 80%);
+  color: var(--ternary-text-color);
+}
+
+.catalogue-view .catalogue-list > .catalogue-item.disabled,
+.counters-list-view .counters-list > .counter.disabled,
+.food-items-list-view .food-items-list > .food-item.disabled,
+.recycle-bin-view .items-list > .item.disabled,
+.applications-list-view .applications-list > .application.disabled,
+.users-list-view .users-list > .user.disabled,
+.sessions-list-view .sessions-list > .session.disabled {
+  display: none;
+}
+
+/* 5. Common Item Sub-elements */
+.catalogue-view .catalogue-list > .catalogue-item > .name,
+.counters-list-view .counters-list > .counter > .name,
+.food-items-list-view .food-items-list > .food-item > .name,
+.recycle-bin-view .items-list > .item > .name,
+.applications-list-view .applications-list > .application > .name,
+.users-list-view .users-list > .user > .name {
+  grid-area: name;
+  font-size: 125%;
+  color: var(--secondary-background-color);
+}
+
+.catalogue-view .catalogue-list > .catalogue-item > .description,
+.counters-list-view .counters-list > .counter > .description,
+.food-items-list-view .food-items-list > .food-item > .description,
+.recycle-bin-view .items-list > .item > .description,
+.applications-list-view .applications-list > .application > .description,
+.users-list-view .users-list > .user > .description {
+  grid-area: descr;
+  font-weight: lighter;
+  font-size: 90%;
+}
+
+.catalogue-view .catalogue-list > .catalogue-item > .handle,
+.counters-list-view .counters-list > .counter > .handle {
+  grid-area: handle;
+}
+
+.catalogue-view .catalogue-list > .catalogue-item > .handle[draggable=true],
+.counters-list-view .counters-list > .counter > .handle[draggable=true] {
+  cursor: grab;
+}
+
+/* 6. Action Bar and Action Buttons */
+.catalogue-view .catalogue-list > .catalogue-item > .action-bar,
+.counters-list-view .counters-list > .counter > .action-bar,
+.food-items-list-view .food-items-list > .food-item > .action-bar,
+.recycle-bin-view .items-list > .item > .action-bar,
+.applications-list-view .applications-list > .application > .action-bar,
+.users-list-view .users-list > .user > .action-bar,
+.sessions-list-view .sessions-list > .session > .action-bar {
+  grid-area: actions;
+  justify-self: end;
+  align-self: start;
+  gap: 0.5rem;
+  background-color: transparent;
+  color: inherit;
+}
+
+.catalogue-view .catalogue-list > .catalogue-item > .action-bar > .action-button,
+.counters-list-view .counters-list > .counter > .action-bar > .action-button,
+.food-items-list-view .food-items-list > .food-item > .action-bar > .action-button,
+.recycle-bin-view .items-list > .item > .action-bar > .action-button,
+.applications-list-view .applications-list > .application > .action-bar > .action-button,
+.users-list-view .users-list > .user > .action-bar > .action-button,
+.sessions-list-view .sessions-list > .session > .action-bar > .action-button {
+  background-color: var(--secondary-text-color);
+  color: var(--secondary-background-color);
+  border-radius: var(--control-border-radius, 4px);
+  border: 1px solid var(--secondary-background-color);
+}
+
+@media (hover: hover) {
+  .catalogue-view .catalogue-list > .catalogue-item > .action-bar > .action-button:hover,
+  .counters-list-view .counters-list > .counter > .action-bar > .action-button:hover,
+  .food-items-list-view .food-items-list > .food-item > .action-bar > .action-button:hover,
+  .recycle-bin-view .items-list > .item > .action-bar > .action-button:hover,
+  .applications-list-view .applications-list > .application > .action-bar > .action-button:hover,
+  .users-list-view .users-list > .user > .action-bar > .action-button:hover,
+  .sessions-list-view .sessions-list > .session > .action-bar > .action-button:hover {
+    background-color: var(--secondary-background-color);
+    color: var(--secondary-text-color);
+  }
+}
+
+/* 7. Metadata Tags (Pills) */
+.catalogue-view .catalogue-list > .catalogue-item > .tags > *,
+.counters-list-view .counters-list > .counter > .tags > *,
+.food-items-list-view .food-items-list > .food-item > .tags > *,
+.recycle-bin-view .items-list > .item > .tags > *,
+.applications-list-view .applications-list > .application > .tags > *,
+.users-list-view .users-list > .user > .tags > * {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+  white-space: nowrap;
+  font-size: x-small;
+  background-color: var(--secondary-background-color);
+  color: var(--secondary-text-color);
+  padding: 0.5em 2em;
+  border-radius: var(--border-radius-pill, 1.25em);
+}
