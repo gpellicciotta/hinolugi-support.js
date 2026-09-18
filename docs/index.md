@@ -16,6 +16,7 @@ Overview of all documentation for the `hinolugi-support.js` project.
 
 - [Visual Style Guide and UI Design System](specs/visual-style-guide.md): Canonical frontend design system, CSS design tokens, and UI widgets for HiNoLuGi applications.
 - [REST Client Upgrade Guide](specs/client-upgrade-guide.md): Migration instructions for `hinolugi-auth` and `hinolugi-counters` client libraries.
+- [Code-Reuse Opportunities Specification](specs/code-reuse-opportunities.md): Comprehensive inventory of code-reuse opportunities and line savings across projects.
 
 ---
 

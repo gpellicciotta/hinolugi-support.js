@@ -9,15 +9,18 @@ An overview of all tasks and their planning.
 > Owner: `@name` shown only when active/blocked/needs-review.
 > Dependencies: `(needs Tnnnn)` shown only when unresolved.
 
-**Next ID:** 0019
+**Next ID:** 0025
 
 ---
 
 ## Next Milestone
 
-- [ ] T0018 Inspect the JS/HTML/CSS code in hinolugi-auth and hinolugi-counters and look for additional opportunities for code-reuse.
-      Look both in the scripts directory and in the webapps and JS clients code of both projects.
-      Make an overview of code that can be added here and what re-use (how many lines of code spared, or entire scripts replaced) it will cause in the other projects.
+- [ ] T0020 Extract shared CSS stylesheets into css/ (dialog, menu, main-layout, collapsible, demo-view, mail-layout, tooltips, wait-panel, error-view).
+- [ ] T0021 Add lightweight Mock DOM test utility (js/mock-dom.mjs) for headless Node.js unit testing.
+- [ ] T0022 Add wire date formatters and uniform pagination helper (page.mjs) to client library.
+- [ ] T0023 Add zero-dependency offline storage adapters (offline-storage.mjs) to client library.
+- [ ] T0024 Add reusable static test server and Playwright visual tour recorder to scripts/lib/.
+- [ ] A0019 [needs: T0020, T0021, T0022, T0023, T0024] Rename the active version v1.0.0 and make a full release
 
 ---
 
