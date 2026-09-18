@@ -15,7 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [ ] T0024 Add reusable static test server and Playwright visual tour recorder to scripts/lib/.
+- [~] T0024 [owner: @worker-1] Add reusable static test server and visual tour recorder to scripts/lib/.
 - [ ] A0019 [needs: T0024] Rename the active version v1.0.0 and make a full release
 
 ---
