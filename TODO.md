@@ -9,13 +9,13 @@ An overview of all tasks and their planning.
 > Owner: `@name` shown only when active/blocked/needs-review.
 > Dependencies: `(needs Tnnnn)` shown only when unresolved.
 
-**Next ID:** 0017
+**Next ID:** 0018
 
 ---
 
 ## Next Milestone
 
-*(Currently no tasks)*
+- [ ] T0017 Extend shared UI components and webapp utilities with opportunities identified from hinolugi-counters.
 
 ---
 
