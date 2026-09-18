@@ -140,7 +140,11 @@ export function toWireDate(value) {
   if (value === null || value === undefined) {
     return value;
   }
-  return value.toISOString().replace(/\.\d{3}Z$/, 'Z');
+  const date = value instanceof Date ? value : new Date(value);
+  if (isNaN(date.getTime())) {
+    return null;
+  }
+  return date.toISOString().replace(/\.\d{3}Z$/, 'Z');
 }
 
 /**

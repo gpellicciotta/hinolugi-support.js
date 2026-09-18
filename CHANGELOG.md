@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 > for the versioning and changelog conventions used across the HiNoLuGi projects.
 
 ## v0.83.1-pre
+- BackEnd: Added client wire date helpers and uniform pagination helper in js/page.mjs.
 - DevEx: Added zero-dependency headless Mock DOM utility in js/mock-dom.mjs for Node unit tests.
 - FrontEnd: Extracted 9 shared CSS stylesheets from auth and counters webapps normalized with design tokens.
 - FrontEnd: Extended shared UI components with button loading states, formatters, action bars, notifications, and usage tracking.

@@ -10,6 +10,11 @@ import {
   fromWireDate,
   parseDate,
 } from '../js/http.mjs';
+import {
+  toWireDate as utilsToWireDate,
+  fromWireDate as utilsFromWireDate,
+  parseDate as utilsParseDate,
+} from '../js/utils.mjs';
 import { ApiError, AuthenticationError, ValidationError, NotFoundError, ConflictError } from '../js/errors.mjs';
 
 test('buildUrl handles baseUrl slashes and query parameter variants', () => {
@@ -52,6 +57,14 @@ test('toWireDate and fromWireDate / parseDate handle server date formats safely'
   const testDate = new Date('2026-09-06T10:15:30.123Z');
   assert.equal(toWireDate(testDate), '2026-09-06T10:15:30Z');
 
+  // String and numeric timestamp inputs
+  assert.equal(toWireDate('2026-09-06T10:15:30.123Z'), '2026-09-06T10:15:30Z');
+  assert.equal(toWireDate(testDate.getTime()), '2026-09-06T10:15:30Z');
+
+  // Invalid date values return null
+  assert.equal(toWireDate('not-a-valid-date'), null);
+  assert.equal(toWireDate(new Date('invalid')), null);
+
   const parsed = fromWireDate('2026-09-06T10:15:30Z');
   assert.ok(parsed instanceof Date);
   assert.equal(parsed.toISOString(), '2026-09-06T10:15:30.000Z');
@@ -60,8 +73,20 @@ test('toWireDate and fromWireDate / parseDate handle server date formats safely'
   assert.equal(fromWireDate(undefined), undefined);
   assert.equal(fromWireDate(testDate), testDate);
 
+  const fromEpoch = fromWireDate(1725617730000);
+  assert.ok(fromEpoch instanceof Date);
+  assert.equal(fromEpoch.getTime(), 1725617730000);
+
   // parseDate is an alias to fromWireDate
   assert.equal(parseDate, fromWireDate);
+  assert.equal(parseDate('2026-09-06T10:15:30Z').toISOString(), '2026-09-06T10:15:30.000Z');
+
+  // Re-exported in js/utils.mjs
+  assert.equal(utilsToWireDate, toWireDate);
+  assert.equal(utilsFromWireDate, fromWireDate);
+  assert.equal(utilsParseDate, parseDate);
+  assert.equal(utilsToWireDate(testDate), '2026-09-06T10:15:30Z');
+  assert.equal(utilsFromWireDate('2026-09-06T10:15:30Z').toISOString(), '2026-09-06T10:15:30.000Z');
 });
 
 test('sendRequest performs successful GET request and returns status, data, headers', async () => {
