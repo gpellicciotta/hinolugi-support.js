@@ -5,6 +5,8 @@ All notable changes to this project are documented here.
 > See [coordinating work guidelines](https://github.com/gpellicciotta/dev-guidelines/blob/main/guidelines/coordinating-work-guidelines.md)
 > for the versioning and changelog conventions used across the HiNoLuGi projects.
 
+## v1.0.1-pre
+
 ## v1.0.0 [released: 2026-09-19]
 - DevEx: Added reusable static dev/test server and Playwright tour recorder in scripts/lib/.
 - BackEnd: Added zero-dependency offline storage adapters in js/offline-storage.mjs.
