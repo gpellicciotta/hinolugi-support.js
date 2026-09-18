@@ -1,10 +1,10 @@
 ---
 id: T0017
-owner: —
+owner: "@antigravity"
 needs: []
 branch: task/T0017-extend-shared-ui-components-and-utilities
 worktree: ./work/T0017-extend-shared-ui-components-and-utilities
-status: available
+status: active
 started: 2026-09-18
 ended: —
 ---
@@ -36,6 +36,9 @@ Ensure complete test coverage and visual consistency across all shared component
 - [2026-09-18] **[Read]**
   Assembled reusable component and utility opportunities from counters webapp audit.
   Documented implementation requirements, reference sources, and test coverage scope.
+
+- [2026-09-18] **[Decide]**
+  Claimed task T0017 with approved implementation plan for worktree execution.
 
 ## Implementation Details & Source References
 
