@@ -15,7 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [~] A0019 [owner: @antigravity] Rename the active version v1.0.0 and make a full release.
+*(Currently no tasks)*
 
 ---
 
