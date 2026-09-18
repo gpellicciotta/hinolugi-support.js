@@ -15,7 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [ ] T0020 Extract shared CSS stylesheets into css/ (dialog, menu, main-layout, collapsible, demo-view, mail-layout, tooltips, wait-panel, error-view).
+- [~] T0020 [owner: @worker-1] Extract shared CSS stylesheets into css/.
 - [ ] T0021 Add lightweight Mock DOM test utility (js/mock-dom.mjs) for headless Node.js unit testing.
 - [ ] T0022 Add wire date formatters and uniform pagination helper (page.mjs) to client library.
 - [ ] T0023 Add zero-dependency offline storage adapters (offline-storage.mjs) to client library.
