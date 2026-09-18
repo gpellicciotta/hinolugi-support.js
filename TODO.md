@@ -15,11 +15,10 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [~] T0021 [owner: @worker-1] Add lightweight Mock DOM test utility for headless Node.js testing.
 - [ ] T0022 Add wire date formatters and uniform pagination helper (page.mjs) to client library.
 - [ ] T0023 Add zero-dependency offline storage adapters (offline-storage.mjs) to client library.
 - [ ] T0024 Add reusable static test server and Playwright visual tour recorder to scripts/lib/.
-- [ ] A0019 [needs: T0021, T0022, T0023, T0024] Rename the active version v1.0.0 and make a full release
+- [ ] A0019 [needs: T0022, T0023, T0024] Rename the active version v1.0.0 and make a full release
 
 ---
 
