@@ -1,0 +1,66 @@
+/*
+ * Error View/Panel
+ * ================
+ *
+ * Styling of the error view.
+ */
+
+@import "style.css";
+
+#error-view {
+  width: 100%;
+  max-width: var(--view-max-width-form, 42rem);
+  display: grid;
+  grid-template:
+    "logo title"
+    "descr descr";
+  grid-template-columns: max-content auto;
+  grid-template-rows: min-content max-content;
+}
+
+/* Landscape phone and bigger */
+@media only screen and (min-width: 481px) {
+  #error-view {
+    grid-template:
+      "logo title"
+      "logo descr";
+    grid-template-columns: max-content auto;
+    grid-template-rows: min-content max-content;
+  }
+}
+
+.error-panel {
+  display: inline-grid;
+  grid-template:
+    "logo title"
+    "logo descr";
+  grid-template-columns: max-content auto;
+  grid-template-rows: min-content auto;
+  padding: 1em;
+  border-radius: var(--card-border-radius, 8px);
+  box-shadow: var(--card-shadow, var(--shadow-md));
+
+  background-color: var(--ternary-background-color);
+  color: var(--yellow-hex);
+}
+
+.error-panel .logo,
+#error-view .logo {
+  grid-area: logo;
+  padding-left: 1rem;
+  padding-right: 2rem;
+  font-size: 20vmin;
+}
+
+.error-panel .title,
+#error-view .title {
+  grid-area: title;
+  font-size: 300%;
+  padding-bottom: 1em;
+}
+
+.error-panel .description,
+#error-view .description {
+  grid-area: descr;
+  text-align: center;
+}

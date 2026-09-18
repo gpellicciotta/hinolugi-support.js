@@ -1,0 +1,134 @@
+/*
+ * Dialog
+ * ======
+ *
+ * (Modal) Dialog.
+ */
+
+@import "style.css";
+
+.dialog-overlay {
+  /* Position */
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: var(--dialog-overlay-z-level);
+  /* Layout: center contents */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  /* Style */
+  background-color: rgba(var(--primary-background-color-components), 0.9);
+  cursor: not-allowed;
+}
+
+.dialog-overlay.disabled {
+  display: none;
+}
+
+.dialog-overlay .dialog {
+  /* Position */
+  position: relative; /* For close button */
+  z-index: var(--dialog-z-level);
+  /* Style */
+  background-color: var(--secondary-background-color);
+  color: var(--secondary-text-color);
+  border: 1px solid var(--grey-hex);
+  border-radius: var(--card-border-radius, 8px);
+  box-shadow: var(--shadow-lg, 0 4px 12px rgba(0, 0, 0, 0.15));
+  overflow: hidden;
+  cursor: default;
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.dialog-overlay .dialog .dialog-title {
+  background-color: var(--ternary-background-color);
+  color: var(--ternary-text-color);
+  border-bottom: 2px solid var(--ternary-text-color);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dialog-overlay .dialog .dialog-buttons {
+  padding: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: stretch;
+}
+
+.dialog-overlay .dialog.disabled {
+  display: none;
+}
+
+.dialog-overlay .dialog .close-button {
+  /* Position */
+  position: absolute;
+  top: -0.5em;
+  right: -0.5em;
+  z-index: calc(var(--dialog-z-level) + 1);
+  /* Style */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: var(--border-radius-circle, 50%);
+  font-size: 1.5em;
+  height: 1.5em;
+  width: 1.5em;
+  border-color: var(--secondary-text-color);
+  background-color: var(--secondary-background-color);
+  color: var(--secondary-text-color);
+}
+
+.dialog-overlay .dialog .close-button > * {
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .dialog-overlay .dialog .close-button:hover {
+    border-color: var(--primary-text-color);
+    background-color: var(--primary-background-color);
+    color: var(--primary-text-color);
+  }
+}
+
+.dialog-overlay .dialog .close-button:active {
+  background-color: var(--secondary-background-color);
+  color: var(--secondary-text-color);
+}
+
+.dialog-overlay .dialog input[type=button],
+.dialog-overlay .dialog button,
+.dialog-overlay .dialog .button {
+  border-color: var(--secondary-text-color);
+  background-color: var(--secondary-background-color);
+  color: var(--secondary-text-color);
+  border-radius: var(--control-border-radius, 4px);
+}
+
+@media (hover: hover) {
+  .dialog-overlay .dialog input[type=button]:hover,
+  .dialog-overlay .dialog button:hover,
+  .dialog-overlay .dialog .button:hover {
+    border-color: var(--primary-text-color);
+    background-color: var(--primary-background-color);
+    color: var(--primary-text-color);
+  }
+}
+
+.dialog-overlay .dialog input[type=button]:active,
+.dialog-overlay .dialog button:active,
+.dialog-overlay .dialog .button:active {
+  border-color: var(--primary-text-color);
+  background-color: var(--primary-background-color);
+  color: var(--primary-text-color);
+}

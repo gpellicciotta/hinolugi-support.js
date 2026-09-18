@@ -1,0 +1,217 @@
+/*
+ * Main Layout
+ * ===========
+ *
+ * Layout of main app view.
+ *
+ * Desktop: assuming enough horizontal space
+ * =========================================================================================
+ * Technical layout:
+ *  [sticky top] with header-logo|title|action-bar, notification-bar, main menu, context action-bar
+ *  [main]
+ *  [sticky bottom] with footer
+ *
+ * Conceptual layout:
+ *   [notification bar                       ]  latest notification: only visible when applicable
+ *   [header-logo][header-title][action bar  ]  fixed to top
+ *   [main menu                              ]  always visible with pop-down sub-menu's
+ *   [context action bar                     ]  context-specific actions: only visible when applicable
+ *   [                                       .
+ *   .            main content               .  always visible, possibly with scroll bars
+ *   .                                       ]
+ *   [footer                                 ]  fixed to bottom
+ *
+ * Mobile: limited, mainly vertical spacing, no footer
+ * =========================================================================================
+ * Technical layout:
+ *    [sticky top] with notification bar
+ *    [main]
+ *    [sticky bottom] with main menu, context-action bar and action bar
+ *
+ *  Conceptual layout:
+ *    [notification bar         ]               latest notification: visible when applicable
+ *    [                         .
+ *    .  main content or menu   .               menu activated from bottom
+ *    .                         ]
+ *    [context action bar       ]               context-only actions: visible when applicable
+ *    [action bar               ]               with right-most action is hamburger for showing menu
+ *                                              at bottom for better thumb accessibility
+ *
+ * CSS Variables
+ * =============
+ * See below for all customizable variables with their default values.
+ */
+
+@import "style.css";
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+}
+
+#app-screen {
+  /* Layout: 1 cols, 3 rows */
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: min-content 1fr min-content;
+  grid-template-areas:
+    "sticky-top"
+    "content"
+    "sticky-bottom";
+  width: 100%;
+  min-height: 100vh;
+}
+
+#sticky-top {
+  grid-area: sticky-top;
+
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  z-index: var(--chrome-z-level);
+
+  /* Mobile Layout: 1 cols, 1 rows */
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: min-content;
+  grid-template-areas: "notification-bar";
+}
+
+#notification-bar {
+  grid-area: notification-bar;
+  z-index: var(--notification-z-level);
+}
+
+#header-logo {
+  grid-area: header-logo;
+  display: none;
+
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+#header-logo .app-name {
+  display: none;
+}
+
+#header-title {
+  grid-area: header-title;
+  display: none;
+}
+
+#content {
+  grid-area: content;
+
+  position: relative; /* Relative positioning without integer z-index keeps #content in flow without trapping fixed modal overlays */
+  z-index: var(--base-z-level, auto);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+
+  padding: 1rem;
+}
+
+#sticky-bottom {
+  grid-area: sticky-bottom;
+
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  z-index: var(--chrome-z-level);
+
+  /* Mobile Layout: 1 cols, 1 rows */
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: min-content min-content min-content;
+  grid-template-areas:
+    "menu"
+    "ctx-action-bar"
+    "action-bar";
+}
+
+#menu {
+  grid-area: menu;
+  display: none;
+}
+
+#ctx-action-bar {
+  grid-area: ctx-action-bar;
+  display: none;
+}
+
+#ctx-action-bar:not(:empty) {
+  display: flex;
+}
+
+#action-bar {
+  grid-area: action-bar;
+}
+
+#footer-text {
+  grid-area: footer-text;
+  display: none;
+}
+
+/* Landscape phone and bigger */
+@media only screen and (min-width: 481px) {
+  #sticky-top {
+    /* Layout: 2 cols, 4 rows */
+    grid-template-columns: 1fr max-content;
+    grid-template-rows: min-content min-content min-content min-content;
+    grid-template-areas:
+      "notification-bar notification-bar"
+      "header-title     action-bar"
+      "menu             menu"
+      "ctx-action-bar   ctx-action-bar";
+  }
+
+  #header-title {
+    display: flex;
+  }
+
+  #sticky-bottom {
+    /* Layout: 1 cols, 1 rows */
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content;
+    grid-template-areas: "footer-text";
+  }
+
+  #footer-text {
+    display: flex;
+  }
+}
+
+/* Landscape phone and bigger, capable of showing a full header bar */
+@media only screen and (min-width: 630px) {
+  #sticky-top {
+    /* Layout: 3 cols, 4 rows */
+    grid-template-columns: min-content auto auto;
+    grid-template-rows: min-content min-content min-content min-content;
+    grid-template-areas:
+      "notification-bar notification-bar notification-bar"
+      "header-logo      header-title     action-bar"
+      "menu             menu             menu"
+      "ctx-action-bar   ctx-action-bar   ctx-action-bar";
+  }
+
+  #header-logo {
+    display: flex;
+  }
+
+  #header-logo .app-name {
+    display: inline-block;
+    padding-left: 0.5rem;
+  }
+}

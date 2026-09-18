@@ -1,0 +1,97 @@
+/*
+ * Collapsible Sections
+ * ====================
+ *
+ * Main idea from: https://alligator.io/css/collapsible/
+ *
+ * Sections must be created in HTML as:
+ * ```
+ *   <div class="collapsible">
+ *     <input type="checkbox" checked>
+ *     <label for="yyy">Zzz</label>
+ *     <div id="yyy" class="collapsible-content">
+ *       ...
+ *     </div>
+ *   </div>
+ * ```
+ * Where the `<input>`, `<label>`, and `<div class="collapsible-content">`
+ * must be in the given order, and next to each other.
+ *
+ * There are no restrictions on the content of `<div class="collapsible-content">` itself.
+ *
+ * The checkbox must have the `checked` attribute only if you want it expanded by default.
+ *
+ * CSS Variables
+ * =============
+ * See below for all customizable variables with their default values.
+ * All names start with `--collapsible-`
+ */
+
+@import "style.css";
+
+:root {
+  --collapsible-header-bg-color: var(--dark-grey-hex, #70757a);
+  --collapsible-border-color: var(--grey-hex, #d3d3d3);
+}
+
+.collapsible {
+  margin: 1em 0;
+}
+
+.collapsible > input[type="checkbox"] {
+  display: none; /* Don't show checkbox itself */
+  border: none;
+}
+
+.collapsible > label {
+  display: block; /* Span full line to ease clicking */
+  cursor: pointer;
+  background-color: var(--collapsible-header-bg-color);
+  color: var(--secondary-text-color, #ffffff);
+  user-select: none;
+  font-size: x-large;
+  padding: 0.5em;
+  border-radius: var(--border-radius-sm, 4px);
+  border: 1px solid var(--collapsible-border-color);
+  margin: 0 !important;
+}
+
+.collapsible > label::before { /* Draw triangle */
+  content: " ";
+  display: inline-block;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid currentColor;
+  vertical-align: middle;
+  margin-right: 0.7rem;
+  transform: translateY(-2px);
+  transition: transform 0.1s ease-out;
+}
+
+.collapsible > input[type="checkbox"]:checked + label::before { /* Rotate triangle when checked */
+  transform: rotate(90deg) translateX(-3px);
+}
+
+.collapsible > .collapsible-content { /* Basic collapsed state has 0px max-height */
+  max-height: 0;
+  overflow: hidden;
+  border: none;
+  transition: max-height 0.1s ease-in-out;
+}
+
+.collapsible > input[type="checkbox"]:checked + label {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.collapsible > input[type="checkbox"]:checked + label + .collapsible-content { /* Uncollapsed state has 100vh max-height */
+  max-height: 100vh;
+  overflow: scroll;
+  border-top: 0;
+  border-left: 1px solid var(--collapsible-border-color);
+  border-right: 1px solid var(--collapsible-border-color);
+  border-bottom: 1px solid var(--collapsible-border-color);
+  border-bottom-right-radius: var(--border-radius-sm, 4px);
+  border-bottom-left-radius: var(--border-radius-sm, 4px);
+  padding: 1em;
+}

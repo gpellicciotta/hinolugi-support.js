@@ -1,0 +1,42 @@
+/*
+ * Tooltips
+ * ========
+ *
+ * Styling of tool tips.
+ *
+ * CSS Variables
+ * =============
+ * See below for all customizable variables with their default values.
+ */
+
+@import "style.css";
+
+/* Landscape phone and bigger */
+@media only screen and (min-width: 481px) {
+  .tooltip-container {
+    position: relative;
+  }
+
+  .tooltip-container .tooltip {
+    position: absolute;
+    width: fit-content;
+    background-color: var(--soft-black-hex, #202124);
+    border: 1px solid var(--white-hex, #ffffff);
+    color: var(--white-hex, #ffffff);
+    border-radius: var(--border-radius-sm, 4px);
+    box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.08));
+    font-size: 0.8rem;
+    padding: 0.5em;
+    display: block;
+    visibility: hidden;
+    z-index: var(--tooltip-z-level, 400);
+  }
+
+  .tooltip-container:hover .tooltip {
+    visibility: visible;
+  }
+}
+
+.tooltip-container .tooltip {
+  display: none;
+}

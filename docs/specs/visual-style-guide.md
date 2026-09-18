@@ -312,3 +312,32 @@ Catalogue views implement a standardized list header based on [`css/catalogue-vi
 - Views never unmount or disappear during asynchronous background operations.
 - The `.component.wait-overlay > .main` maintains high visibility (`opacity: 0.94`).
 
+---
+
+## Shared Stylesheet Inventory
+
+`@gpellicciotta/hinolugi-support.js` exports a comprehensive library of responsive, framework-free CSS stylesheets under `css/`:
+
+| Stylesheet | Description | Key Custom Properties / Tokens Used |
+|:---|:---|:---|
+| [`css/colors.css`](../../css/colors.css) | Core palette hex colors and RGB channel triples | `--blue-hex`, `--green-hex`, `--red-hex`, `--yellow-hex`, `--grey-hex`, `--dark-grey-hex` |
+| [`css/style.css`](../../css/style.css) | Theme definitions, typography, elevation, and layout dimensions | `--app-screen-bg-color`, `--primary-text-color`, `--shadow-md`, `--border-radius-md` |
+| [`css/reset.css`](../../css/reset.css) | CSS baseline reset for standard elements | Box-sizing, zero margin/padding |
+| [`css/component.css`](../../css/component.css) | Generic components (empty states, tags, chips) | `--card-border-color`, `--card-shadow`, `--border-radius-pill` |
+| [`css/forms.css`](../../css/forms.css) | 4-row grid input groups, validation, help triggers | `--form-element-border-color`, `--form-element-valid-color` |
+| [`css/action-bar.css`](../../css/action-bar.css) | Global and contextual action bars, action icons | `--ternary-background-color`, `--secondary-background-color` |
+| [`css/notification-bar.css`](../../css/notification-bar.css) | Toast and drawer notifications with status tags | `--notification-z-level`, `--color-danger`, `--color-warning` |
+| [`css/progress.css`](../../css/progress.css) | Spinners and fixed top indeterminate progress bar | `--progress-color`, `--progress-z-level`, `--blue-hex` |
+| [`css/catalogue-view.css`](../../css/catalogue-view.css) | Search toolbars, sort options, catalogue lists | `--view-max-width-form`, `--card-border-radius` |
+| [`css/collection-editor.css`](../../css/collection-editor.css) | Embedded sub-list editor header and item rows | `--dark-grey-hex`, `--primary-background-color` |
+| [`css/dialog.css`](../../css/dialog.css) | Modal dialog overlay, centered window, action buttons | `--dialog-overlay-z-level`, `--dialog-z-level`, `--card-border-radius`, `--shadow-lg` |
+| [`css/menu.css`](../../css/menu.css) | Responsive drawer and desktop dropdown menu bar | `--dark-grey-hex`, `--ternary-background-color`, `--ternary-text-color` |
+| [`css/main-layout.css`](../../css/main-layout.css) | Responsive sticky header, main content, sticky footer | `--chrome-z-level`, `--base-z-level`, `--view-max-width-form` |
+| [`css/collapsible.css`](../../css/collapsible.css) | Checkbox-driven accordion and expandable panels | `--collapsible-header-bg-color`, `--collapsible-border-color` |
+| [`css/demo-view.css`](../../css/demo-view.css) | Interactive demo badges and scenario runners | `--menu-bar-bg-color`, `--menu-bar-text-color` |
+| [`css/mail-layout.css`](../../css/mail-layout.css) | Transactional email layout shell with OTP display | `--primary-background-color`, `--secondary-background-color`, `--monospace-font-family` |
+| [`css/tooltips.css`](../../css/tooltips.css) | Lightweight hover tooltips | `--tooltip-z-level`, `--soft-black-hex`, `--border-radius-sm` |
+| [`css/wait-panel.css`](../../css/wait-panel.css) | Full-screen and card wait overlay spinner container | `--progress-z-level`, `--progress-color`, `--progress-size` |
+| [`css/error-view.css`](../../css/error-view.css) | Standardized error banner and details view | `--view-max-width-form`, `--card-border-radius`, `--yellow-hex` |
+
+

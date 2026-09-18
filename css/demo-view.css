@@ -1,0 +1,158 @@
+/*
+ * Menu Style
+ * ==========
+ *
+ * A menu-bar is a horizontal bar containing multiple menus, possible with separators.
+ * The menu-bar initially only shows the menu toggle's of each contained menu.
+ *
+ *   <div class='menu-bar'>
+ *     <div class='menu activated'>
+ *       <a class='menu-toggle'>File</a>
+ *       <div class='menu-content'>
+ *         ...
+ *       </div>
+ *     </div>
+ *     ...
+ *     <a class='menu-separator' />
+ *     <div class='menu'>
+ *       <a class='menu-toggle'>Help</a>
+ *       <div class='menu-content'>
+ *         ...
+ *       </div>
+ *     </div>
+ *   </div>
+ *
+ * A menu is the actual vertical bar with menu-items, possibly with vertical separators,
+ * and possibly also sub-menus.
+ * A .menu element always has two children: a .menu-toggle representing the menu name and
+ * acting as a toggle for showing (i.e. activating) the .menu-content.
+ * The .menu-content element is merely a container for menu items.
+ *
+ *  <div class='menu'>
+ *    <a class='menu-item' ... >
+ *    <a class='menu-separator' />
+ *    <div class='menu'>
+ *      <a class='menu-toggle' ... />
+ *      <div class='menu-content'>
+ *        ...
+ *      </div>
+ *    </div>
+ *  </div>
+ *
+ * An individual .menu-item can have three children, representing an optional icon,
+ * mandatory text and an optional shortcut text:
+ *
+ *  <a class='menu-item'>
+ *    <i class='icon'>✂</i>
+ *    <i class='text'>Cut</i>
+ *    <i class='shortcut'>CTRL+X</i>
+ *  </a>
+ *
+ * A .menu-toggle can have the same three child-elements, but the icon will be
+ * ignored for top-level (i.e. within a .menu-bar) menus.
+ *
+ * CSS Classes:
+ * ============
+ *  .menu-bar       : horizontal container for .menu elements, possibly with horizontal .menu-separator elements.
+ *  .menu           : logical container for .menu-toggle (= menu title) and .menu-content
+ *  .menu-content   : vertical container for .menu-item elements, also .menu-separator and other (sub) .menu elements
+ *  .menu-item      : an individual menu item
+ *  .menu-separator : a visual separator
+ *  .menu-toggle    : a menu title that can be clicked to (de)activate the containing menu, which means making the 
+ *                    sibling .menu-content visible (or invisible).
+ *
+ * CSS Variables:
+ * ==============
+ *   --menu-bg-color        : 
+ *   --menu-text-color      :
+ *   --menu-focus-color     :
+ *   --menu-bar-text-color  :
+ *   --menu-bar-bg-color    :
+ *   --menu-bar-focus-color :
+ */
+
+@import "colors.css";
+@import "style.css";
+
+:root {
+  --menu-bg-color: var(--grey-hex, grey);
+  --menu-text-color: var(--white-hex, white);
+  --menu-focus-color: var(--red-hex, red);
+  --menu-bar-text-color: var(--white-hex, white);
+  --menu-bar-bg-color: var(--black-hex, black);
+  --menu-bar-focus-color: var(--red-hex, red);
+}
+
+.menu-bar {
+  background-color: var(--menu-bar-bg-color);
+  color: var(--menu-bar-text-color);
+}
+
+.menu {
+  background-color: var(--menu-bg-color);
+  color: var(--menu-text-color);
+}
+
+.menu-toggle,
+.menu-item {
+  text-decoration: none;
+}
+
+.menu-toggle,
+.menu-item,
+.menu-separator {
+  background-color: inherit;
+  color: inherit;
+}
+
+i.icon,
+i.shortcut,
+i.text {
+  background-color: inherit;
+  color: inherit;
+}
+
+.menu-content > .menu > .menu-content {
+  /* Nested menus should become one tint lighter */
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Landscape phone and bigger */
+@media only screen and (min-width: 481px) {
+  body {
+    display: grid;
+    grid-template-areas:
+      "header header"
+      "main menu"
+      "footer footer";
+    grid-template-rows: min-content max-content min-content;
+  }
+
+  header {
+    grid-area: header;
+  }
+
+  div.menu-bar {
+    grid-area: menu;
+    margin-left: 1em;
+    width: max-content;
+  }
+
+  div.menu-bar > .menu-toggle {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  div.menu-bar > .menu-toggle.active > .menu-content {
+    width: 30vw;
+  }
+
+  main {
+    grid-area: main;
+  }
+
+  footer {
+    grid-area: footer;
+  }
+}

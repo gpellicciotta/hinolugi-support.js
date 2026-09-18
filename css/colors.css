@@ -28,10 +28,12 @@
    --pink-hex             : #e03997;
    --brown-components     : 165, 103, 63;
    --brown-hex            : #a5673f;
-   --light-grey-components: 211, 211, 211;
-   --light-grey-hex       : #d3d3d3;
-   --grey-components      : 112, 117, 122;
-   --grey-hex             : #70757a;
+   --light-grey-components: 244, 244, 244;
+   --light-grey-hex       : #f4f4f4;
+   --grey-components      : 211, 211, 211;
+   --grey-hex             : #d3d3d3;
+   --dark-grey-components : 112, 117, 122;
+   --dark-grey-hex        : #70757a;
    --black-components     : 0, 0, 0;
    --black-hex            : #000000;
    --soft-black-components: 32, 33, 36;
