@@ -15,10 +15,9 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [~] T0022 [owner: @worker-1] Add wire date formatters and pagination helper to client library.
 - [ ] T0023 Add zero-dependency offline storage adapters (offline-storage.mjs) to client library.
 - [ ] T0024 Add reusable static test server and Playwright visual tour recorder to scripts/lib/.
-- [ ] A0019 [needs: T0022, T0023, T0024] Rename the active version v1.0.0 and make a full release
+- [ ] A0019 [needs: T0023, T0024] Rename the active version v1.0.0 and make a full release
 
 ---
 
