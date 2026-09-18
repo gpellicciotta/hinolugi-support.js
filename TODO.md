@@ -15,7 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [ ] T0023 Add zero-dependency offline storage adapters (offline-storage.mjs) to client library.
+- [~] T0023 [owner: @worker-1] Add zero-dependency offline storage adapters to client library.
 - [ ] T0024 Add reusable static test server and Playwright visual tour recorder to scripts/lib/.
 - [ ] A0019 [needs: T0023, T0024] Rename the active version v1.0.0 and make a full release
 
