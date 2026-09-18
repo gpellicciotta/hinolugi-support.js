@@ -12,6 +12,15 @@ class FakeElement {
     this.parent = null;
     this._listeners = {};
     this.innerHTML = '';
+    this._attrs = {};
+  }
+
+  setAttribute(name, value) {
+    this._attrs[name] = String(value);
+  }
+
+  getAttribute(name) {
+    return this._attrs[name] ?? null;
   }
 
   get classList() {
@@ -106,7 +115,7 @@ describe('attach / detach', () => {
 });
 
 describe('showMainUI / showWaitOverlay / showErrorOverlay', () => {
-  test('showMainUI clears the error and wait overlay classes', () => {
+  test('showMainUI clears overlay classes and sets data-ui-state to ready', () => {
     const comp = makeComponent();
     comp.componentUIEl.classList.add('error-overlay');
     comp.componentUIEl.classList.add('wait-overlay');
@@ -119,27 +128,31 @@ describe('showMainUI / showWaitOverlay / showErrorOverlay', () => {
     assert.deepEqual(updateInfo, { some: 'info' });
     assert.equal(comp.componentUIEl.classList.contains('error-overlay'), false);
     assert.equal(comp.componentUIEl.classList.contains('wait-overlay'), false);
+    assert.equal(comp.componentUIEl.getAttribute('data-ui-state'), 'ready');
   });
 
-  test('showWaitOverlay defaults the progress text and adds the wait-overlay class', () => {
+  test('showWaitOverlay defaults the progress text, adds wait-overlay class, and sets data-ui-state to updating', () => {
     const comp = makeComponent();
     comp.showWaitOverlay();
     assert.equal(comp.waitProgressEl.innerHTML, 'Waiting for data...');
     assert.equal(comp.componentUIEl.classList.contains('wait-overlay'), true);
+    assert.equal(comp.componentUIEl.getAttribute('data-ui-state'), 'updating');
   });
 
   test('showWaitOverlay uses a custom progress message when given', () => {
     const comp = makeComponent();
     comp.showWaitOverlay({ 'progress-message': 'Loading widgets...' });
     assert.equal(comp.waitProgressEl.innerHTML, 'Loading widgets...');
+    assert.equal(comp.componentUIEl.getAttribute('data-ui-state'), 'updating');
   });
 
-  test('showErrorOverlay defaults the title/description and adds the error-overlay class', () => {
+  test('showErrorOverlay defaults the title/description and sets data-ui-state to error', () => {
     const comp = makeComponent();
     comp.showErrorOverlay();
     assert.equal(comp.errorTitleEl.innerHTML, 'Unknown Error');
     assert.equal(comp.errorDescriptionEl.innerHTML, 'No details available... Sorry.');
     assert.equal(comp.componentUIEl.classList.contains('error-overlay'), true);
+    assert.equal(comp.componentUIEl.getAttribute('data-ui-state'), 'error');
   });
 
   test('showErrorOverlay uses the given title/description when given', () => {
@@ -147,6 +160,7 @@ describe('showMainUI / showWaitOverlay / showErrorOverlay', () => {
     comp.showErrorOverlay({ 'error-title': 'Save failed', 'error-description': 'Network is down' });
     assert.equal(comp.errorTitleEl.innerHTML, 'Save failed');
     assert.equal(comp.errorDescriptionEl.innerHTML, 'Network is down');
+    assert.equal(comp.componentUIEl.getAttribute('data-ui-state'), 'error');
   });
 });
 
@@ -199,5 +213,56 @@ describe('startLongRunningOperation', () => {
     assert.equal(errorInfo['error-description'], 'Something went wrong');
     assert.equal(errorInfo['error-description'] === 'Loading', false);
     assert.ok(errorInfo['error-cause'] instanceof Error);
+  });
+
+  test('supports (title, asyncFn) signature overload', async () => {
+    const comp = makeComponent();
+    let ran = false;
+    await new Promise((resolveTest) => {
+      comp.startLongRunningOperation('Quick Task', async () => {
+        ran = true;
+        resolveTest();
+      });
+    });
+    assert.equal(ran, true);
+  });
+
+  test('supports bare async function signature overload', async () => {
+    const comp = makeComponent();
+    let ran = false;
+    await new Promise((resolveTest) => {
+      comp.startLongRunningOperation(async () => {
+        ran = true;
+        resolveTest();
+      });
+    });
+    assert.equal(ran, true);
+  });
+
+  test('coordinates with app.startProgress and app.stopProgress', async () => {
+    const comp = makeComponent();
+    let startCalls = 0;
+    let stopCalls = 0;
+    comp.app = {
+      startProgress: () => {
+        startCalls++;
+      },
+      stopProgress: () => {
+        stopCalls++;
+      },
+    };
+
+    // Simulate timer firing
+    comp._hasActiveAppProgress = true;
+    await new Promise((resolveTest) => {
+      comp.startLongRunningOperation({
+        title: 'Task with progress',
+        start: async () => 'done',
+        always: () => resolveTest(),
+      });
+    });
+
+    assert.equal(comp._hasActiveAppProgress, false);
+    assert.equal(stopCalls, 1);
   });
 });

@@ -15,8 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [~] T0017 [owner: @antigravity] Extend shared UI components and webapp utilities with opportunities identified from hinolugi-counters.
-- [ ] T0018 [needs T0017] Inspect the JS/HTML/CSS code in hinolugi-auth and hinolugi-counters and look for additional opportunities for code-reuse.
+- [ ] T0018 Inspect the JS/HTML/CSS code in hinolugi-auth and hinolugi-counters and look for additional opportunities for code-reuse.
       Look both in the scripts directory and in the webapps and JS clients code of both projects.
       Make an overview of code that can be added here and what re-use (how many lines of code spared, or entire scripts replaced) it will cause in the other projects.
 

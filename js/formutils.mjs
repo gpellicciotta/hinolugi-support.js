@@ -213,3 +213,39 @@ export function handlePasswordDisclosure(el) {
     }
   });
 }
+
+/**
+ *  Toggle an inline loading state on a button during async operations.
+ *  Preserves the original HTML structure and restores it when loading ends.
+ *
+ *  @param {HTMLElement} buttonEl The button element to toggle
+ *  @param {boolean} isLoading Whether the button is in the loading state
+ *  @param {string|null} loadingText Optional label to show during loading
+ */
+export function setButtonLoading(buttonEl, isLoading = true, loadingText = null) {
+  if (!buttonEl) return;
+  if (isLoading) {
+    if (!buttonEl.dataset) {
+      buttonEl.dataset = {};
+    }
+    if (!buttonEl.dataset.originalContent) {
+      buttonEl.dataset.originalContent = buttonEl.innerHTML || '';
+    }
+    buttonEl.disabled = true;
+    if (buttonEl.classList && typeof buttonEl.classList.add === 'function') {
+      buttonEl.classList.add('is-loading');
+    }
+    const textSpan = typeof buttonEl.querySelector === 'function' ? buttonEl.querySelector('.text') : null;
+    const label = loadingText || (textSpan ? textSpan.textContent : buttonEl.textContent?.trim() || 'Processing...');
+    buttonEl.innerHTML = `<i class="icon fa-solid fa-circle-notch fa-spin"></i> <span class="text">${label}</span>`;
+  } else {
+    buttonEl.disabled = false;
+    if (buttonEl.classList && typeof buttonEl.classList.remove === 'function') {
+      buttonEl.classList.remove('is-loading');
+    }
+    if (buttonEl.dataset && buttonEl.dataset.originalContent) {
+      buttonEl.innerHTML = buttonEl.dataset.originalContent;
+      delete buttonEl.dataset.originalContent;
+    }
+  }
+}

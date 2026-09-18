@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 > for the versioning and changelog conventions used across the HiNoLuGi projects.
 
 ## v0.83.1-pre
+- FrontEnd: Extended shared UI components with button loading states, formatters, action bars, notifications, and usage tracking.
 - FrontEnd: Added visual style guide specification, shared CSS design tokens, and collection editor component.
 - DevEx: Added `scripts/extract-release-notes.mjs` and `npm run release-notes` to generate GitHub Release notes from CHANGELOG.md.
 - Docs: Fixed Release Process Step 4 to use extracted CHANGELOG.md notes instead of a placeholder `--notes` string.

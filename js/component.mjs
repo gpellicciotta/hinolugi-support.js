@@ -115,8 +115,11 @@ export default class Component {
     if (info) {
       this.updateMainUI(info);
     }
-    this.componentUIEl.classList.remove('error-overlay');
-    this.componentUIEl.classList.remove('wait-overlay');
+    if (this.componentUIEl) {
+      this.componentUIEl.classList.remove('error-overlay');
+      this.componentUIEl.classList.remove('wait-overlay');
+      this.componentUIEl.setAttribute('data-ui-state', 'ready');
+    }
   }
 
   /**
@@ -126,20 +129,26 @@ export default class Component {
   updateMainUI(info) {}
 
   showWaitOverlay(waitInfo) {
-    this.componentUIEl.classList.remove('error-overlay');
-    if (this.waitUIEl) {
-      this.waitProgressEl.innerHTML = waitInfo?.['progress-message'] || 'Waiting for data...';
+    if (this.componentUIEl) {
+      this.componentUIEl.classList.remove('error-overlay');
+      if (this.waitUIEl) {
+        this.waitProgressEl.innerHTML = waitInfo?.['progress-message'] || 'Waiting for data...';
+      }
+      this.componentUIEl.classList.add('wait-overlay');
+      this.componentUIEl.setAttribute('data-ui-state', 'updating');
     }
-    this.componentUIEl.classList.add('wait-overlay');
   }
 
   showErrorOverlay(errInfo) {
-    this.componentUIEl.classList.remove('wait-overlay');
-    if (this.errorUIEl) {
-      this.errorTitleEl.innerHTML = errInfo?.['error-title'] || 'Unknown Error';
-      this.errorDescriptionEl.innerHTML = errInfo?.['error-description'] || 'No details available... Sorry.';
+    if (this.componentUIEl) {
+      this.componentUIEl.classList.remove('wait-overlay');
+      if (this.errorUIEl) {
+        this.errorTitleEl.innerHTML = errInfo?.['error-title'] || 'Unknown Error';
+        this.errorDescriptionEl.innerHTML = errInfo?.['error-description'] || 'No details available... Sorry.';
+      }
+      this.componentUIEl.classList.add('error-overlay');
+      this.componentUIEl.setAttribute('data-ui-state', 'error');
     }
-    this.componentUIEl.classList.add('error-overlay');
   }
 
   /**
@@ -174,51 +183,108 @@ export default class Component {
   /**
    *  Start a long-running operation, which will run asynchronously.
    *
-   *  @param longRunningOperation Should be an object with:
-   *    - title text property
-   *    - description text property
-   *    - start method returning a promise
-   *    - success method that will be called when the promise resolves
-   *    - error method that will be called when the promise rejects or some other error occurs
-   *    - always method that will be called always, after either the success or error callbacks
+   *  @param longRunningOperation Can be:
+   *    - An object with title, description, start(), and optional success(), error(), always()
+   *    - A string title, combined with an async function as second argument
+   *    - A single async function
+   *  @param asyncFn Optional async function when first parameter is a title string
    */
-  startLongRunningOperation(longRunningOperation) {
-    this.startWaitUITimer = setTimeout(() => {
-      // Show wait UI only if we get no response within DEFAULT_WAIT_UI_DELAY_TIME
-      this.startWaitUITimer = null;
-      this.showWaitOverlay();
-    }, DEFAULT_WAIT_UI_DELAY_TIME);
+  startLongRunningOperation(longRunningOperation, asyncFn) {
+    let op = longRunningOperation;
+    if (typeof longRunningOperation === 'string' && typeof asyncFn === 'function') {
+      op = {
+        title: longRunningOperation,
+        description: longRunningOperation,
+        start: asyncFn,
+        success: () => {},
+        error: (err) => {
+          this.log.error(`Operation '${longRunningOperation}' failed:`, err);
+        },
+      };
+    } else if (typeof longRunningOperation === 'function') {
+      op = {
+        title: 'Operation',
+        description: 'Operation in progress',
+        start: longRunningOperation,
+        success: () => {},
+        error: (err) => {
+          this.log.error('Operation failed:', err);
+        },
+      };
+    }
 
-    this.log.info(`Long-running operation '${longRunningOperation.title}' has started`);
-    longRunningOperation
-      .start()
-      .then((info) => {
-        this.log.trace(`Long-running operation '${longRunningOperation.title}' has succeeded: `, info);
-        if (this.startWaitUITimer) {
-          clearTimeout(this.startWaitUITimer);
+    if (!op || typeof op.start !== 'function') {
+      this.log.error(
+        'Invalid long-running operation argument passed to startLongRunningOperation',
+        longRunningOperation,
+      );
+      return;
+    }
+
+    if (this.startWaitUITimer) {
+      clearTimeout(this.startWaitUITimer);
+      this.startWaitUITimer = null;
+    }
+    const currentTimer = setTimeout(() => {
+      if (this.startWaitUITimer === currentTimer) {
+        this.startWaitUITimer = null;
+        if (this.app && typeof this.app.startProgress === 'function') {
+          this.app.startProgress();
+          this._hasActiveAppProgress = true;
         }
-        longRunningOperation.success(info);
+        this.showWaitOverlay({ 'progress-message': op.description || op.title || 'Waiting for data...' });
+      }
+    }, DEFAULT_WAIT_UI_DELAY_TIME);
+    this.startWaitUITimer = currentTimer;
+
+    this.log.info(`Long-running operation '${op.title}' has started`);
+    op.start()
+      .then((info) => {
+        this.log.trace(`Long-running operation '${op.title}' has succeeded: `, info);
+        if (this.startWaitUITimer === currentTimer) {
+          clearTimeout(this.startWaitUITimer);
+          this.startWaitUITimer = null;
+        }
+        if (op.success) {
+          op.success(info);
+        }
       })
       .catch((err) => {
-        this.log.error(`Long-running operation '${longRunningOperation.title}' has failed: `, err);
+        this.log.error(`Long-running operation '${op.title}' has failed: `, err);
         if (this.startWaitUITimer) {
           clearTimeout(this.startWaitUITimer);
+          this.startWaitUITimer = null;
         }
         let errMsg = err?.message;
         if (errMsg) {
           errMsg = utils.capitalize(errMsg);
         }
         const errorInfo = {
-          'error-title': longRunningOperation.title,
-          'error-description': errMsg,
+          'error-title': op.title,
+          'error-description': errMsg || op.description || 'No details available... Sorry.',
           'error-cause': err,
         };
-        longRunningOperation.error(errorInfo);
+        if (op.error) {
+          op.error(errorInfo);
+        }
       })
       .finally(() => {
-        this.log.trace(`Long-running operation '${longRunningOperation.title}' has ended`);
-        if (longRunningOperation.always) {
-          longRunningOperation.always();
+        if (this.startWaitUITimer) {
+          clearTimeout(this.startWaitUITimer);
+          this.startWaitUITimer = null;
+        }
+        if (this._hasActiveAppProgress) {
+          if (this.app && typeof this.app.stopProgress === 'function') {
+            this.app.stopProgress();
+          }
+          this._hasActiveAppProgress = false;
+        }
+        if (this.componentUIEl) {
+          this.componentUIEl.classList.remove('wait-overlay');
+        }
+        this.log.trace(`Long-running operation '${op.title}' has ended`);
+        if (op.always) {
+          op.always();
         }
       });
   }

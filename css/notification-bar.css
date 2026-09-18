@@ -1,0 +1,209 @@
+/*
+ * Notification Bar
+ * ================
+ *
+ * Notification bar/drawer styling.
+ */
+
+@import "style.css";
+
+#notification-bar,
+#main-notification-bar {
+  width: 100%;
+}
+
+#notification-bar .main {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  padding: 0 0.5rem;
+  background-color: var(--ternary-background-color);
+  color: var(--ternary-text-color);
+  grid-auto-rows: auto;
+  justify-content: stretch;
+  align-items: flex-start;
+  gap: 0.5rem;
+  position: relative;
+}
+
+#notification-bar[data-notification-count="0"] {
+  display: none;
+}
+
+#notification-bar .main > .action-bar {
+  top: 0.25rem;
+  left: 0.25rem;
+  position: fixed;
+}
+
+#notification-bar[data-notification-count="1"] .main > .action-bar {
+  display: none;
+}
+
+#notification-bar .main > .notification-bar {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  background-color: var(--ternary-background-color);
+  color: var(--ternary-text-color);
+  grid-auto-rows: 1fr;
+  justify-content: stretch;
+  align-items: flex-start;
+  column-gap: 0.5rem;
+}
+
+.notification-bar {
+  display: flex;
+  flex-direction: column;
+  background-color: inherit;
+  color: inherit;
+}
+
+.notification-bar > .notification {
+  display: none;
+  padding: 0.5rem 0;
+  gap: 0;
+  row-gap: 0.25rem;
+  grid-template-areas: "message actions";
+  grid-template-rows: max-content;
+  grid-template-columns: 1fr 4rem;
+}
+
+@media only screen and (min-width: 600px) {
+  .notification-bar > .notification {
+    grid-template-areas: "message actions"
+                         "tags    tags";
+    grid-template-rows: max-content min-content;
+  }
+}
+
+.notification-bar > .notification:first-child {
+  display: grid;
+  padding-bottom: 1rem;
+}
+
+.expanded .notification-bar > .notification:first-child {
+  padding-bottom: 0.5rem;
+}
+
+.expanded .notification-bar > .notification:not(:first-child) {
+  display: grid;
+  border-top: 1px solid var(--ternary-text-color);
+}
+
+.notification-bar > .notification:last-child {
+  padding-bottom: 1rem;
+}
+
+.notification > .action-bar {
+  grid-area: actions;
+  display: flex;
+  flex-direction: row;
+  align-self: flex-start;
+  justify-self: end;
+}
+
+.notification > .action-bar > button {
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.5em;
+  color: var(--primary-text-color);
+  border: 1px solid var(--primary-background-color);
+  background-color: var(--primary-background-color);
+  overflow: hidden;
+}
+
+.notification > .action-bar > button > * {
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .notification > .action-bar > button:hover {
+    background-color: var(--secondary-background-color);
+    color: var(--secondary-text-color);
+  }
+}
+
+.notification > .action-bar > button:active {
+  border-color: var(--primary-background-color);
+}
+
+.notification > .message {
+  grid-area: message;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 125%;
+}
+
+.notification > .message > button {
+  padding: 0.5rem;
+  margin: 0.25rem;
+  text-align: center;
+  font-size: inherit;
+  text-decoration: none;
+  background-color: var(--ternary-text-color);
+  color: var(--ternary-background-color);
+  border: 1px solid var(--ternary-background-color);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .notification > .message > button:hover {
+    background-color: var(--ternary-background-color);
+    color: var(--ternary-text-color);
+    border-color: var(--ternary-text-color);
+  }
+}
+
+.notification > .tags {
+  grid-area: tags;
+  display: none;
+}
+
+@media only screen and (min-width: 600px) {
+  .notification > .tags {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    font-size: 70%;
+    padding-right: 3rem;
+  }
+}
+
+.notification > .tags > * {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+  white-space: nowrap;
+  font-size: inherit;
+  border: 1px solid var(--ternary-text-color);
+  padding: 0.5em 2em;
+  border-radius: var(--border-radius-pill, 1.25em);
+}
+
+.notification > .tags > .type[data-type="info"] {
+  background-color: inherit;
+}
+
+.notification > .tags > .type[data-type="error"] {
+  background-color: var(--red-hex);
+}
+
+.notification > .tags > .type[data-type="warning"] {
+  background-color: var(--orange-hex);
+}
+
+.notification > .tags > .type[data-type="question"] {
+  background-color: var(--green-hex);
+}
+
+.notification-bar *.disabled {
+  display: none;
+}

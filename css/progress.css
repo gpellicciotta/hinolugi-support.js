@@ -1,0 +1,132 @@
+/*
+ * Progress Animation & Top Progress Bar
+ * =====================================
+ *
+ * Indeterminate progress animation and fixed top-of-viewport progress bar.
+ */
+
+:root {
+  --progress-color: black;
+  --progress-size: 250px;
+}
+
+.progress-component {
+  color: var(--progress-color);
+  position: relative;
+  width: var(--progress-size);
+  height: var(--progress-size);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-component > p {
+  text-align: center;
+}
+
+.progress-component > p,
+.progress-component > svg {
+  display: inline-flex;
+  pointer-events: none;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--progress-size);
+  height: var(--progress-size);
+}
+
+.progress-component .progress-spinner {
+  animation: rotate 2s linear infinite;
+  z-index: var(--progress-z-level, 300);
+  width: var(--progress-size);
+  height: var(--progress-size);
+}
+
+.progress-component .progress-spinner .progress-path {
+  stroke: var(--progress-color);
+  stroke-linecap: round;
+  animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+
+/*
+ * Top Slim Indeterminate Progress Bar
+ * ===================================
+ * Fixed at the very top of the app shell to indicate in-flight network activity
+ * without blocking UI interaction or hiding view content.
+ */
+
+#app-top-progress-bar,
+.app-top-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 3px;
+  background: transparent;
+  z-index: 10000;
+  pointer-events: none;
+  opacity: 0;
+  overflow: hidden;
+  transition: opacity 0.2s ease-in-out;
+}
+
+#app-top-progress-bar.active,
+.app-top-progress-bar.active {
+  opacity: 1;
+  background: rgba(37, 99, 235, 0.15);
+}
+
+#app-top-progress-bar.active::after,
+.app-top-progress-bar.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 35%;
+  background: var(--blue-hex, #2563eb);
+  border-radius: 2px;
+  animation: top-progress-slide 1.2s infinite ease-in-out;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.7);
+}
+
+@keyframes top-progress-slide {
+  0% {
+    left: -35%;
+    width: 35%;
+  }
+  50% {
+    width: 60%;
+  }
+  100% {
+    left: 100%;
+    width: 35%;
+  }
+}

@@ -1,0 +1,389 @@
+/*
+ * Action Bar
+ * ==========
+ *
+ * Styling of global and contextual action bars.
+ */
+
+@import "style.css";
+
+#action-bar {
+  --action-bar-background-color: var(--secondary-background-color);
+  --action-bar-text-color: var(--secondary-text-color);
+
+  width: 100%;
+  height: 100%;
+  font-size: 1.5rem;
+  background-color: var(--action-bar-background-color);
+  color: var(--action-bar-text-color);
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#ctx-action-bar {
+  --action-bar-background-color: var(--ternary-background-color);
+  --action-bar-text-color: var(--ternary-text-color);
+
+  width: 100%;
+  height: 100%;
+  font-size: 1.5rem;
+  background-color: var(--action-bar-background-color);
+  color: var(--action-bar-text-color);
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ctx-feedback-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  gap: 1rem;
+  background-color: var(--ternary-background-color);
+  color: var(--ternary-text-color);
+  box-sizing: border-box;
+}
+
+.ctx-feedback-bar .ctx-feedback-msg {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ctx-feedback-bar .ctx-feedback-msg i {
+  color: var(--green-hex);
+}
+
+.ctx-feedback-bar .ctx-feedback-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.ctx-feedback-bar .ctx-undo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--yellow-hex);
+  color: var(--soft-black-hex);
+  border: none;
+  border-radius: 4px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.ctx-feedback-bar .ctx-undo-btn:hover {
+  background: #fcc92b;
+  transform: scale(1.03);
+}
+
+.ctx-feedback-bar .ctx-dismiss-btn {
+  background: transparent;
+  border: none;
+  color: var(--grey-hex);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+}
+
+.ctx-feedback-bar .ctx-dismiss-btn:hover {
+  color: var(--white-hex);
+}
+
+.action-bar,
+.action-button {
+  font-size: inherit;
+  background-color: inherit;
+  color: inherit;
+  text-decoration: inherit;
+}
+
+.action-bar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+@media only screen and (min-width: 481px) {
+  #action-bar {
+    justify-content: flex-end;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    padding-right: 0.25rem;
+  }
+
+  #action-bar,
+  #ctx-action-bar {
+    padding: 0.25rem;
+  }
+
+  #action-bar,
+  #ctx-action-bar:empty {
+    padding: 0 0.25rem;
+  }
+}
+
+.action-bar.main .action-button,
+#ctx-action-bar .action-button {
+  min-width: 3rem;
+}
+
+.action-bar .action-button {
+  padding: 0.25rem;
+  margin: 0.25rem;
+  max-width: 3rem;
+  text-align: center;
+  font-size: inherit;
+  background-color: var(--action-bar-background-color);
+  color: var(--action-bar-text-color);
+  border-color: var(--action-bar-background-color);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .action-bar .action-button:hover {
+    border-color: var(--action-bar-text-color);
+  }
+}
+
+.action-bar .action-button:active,
+.action-bar .action-button.active {
+  background-color: var(--action-bar-text-color);
+  color: var(--action-bar-background-color);
+  border-color: var(--action-bar-text-color);
+}
+
+.action-bar .action-button.active i,
+.action-bar .action-button:active i {
+  color: var(--action-bar-background-color);
+}
+
+.action-bar .action-button i {
+  font-size: inherit;
+  background-color: inherit;
+  color: inherit;
+}
+
+.action-bar .item.separator {
+  min-width: 1px;
+  width: 1px;
+  height: 1.6rem;
+  background-color: currentColor;
+  opacity: 0.35;
+  margin: 0 0.5rem;
+  align-self: center;
+  list-style: none;
+}
+
+.action-bar .item.disabled {
+  display: none;
+}
+
+@media only screen and (min-width: 481px) {
+  .action-bar .action-button {
+    border: 1px solid var(--action-bar-background-color);
+  }
+
+  .action-bar .action-button:hover {
+    border: 1px solid var(--action-bar-text-color);
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .action-bar.main .action-button,
+  #ctx-action-bar .action-button {
+    min-width: 2.2rem;
+    max-width: 2.6rem;
+    padding: 0.2rem;
+    margin: 0.15rem;
+    font-size: 1.2rem;
+  }
+
+  .action-bar .item.separator {
+    margin: 0 0.25rem;
+    height: 1.3rem;
+  }
+}
+
+#ctx-action-bar .action-bar .item.disabled {
+  display: flex;
+}
+
+#ctx-action-bar .action-bar .item.disabled .action-button {
+  color: var(--grey-hex);
+}
+
+@media (hover: hover) {
+  #ctx-action-bar .action-bar .item.disabled .action-button:hover {
+    background-color: inherit;
+    cursor: not-allowed;
+  }
+}
+
+#ctx-action-bar .action-bar .item.disabled .action-button:active {
+  background-color: inherit;
+  color: var(--grey-hex);
+  border: inherit;
+}
+
+.action-bar .toggle-checkbox {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid transparent;
+  padding: 0.25rem;
+  margin: 0.25rem;
+}
+
+.action-bar .action-button svg * {
+  fill: currentColor;
+}
+
+@media (hover: hover) {
+  .action-bar .toggle-checkbox:hover {
+    border: 1px solid var(--secondary-text-color);
+  }
+}
+
+.action-bar .toggle-checkbox > input {
+  display: none;
+}
+
+.action-bar .toggle-checkbox > input ~ .checked {
+  display: none;
+}
+
+.action-bar .toggle-checkbox > input + .checked + .unchecked {
+  display: initial;
+}
+
+.action-bar .toggle-checkbox > input:checked + .checked {
+  display: initial;
+}
+
+.action-bar .toggle-checkbox > input:checked + .checked + .unchecked {
+  display: none;
+}
+
+.action-bar .mark-for-deletion-action {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0.25rem;
+  margin: 0.25rem;
+}
+
+.action-bar .mark-for-deletion-action > input {
+  display: none;
+}
+
+.action-bar .mark-for-deletion-action > input ~ .checked {
+  display: none;
+}
+
+.action-bar .mark-for-deletion-action > input + .checked + .unchecked {
+  display: initial;
+  color: var(--grey-hex);
+}
+
+.action-bar .mark-for-deletion-action > input:checked + .checked {
+  display: initial;
+  color: var(--red-hex);
+}
+
+.action-bar .mark-for-deletion-action > input:checked + .checked + .unchecked {
+  display: none;
+}
+
+/* Sync Status Badge */
+.action-bar .sync-status-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  margin: 0.25rem;
+  font-size: inherit;
+  border-radius: 4px;
+}
+
+.action-bar .sync-status-btn.online {
+  color: var(--action-bar-text-color);
+}
+
+.action-bar .sync-status-btn.offline {
+  color: var(--grey-hex, #999);
+}
+
+.action-bar .sync-status-btn.syncing {
+  color: var(--yellow-hex, #f0ad4e);
+}
+
+.action-bar .sync-status-btn.error {
+  color: var(--red-hex, #d9534f);
+}
+
+.action-bar .sync-status-btn .sync-pill {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background-color: var(--yellow-hex, #f0ad4e);
+  color: var(--soft-black-hex, #222);
+  border-radius: 10px;
+  font-size: 0.65rem;
+  font-weight: bold;
+  padding: 1px 4px;
+  min-width: 14px;
+  text-align: center;
+  line-height: 1;
+}
+
+.action-bar .sync-status-btn .sync-pill.error {
+  background-color: var(--red-hex, #d9534f);
+  color: #fff;
+}
+
+.sync-icon-offline {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sync-icon-offline::after {
+  content: '';
+  position: absolute;
+  top: 48%;
+  left: -2px;
+  right: -2px;
+  height: 2px;
+  background-color: #ef4444;
+  transform: rotate(-45deg);
+  border-radius: 1px;
+}

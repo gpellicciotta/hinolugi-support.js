@@ -13,6 +13,7 @@ import {
   validateEmailField,
   validatePasswordField,
   handlePasswordDisclosure,
+  setButtonLoading,
 } from '../js/formutils.mjs';
 
 // Minimal fake DOM element, just enough to exercise formutils.mjs without a jsdom dependency.
@@ -26,6 +27,27 @@ class FakeElement {
     this.parent = null;
     this._listeners = {};
     this.value = '';
+    this._innerHTML = '';
+    this._textContent = undefined;
+    this.disabled = false;
+  }
+
+  get textContent() {
+    if (this._textContent !== undefined) return this._textContent;
+    if (this.children.length > 0) return this.children.map((c) => c.textContent).join('');
+    return this._innerHTML || '';
+  }
+
+  set textContent(v) {
+    this._textContent = v;
+  }
+
+  get innerHTML() {
+    return this._innerHTML;
+  }
+
+  set innerHTML(v) {
+    this._innerHTML = v;
   }
 
   appendChild(child) {
@@ -259,5 +281,60 @@ describe('handlePasswordDisclosure', () => {
   test('throws when the required structure is missing', () => {
     const el = new FakeElement('div');
     assert.throws(() => handlePasswordDisclosure(el), /Cannot determine root .icon-input/);
+  });
+});
+
+describe('setButtonLoading', () => {
+  test('safely ignores null or undefined element', () => {
+    assert.doesNotThrow(() => setButtonLoading(null, true));
+    assert.doesNotThrow(() => setButtonLoading(undefined, false));
+  });
+
+  test('toggles loading state, disables button, and injects spinner', () => {
+    const button = new FakeElement('button');
+    button.innerHTML = 'Save Preferences';
+
+    setButtonLoading(button, true);
+
+    assert.equal(button.disabled, true);
+    assert.equal(button.classList.contains('is-loading'), true);
+    assert.equal(button.dataset.originalContent, 'Save Preferences');
+    assert.ok(button.innerHTML.includes('fa-circle-notch fa-spin'));
+    assert.ok(button.innerHTML.includes('Save Preferences'));
+
+    setButtonLoading(button, false);
+
+    assert.equal(button.disabled, false);
+    assert.equal(button.classList.contains('is-loading'), false);
+    assert.equal(button.innerHTML, 'Save Preferences');
+    assert.equal(button.dataset.originalContent, undefined);
+  });
+
+  test('supports custom loadingText', () => {
+    const button = new FakeElement('button');
+    button.innerHTML = 'Export Data';
+
+    setButtonLoading(button, true, 'Exporting...');
+
+    assert.equal(button.disabled, true);
+    assert.equal(button.classList.contains('is-loading'), true);
+    assert.ok(button.innerHTML.includes('Exporting...'));
+
+    setButtonLoading(button, false);
+    assert.equal(button.innerHTML, 'Export Data');
+  });
+
+  test('extracts label from child .text element if present', () => {
+    const button = new FakeElement('button');
+    const span = new FakeElement('span', ['text']);
+    span.textContent = 'Submit Form';
+    button.appendChild(span);
+    button.innerHTML = '<span class="text">Submit Form</span>';
+
+    setButtonLoading(button, true);
+    assert.ok(button.innerHTML.includes('Submit Form'));
+
+    setButtonLoading(button, false);
+    assert.equal(button.innerHTML, '<span class="text">Submit Form</span>');
   });
 });

@@ -1485,3 +1485,108 @@ export function formatNumber(numVal, fractionDigits = 2, minimumIntegerDigits = 
     minimumFractionDigits: fractionDigits,
   });
 }
+
+export const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
+/**
+ *  Format a date-time value into a human-friendly string (e.g. "15 January 2026 at 09:08" or "15 January 2026").
+ *
+ *  @param dateTime The date-time value (Date object, timestamp number, or ISO string).
+ *  @param withTime Whether to include the "at HH:MM" time portion.
+ *  @return A human-readable date string, or empty string if invalid.
+ */
+export function formatHumanDateTime(dateTime, withTime = true) {
+  dateTime = toDateTime(dateTime);
+  if (!dateTime || isNaN(dateTime.getTime())) {
+    return '';
+  }
+  const day = dateTime.getDate();
+  const month = MONTH_NAMES[dateTime.getMonth()];
+  const year = dateTime.getFullYear();
+  if (!withTime) {
+    return `${day} ${month} ${year}`;
+  }
+  const hours = String(dateTime.getHours()).padStart(2, '0');
+  const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+  return `${day} ${month} ${year} at ${hours}:${minutes}`;
+}
+
+/**
+ *  Format a date-time value into a detailed, human-friendly relative time string
+ *  (e.g. "1 day, 2 hours and 15 minutes ago", "2 hours and 15 minutes ago", "15 minutes ago", "just now").
+ *
+ *  @param dateTime The date-time value (Date object, timestamp number, or ISO string).
+ *  @param now Reference date-time (defaults to current date-time).
+ *  @return A descriptive relative time string.
+ */
+export function formatDetailedRelativeTime(dateTime, now = new Date()) {
+  dateTime = toDateTime(dateTime);
+  if (!dateTime || isNaN(dateTime.getTime())) {
+    return '';
+  }
+  const nowMillis = now instanceof Date ? now.getTime() : Date.now();
+  const actualMillis = dateTime.getTime();
+  const diffMillis = nowMillis - actualMillis;
+
+  if (diffMillis < 0) {
+    // In future or tiny forward clock drift
+    if (Math.abs(diffMillis) < 60000) {
+      return 'just now';
+    }
+    return formatRelativeDateTime(dateTime);
+  }
+
+  if (diffMillis < 60000) {
+    return 'just now';
+  }
+
+  let totalSeconds = Math.floor(diffMillis / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  totalSeconds %= 86400;
+  const hours = Math.floor(totalSeconds / 3600);
+  totalSeconds %= 3600;
+  const minutes = Math.floor(totalSeconds / 60);
+
+  const dayPart = days > 0 ? (days === 1 ? '1 day' : `${days} days`) : '';
+  const hourPart = hours > 0 ? (hours === 1 ? '1 hour' : `${hours} hours`) : '';
+  const minutePart = minutes > 0 ? (minutes === 1 ? '1 minute' : `${minutes} minutes`) : '';
+
+  if (days > 0) {
+    if (hourPart && minutePart) {
+      return `${dayPart}, ${hourPart} and ${minutePart} ago`;
+    }
+    if (hourPart) {
+      return `${dayPart} and ${hourPart} ago`;
+    }
+    if (minutePart) {
+      return `${dayPart} and ${minutePart} ago`;
+    }
+    return `${dayPart} ago`;
+  }
+
+  if (hours > 0) {
+    if (minutePart) {
+      return `${hourPart} and ${minutePart} ago`;
+    }
+    return `${hourPart} ago`;
+  }
+
+  if (minutes > 0) {
+    return `${minutePart} ago`;
+  }
+
+  return 'just now';
+}

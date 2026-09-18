@@ -4,9 +4,9 @@ owner: "@antigravity"
 needs: []
 branch: task/T0017-extend-shared-ui-components-and-utilities
 worktree: ./work/T0017-extend-shared-ui-components-and-utilities
-status: active
+status: completed
 started: 2026-09-18
-ended: —
+ended: 2026-09-18
 ---
 
 # T0017: Extend Shared UI Components and Webapp Utilities
@@ -21,15 +21,15 @@ Ensure complete test coverage and visual consistency across all shared component
 
 ## Task Execution Steps
 
-- [ ] **[Implement]** Add setButtonLoading helper in formutils.mjs with unit tests.
-- [ ] **[Implement]** Add formatHumanDateTime and formatDetailedRelativeTime formatters to utils.mjs with unit tests.
-- [ ] **[Implement]** Add data-ui-state tracking and overloaded operation runners to Component base class.
-- [ ] **[Implement]** Port local-usage-tracking.mjs into js directory with unit tests.
-- [ ] **[Implement]** Add AppNotificationBar and AppActionBar components with matching stylesheets.
-- [ ] **[Implement]** Port top progress bar stylesheet into css/progress.css.
-- [ ] **[Implement]** Add generic redirectToHinolugiAuth helper for SSO sign-in flows.
-- [ ] **[Verify]**    Run full automated test suite to confirm all tests pass.
-- [ ] **[Doc]**       Update visual style guide, exports, and CHANGELOG.md for new release.
+- [x] **[Implement]** Add setButtonLoading helper in formutils.mjs with unit tests.
+- [x] **[Implement]** Add formatHumanDateTime and formatDetailedRelativeTime formatters to utils.mjs with unit tests.
+- [x] **[Implement]** Add data-ui-state tracking and overloaded operation runners to Component base class.
+- [x] **[Implement]** Port local-usage-tracking.mjs into js directory with unit tests.
+- [x] **[Implement]** Add AppNotificationBar and AppActionBar components with matching stylesheets.
+- [x] **[Implement]** Port top progress bar stylesheet into css/progress.css.
+- [x] **[Implement]** Add generic redirectToHinolugiAuth helper for SSO sign-in flows.
+- [x] **[Verify]**    Run full automated test suite to confirm all tests pass.
+- [x] **[Doc]**       Update visual style guide, exports, and CHANGELOG.md for new release.
 
 ## Execution Log
 
@@ -40,81 +40,30 @@ Ensure complete test coverage and visual consistency across all shared component
 - [2026-09-18] **[Decide]**
   Claimed task T0017 with approved implementation plan for worktree execution.
 
-## Implementation Details & Source References
+- [2026-09-18] **[Implement]**
+  Added button loading states, formatters, action and notification bars, and auth redirection.
 
-### Button Loading State (`formutils.mjs`)
+- [2026-09-18] **[Verify]**
+  Validated 154 unit tests passing across all new and existing modules.
 
-- **Context**: The visual style guide (`docs/specs/visual-style-guide.md`) specifies `formutils.setButtonLoading(buttonEl, isLoading, loadingText)`.
-- **Gap**: The function is currently missing from `hinolugi-support.js/js/formutils.mjs`.
-- **Reference Source**: `hinolugi-counters/webapp/js/utils/formutils.mjs` lines 146–186.
-- **Specification**:
-  - `setButtonLoading(buttonEl, isLoading = true, loadingText = null)`
-  - Preserves original button HTML in `dataset.originalContent`.
-  - Disables button and applies `is-loading` class.
-  - Injects FontAwesome spinner (`<i class="icon fa-solid fa-circle-notch fa-spin"></i>`) alongside label.
-  - Restores previous DOM content and state when `isLoading` is false.
+- [2026-09-18] **[Complete]**
+  Integrated shared UI components and utilities with complete unit test coverage.
+  - Review tier: solo AI agent pre-authorized to integrate; tests all green.
 
-### Date and Relative Time Formatters (`utils.mjs`)
+## Walkthrough & Validation
 
-- **Context**: Audit logs, activity streams, and account panels require human-readable timestamp displays.
-- **Reference Source**: `hinolugi-counters/webapp/js/utils/utils.mjs` lines 1280–1363.
-- **Functions to Add**:
-  - `formatHumanDateTime(dateTime, withTime = true)`: formats dates as `15 January 2026 at 09:08` or `15 January 2026`.
-  - `formatDetailedRelativeTime(dateTime, now = new Date())`: formats durations as `1 day, 2 hours and 15 minutes ago`, `45 minutes ago`, or `just now`.
-  - Handles null, undefined, timestamps, and invalid Date objects safely.
+### Changes Implemented
 
-### Component Lifecycle Enhancements (`component.mjs`)
+- `js/formutils.mjs`: Added `setButtonLoading(buttonEl, isLoading, loadingText)` managing button state and spinner.
+- `js/utils.mjs`: Added `MONTH_NAMES`, `formatHumanDateTime`, and `formatDetailedRelativeTime`.
+- `js/component.mjs`: Added `data-ui-state` tracking (`ready`, `updating`, `error`), flexible operation overloads, and top progress hooks.
+- `js/local-usage-tracking.mjs`: Ported usage tracking and pinning store backed by `localStorage`.
+- `js/app-notification-bar.mjs` & `css/notification-bar.css`: Ported collapsible notification banner component and stylesheet.
+- `js/app-action-bar.mjs` & `css/action-bar.css`: Ported responsive action bar component and stylesheet.
+- `css/progress.css`: Ported 3px indeterminate top progress bar stylesheet.
+- `js/hinolugi-auth-redirect.mjs`: Added generic SSO redirect utility for HiNoLuGi services.
 
-- **Context**: Counters hardened `Component` with operational overloads and automated state attributes.
-- **Reference Source**: `hinolugi-counters/webapp/js/utils/component.mjs` lines 114–280.
-- **Enhancements**:
-  - Add `data-ui-state` attribute management (`"ready"`, `"updating"`, `"error"`) to `this.componentUIEl`.
-  - Support signature overloads in `startLongRunningOperation`:
-    - `startLongRunningOperation(title, asyncFn)`
-    - `startLongRunningOperation(asyncFn)`
-    - `startLongRunningOperation(optionsObject)`
-  - Coordinate with top-level progress bar via `app.startProgress()` and `app.stopProgress()`.
+### Validation
 
-### Local Usage Tracking Store (`local-usage-tracking.mjs`)
-
-- **Context**: Manages recent and frequent selections in `localStorage` without framework dependencies.
-- **Reference Source**: `hinolugi-counters/webapp/js/utils/local-usage-tracking.mjs`.
-- **Features**:
-  - `recordUsage(storageKey, key)`: records timestamp and increments usage counter.
-  - `getTopKeys(storageKey, limit)`: returns sorted keys prioritizing pinned, then count, then recency.
-  - `pinKey(storageKey, key, pinned)`: pins items to always remain at top of suggestion lists.
-  - Safe error handling when `localStorage` is inaccessible or full.
-
-### App Notification Bar (`app-notification-bar.mjs` and `notification-bar.css`)
-
-- **Context**: Universal top notification bar component displaying alert banners across all SPAs.
-- **Reference Source**: `hinolugi-counters/webapp/js/view/app-notification-bar.mjs` and `webapp/css/notification-bar.css`.
-- **Features**:
-  - Collapsible banner showing latest alert with expandable drawer.
-  - Dismiss button triggering `app.deleteNotification(notificationId)`.
-  - Standard responsive styling integrating with sticky shell headers.
-
-### App Action Bar (`app-action-bar.mjs` and `action-bar.css`)
-
-- **Context**: Reusable action bar for desktop and mobile touch navigation.
-- **Reference Source**: `hinolugi-counters/webapp/js/view/app-action-bar.mjs` and `webapp/css/action-bar.css`.
-- **Features**:
-  - Renders action buttons from registered action IDs.
-  - Supports enabled/disabled states, tooltip descriptions, and badge indicators.
-  - Standard layout and mobile bottom-bar positioning.
-
-### Top Progress Bar Stylesheet (`progress.css`)
-
-- **Context**: Visual style guide section 3.1 mandates `#app-top-progress-bar`.
-- **Reference Source**: `hinolugi-counters/webapp/css/progress.css`.
-- **Features**:
-  - Fixed 3px indeterminate linear progress animation across top edge of viewport.
-  - Smooth opacity transitions when toggled active.
-
-### Auth Service Redirection Helper (`hinolugi-auth-redirect.mjs`)
-
-- **Context**: Generic SSO authentication redirect helper for HiNoLuGi applications.
-- **Reference Source**: `hinolugi-counters/webapp/js/utils/hinolugi-auth-redirect.mjs`.
-- **Features**:
-  - `redirectToHinolugiAuth({ authServiceBaseUrl, appName, redirectUrl, appLogoUrl })`
-  - Encodes query parameters and redirects browser to `hinolugi-auth/sign-in`.
+- Executed `npm test`: all 154 tests passed across 32 suites.
+- Executed prettier on newly created and modified modules.
