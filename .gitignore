@@ -9,6 +9,10 @@ build
 bin
 idea-bin
 
+# Log files
+logs/
+**/*.log
+
 # Ignore env files
 **/*.env
 

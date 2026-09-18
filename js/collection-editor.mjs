@@ -336,3 +336,4 @@ export default class CollectionEditor {
     return domutils.htmlToElement(html);
   }
 }
+

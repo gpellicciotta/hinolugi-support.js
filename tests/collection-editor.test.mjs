@@ -395,3 +395,4 @@ test('CollectionEditor Unit Suite in hinolugi-support.js', async (t) => {
     editor.destroy();
   });
 });
+

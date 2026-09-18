@@ -311,3 +311,4 @@ Catalogue views implement a standardized list header based on [`css/catalogue-vi
 
 - Views never unmount or disappear during asynchronous background operations.
 - The `.component.wait-overlay > .main` maintains high visibility (`opacity: 0.94`).
+
