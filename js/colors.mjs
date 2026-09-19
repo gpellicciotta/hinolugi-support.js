@@ -4,11 +4,10 @@
 import { constrain, random } from './math.mjs';
 
 /**
- *  Give a random RGB color value.
+ * Give a random RGB color value.
  *
- *  @param withAlpha Whether to also have a random alpha-component (between 0.1 and 1.0).
- *
- *  @return A random RGB or RGBA value.
+ * @param {boolean} [withAlpha=false] Whether to also have a random alpha-component (between 0.1 and 1.0).
+ * @returns {string} A random RGB or RGBA CSS string.
  */
 export function randomRgbColor(withAlpha = false) {
   const r = random(1, 255);
@@ -25,13 +24,13 @@ export function randomRgbColor(withAlpha = false) {
 /**
  * Convert an HSL color value to RGB.
  *
- * Conversion formula adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+ * Conversion formula adapted from http://en.wikipedia.org/wiki/HSL_color_space
  * and https://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
  *
- * @param h The hue: a float value in the range [0, 1]
- * @param s The saturation: a float value in the range [0, 1]
- * @param l The lightness: a float value in the range [0, 1]
- * @return An object with 'r', 'g' and 'b' properties, all integers in the range [0, 255].
+ * @param {number} h The hue: a float value in the range [0, 1].
+ * @param {number} s The saturation: a float value in the range [0, 1].
+ * @param {number} l The lightness: a float value in the range [0, 1].
+ * @returns {{r: number, g: number, b: number}} An object with 'r', 'g' and 'b' properties, all integers in the range [0, 255].
  */
 export function hslToRgb(h, s, l) {
   let r = 0;
@@ -79,11 +78,10 @@ function hueToRgb(p, q, t) {
  * Conversion formula adapted from http://en.wikipedia.org/wiki/HSL_color_space
  * and https://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
  *
- * @param r The red color component: an integer in the range [0, 255].
- * @param g The green color component: an integer in the range [0, 255].
- * @param b The blue color component: an integer in the range [0, 255].
- *
- * @return An object with 'h' (hue), 's' (saturation) and 'l' (light) properties: float values in the range [0, 1].
+ * @param {number} r The red color component: an integer in the range [0, 255].
+ * @param {number} g The green color component: an integer in the range [0, 255].
+ * @param {number} b The blue color component: an integer in the range [0, 255].
+ * @returns {{h: number, s: number, l: number}} An object with 'h' (hue), 's' (saturation) and 'l' (light) properties: float values in the range [0, 1].
  */
 export function rgbToHsl(r, g, b) {
   r = r / 255.0;
@@ -117,11 +115,10 @@ export function rgbToHsl(r, g, b) {
 }
 
 /**
- *  Format an HSL color (as returned by `rgbToHsl`) as a CSS `hsl(...)` string.
+ * Format an HSL color (as returned by `rgbToHsl`) as a CSS `hsl(...)` string.
  *
- *  @param hsl An object with 'h' (hue), 's' (saturation) and 'l' (light) properties: float values in the range [0, 1].
- *
- *  @return A CSS-compatible `hsl(H,S%,L%)` string.
+ * @param {{h: number, s: number, l: number}} hsl An object with 'h' (hue), 's' (saturation) and 'l' (light) properties: float values in the range [0, 1].
+ * @returns {string} A CSS-compatible `hsl(H,S%,L%)` string.
  */
 export function hslToString(hsl) {
   let hslStr = 'hsl(';
@@ -463,9 +460,8 @@ function alphaComponentValue(v) {
 /**
  * Convert a string into an RGB color value.
  *
- * @param v The value string, which should be of the form 'rgb(r,g,b)', 'rgb(r%,g%,b%)', 'rgba(r,g,b,a)', '#rrggbb', '#rgb', '#rgba', '#rrggbb' or '#rrggbbaa'.
- *
- * @return An object with 'r', 'g', 'b' and 'a' properties, the first three are integers in the range [0, 255], the latter 'a' a float in the range [0, 1].
+ * @param {string} v The value string, which should be of the form 'rgb(r,g,b)', 'rgb(r%,g%,b%)', 'rgba(r,g,b,a)', '#rrggbb', '#rgb', '#rgba', '#rrggbbaa', or a CSS color name.
+ * @returns {{r: number, g: number, b: number, a: number}} An object with 'r', 'g', 'b' and 'a' properties, the first three are integers in the range [0, 255], the latter 'a' a float in the range [0, 1].
  */
 export function stringToRgba(v) {
   v = (v || '').trim();
@@ -529,11 +525,10 @@ export function stringToRgba(v) {
 }
 
 /**
- *  Format an RGBA color (as returned by `stringToRgba`) as a CSS `rgba(...)` string.
+ * Format an RGBA color (as returned by `stringToRgba`) as a CSS `rgba(...)` string.
  *
- *  @param v An object with 'r', 'g', 'b' (0-255) and 'a' (0.0-1.0) properties.
- *
- *  @return A CSS-compatible `rgba(R,G,B,A)` string.
+ * @param {{r: number, g: number, b: number, a: number}} v An object with 'r', 'g', 'b' (0-255) and 'a' (0.0-1.0) properties.
+ * @returns {string} A CSS-compatible `rgba(R,G,B,A)` string.
  */
 export function rgbaToString(v) {
   let rgbaStr = 'rgba(';
@@ -549,13 +544,12 @@ export function rgbaToString(v) {
 }
 
 /**
- *  Best text color (white or black) for a specific RGB-background color.
+ * Best text color (white or black) for a specific RGB-background color.
  *
- *  @param r Red component in range [0-1]
- *  @param g Green component in range [0-1]
- *  @param b Blue component in range [0-1]
- *
- *  @return The string 'white' or 'black'.
+ * @param {number} r Red component in range [0, 1].
+ * @param {number} g Green component in range [0, 1].
+ * @param {number} b Blue component in range [0, 1].
+ * @returns {'white'|'black'} The contrast text color string 'white' or 'black'.
  */
 export function textContrastColor(r, g, b) {
   // Based on answer in https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color

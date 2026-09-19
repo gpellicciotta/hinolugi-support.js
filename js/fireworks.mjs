@@ -3,10 +3,13 @@ import * as log from './logs.mjs';
 import { distance, random, randomElement } from './math.mjs';
 import { Vector, vectorFromPolar, vectorFromCartesian } from './vector.mjs';
 
-// Canvas-based fireworks animation effect, rendered onto a caller-provided <canvas> element.
+/**
+ * Canvas-based fireworks animation effect rendered onto a caller-provided `<canvas>` element.
+ *
+ * @module fireworks
+ */
 
 // Dev Notes
-
 // - Resizing doesn't work properly
 // - Unclear whether the fading trail actually works property
 // - The calculation of initial speed is unproven
@@ -27,13 +30,19 @@ const fireworksById = new Map();
 // Fireworks functions
 
 /**
- *  Start showing fireworks on the canvas.
+ * @typedef {Object} FireworksOptions
+ * @property {number} [frequency=5] Explosions per second (between 1 and 10).
+ * @property {'normal'|'circle'|'heart'|'donut'|'rose'|'star'|'eagle'|'skull'|'rabbit'|'twinkle'|'umbrella'|'svg-path'|'random'} [shape='normal'] Shape pattern of explosions.
+ * @property {string} [svg-path-id] Document element ID of an SVG `<path>` when `shape` is `'svg-path'`.
+ * @property {string} [svgPathId] CamelCase alias for `svg-path-id`.
+ */
+
+/**
+ * Start showing fireworks animation on the provided canvas element.
  *
- *  @param canvasEl The canvas to draw the fireworks on.
- *  @param options Following options are available to tweak how the fireworks will show:
- *                  'frequency': number of fireworks explosions per second. Between 1 and 10 with 5 being the default.
- *                  'shape': one of the following: 'normal' (this is the default), 'circle', 'heart', 'donut', 'rose', 'star', 'eagle', 'skull', 'rabbit', 'twinkle', 'umbrella', 'svg-path' or 'random'.
- *                  'svg-path-id': only relevant if 'shape' = 'svg-path': the ID of the HTML document element that represents and SVG <path> element.
+ * @param {HTMLCanvasElement} canvasEl The canvas element to render fireworks on.
+ * @param {FireworksOptions} [options] Configuration options for frequency, shape, and custom SVG paths.
+ * @returns {void}
  */
 export function start(canvasEl, options) {
   // Reset any previous:
@@ -95,9 +104,10 @@ export function start(canvasEl, options) {
 }
 
 /**
- *  Stop showing fireworks on the canvas.
+ * Stop showing fireworks animation on the provided canvas and remove window event listeners.
  *
- *  @param canvasEl The canvas to stop drawing the fireworks on.
+ * @param {HTMLCanvasElement} canvasEl The canvas element running the fireworks animation.
+ * @returns {void}
  */
 export function stop(canvasEl) {
   const fireworksId = +(canvasEl.dataset.fireworksId || 0);

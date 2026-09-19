@@ -12,8 +12,9 @@
 export class StorageAdapter {
   /**
    * Opens the storage adapter for a given user.
-   * @param {string|number} [userId]
-   * @returns {Promise<StorageAdapter>}
+   *
+   * @param {string|number} [userId] Identifier of the user partitioning the store.
+   * @returns {Promise<StorageAdapter>} Resolves with the active adapter instance.
    */
   async open(userId) {
     throw new Error('Not implemented');
@@ -21,7 +22,8 @@ export class StorageAdapter {
 
   /**
    * Closes the storage adapter and resets active user state.
-   * @returns {Promise<void>}
+   *
+   * @returns {Promise<void>} Resolves when the adapter is closed.
    */
   async close() {
     throw new Error('Not implemented');
@@ -29,9 +31,10 @@ export class StorageAdapter {
 
   /**
    * Retrieves a single item from the store by key.
-   * @param {string} storeName
-   * @param {string|number|Array} key
-   * @returns {Promise<*>}
+   *
+   * @param {string} storeName Target object store or collection name.
+   * @param {string|number|Array} key Primary key or composite key to look up.
+   * @returns {Promise<*>} Resolves with the retrieved record or undefined if not found.
    */
   async get(storeName, key) {
     throw new Error('Not implemented');
@@ -39,8 +42,9 @@ export class StorageAdapter {
 
   /**
    * Retrieves all items from the store.
-   * @param {string} storeName
-   * @returns {Promise<Array>}
+   *
+   * @param {string} storeName Target object store or collection name.
+   * @returns {Promise<Array<*>>} Resolves with all records in the store.
    */
   async getAll(storeName) {
     throw new Error('Not implemented');
@@ -48,10 +52,11 @@ export class StorageAdapter {
 
   /**
    * Puts or updates an item in the store.
-   * @param {string} storeName
-   * @param {*} value
-   * @param {string|number|Array} [key]
-   * @returns {Promise<string|number>}
+   *
+   * @param {string} storeName Target object store or collection name.
+   * @param {*} value Value to persist.
+   * @param {string|number|Array} [key] Optional explicit primary key.
+   * @returns {Promise<string|number>} Resolves with the assigned record key.
    */
   async put(storeName, value, key) {
     throw new Error('Not implemented');
@@ -59,9 +64,10 @@ export class StorageAdapter {
 
   /**
    * Deletes an item from the store by key.
-   * @param {string} storeName
-   * @param {string|number|Array} key
-   * @returns {Promise<void>}
+   *
+   * @param {string} storeName Target object store or collection name.
+   * @param {string|number|Array} key Primary key of the record to remove.
+   * @returns {Promise<void>} Resolves when the record is deleted.
    */
   async delete(storeName, key) {
     throw new Error('Not implemented');
@@ -69,8 +75,9 @@ export class StorageAdapter {
 
   /**
    * Clears all items from the store.
-   * @param {string} storeName
-   * @returns {Promise<void>}
+   *
+   * @param {string} storeName Target object store or collection name.
+   * @returns {Promise<void>} Resolves when the store is cleared.
    */
   async clear(storeName) {
     throw new Error('Not implemented');
@@ -78,8 +85,9 @@ export class StorageAdapter {
 
   /**
    * Counts the number of items in the store.
-   * @param {string} storeName
-   * @returns {Promise<number>}
+   *
+   * @param {string} storeName Target object store or collection name.
+   * @returns {Promise<number>} Resolves with the total number of items stored.
    */
   async count(storeName) {
     throw new Error('Not implemented');
@@ -240,8 +248,11 @@ export class MemoryStorageAdapter extends StorageAdapter {
  */
 export class IndexedDbStorageAdapter extends StorageAdapter {
   /**
-   * @param {string|Object} [dbPrefixOrOptions='hinolugi_counters_user_']
-   * @param {Object} [options={}]
+   * @param {string|Object} [dbPrefixOrOptions='hinolugi_counters_user_'] Database name prefix or options configuration object.
+   * @param {Object} [options={}] Optional adapter settings when string prefix was provided.
+   * @param {number} [options.version=2] Target IndexedDB schema version.
+   * @param {Array<string|{name: string, keyPath?: string|null, autoIncrement?: boolean, indexes?: Array<{name: string, keyPath?: string, unique?: boolean}>}>} [options.stores] Custom store declarations.
+   * @param {function(IDBDatabase, IDBVersionChangeEvent): void} [options.onUpgrade] Custom database upgrade callback.
    */
   constructor(dbPrefixOrOptions = 'hinolugi_counters_user_', options = {}) {
     super();
@@ -263,8 +274,9 @@ export class IndexedDbStorageAdapter extends StorageAdapter {
 
   /**
    * Opens the IndexedDB instance for the specified user.
-   * @param {string|number} [userId='anonymous']
-   * @returns {Promise<IndexedDbStorageAdapter>}
+   *
+   * @param {string|number} [userId='anonymous'] Identifier of the active user.
+   * @returns {Promise<IndexedDbStorageAdapter>} Resolves with opened adapter instance.
    */
   async open(userId = 'anonymous') {
     if (typeof indexedDB === 'undefined') {
@@ -568,10 +580,11 @@ function pruneIfNeeded(store) {
 }
 
 /**
- *  Record a use of `key` under `storageKey`, incrementing its usage count and last-used timestamp.
+ * Record a use of `key` under `storageKey`, incrementing its usage count and last-used timestamp.
  *
- *  @param {string} storageKey The localStorage key identifying this tracked set.
- *  @param {string} key The value being tracked.
+ * @param {string} storageKey The localStorage key identifying this tracked set.
+ * @param {string} key The value being tracked.
+ * @returns {void}
  */
 export function recordUsage(storageKey, key) {
   if (!key) return;
@@ -585,22 +598,29 @@ export function recordUsage(storageKey, key) {
 }
 
 /**
- *  @param {string} storageKey The localStorage key.
- *  @param {number} limit Maximum number of keys to return.
- *  @return {string[]} Up to `limit` keys previously recorded under `storageKey`, pinned first, then most-used/most-recent.
+ * Retrieve suggested keys based on pinned status, frequency, and recency.
+ *
+ * @param {string} storageKey The localStorage key.
+ * @param {number} [limit=10] Maximum number of keys to return.
+ * @returns {string[]} Up to `limit` keys previously recorded under `storageKey`, pinned first, then most-used/most-recent.
  */
 export function getSuggestions(storageKey, limit = 10) {
   return sortedKeys(readStore(storageKey)).slice(0, limit);
 }
 
+/**
+ * Alias of getSuggestions.
+ * @type {typeof getSuggestions}
+ */
 export const getTopKeys = getSuggestions;
 
 /**
- *  Pins (or unpins) `key` under `storageKey`.
+ * Pins (or unpins) `key` under `storageKey`.
  *
- *  @param {string} storageKey The localStorage key.
- *  @param {string} key The tracked key.
- *  @param {boolean} pinned Whether the key is pinned.
+ * @param {string} storageKey The localStorage key.
+ * @param {string} key The tracked key.
+ * @param {boolean} pinned Whether the key is pinned.
+ * @returns {void}
  */
 export function setPinned(storageKey, key, pinned) {
   if (!key) return;
@@ -611,14 +631,18 @@ export function setPinned(storageKey, key, pinned) {
   writeStore(storageKey, store);
 }
 
+/**
+ * Alias of setPinned.
+ * @type {typeof setPinned}
+ */
 export const pinKey = setPinned;
 
 /**
- *  Check if `key` is pinned under `storageKey`.
+ * Check if `key` is pinned under `storageKey`.
  *
- *  @param {string} storageKey The localStorage key.
- *  @param {string} key The tracked key.
- *  @return {boolean} True if pinned.
+ * @param {string} storageKey The localStorage key.
+ * @param {string} key The tracked key.
+ * @returns {boolean} True if pinned.
  */
 export function isPinned(storageKey, key) {
   const store = readStore(storageKey);
@@ -626,13 +650,14 @@ export function isPinned(storageKey, key) {
 }
 
 /**
- *  Sorts an arbitrary array of items in place by tracked pin/usage status under `storageKey`
- *  (pinned first, then most-used/most-recent, then original relative order for untracked items).
+ * Sorts an arbitrary array of items in place by tracked pin/usage status under `storageKey`
+ * (pinned first, then most-used/most-recent, then original relative order for untracked items).
  *
- *  @param {Array} items The array to sort in place.
- *  @param {string} storageKey The localStorage key.
- *  @param {Function} keyFn Given an item, returns the key it's tracked under.
- *  @return {Array} The same array, sorted.
+ * @template T
+ * @param {T[]} items The array to sort in place.
+ * @param {string} storageKey The localStorage key.
+ * @param {function(T): string} keyFn Given an item, returns the key it's tracked under.
+ * @returns {T[]} The same array, sorted.
  */
 export function sortByUsage(items, storageKey, keyFn) {
   const store = readStore(storageKey);

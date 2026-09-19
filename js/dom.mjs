@@ -1,15 +1,15 @@
+/**
+ * DOM related utility functions, canvas sizing helpers, animation frame management, and touch gesture handling.
+ */
 import * as log from './logs.mjs';
-
-// DOM related utility functions. These often rely on the global 'document' and 'window' objects.
 
 // ASPECT RATIO
 
 /**
- *  Get the CSS pixel size of a canvas element.
+ * Get the CSS pixel size of a canvas element.
  *
- *  @param canvasElement The dom <canvas> element to get the current CSS pixel size for.
- *
- *  @return A size object with properties "width" and "height".
+ * @param {HTMLCanvasElement} canvasElement The DOM canvas element to get the current CSS pixel size for.
+ * @returns {{width: number, height: number}} A size object with properties "width" and "height".
  */
 export function getCssPixelSize(canvasElement) {
   // The + prefix casts it to an integer; the slice method gets rid of "px"
@@ -19,26 +19,18 @@ export function getCssPixelSize(canvasElement) {
 }
 
 /**
- *  Ensure the sizes for the provided (typically: canvas) element are re-set initially and after each resize event.
- *  In other words: the physical canvas size will track its CSS size changes.
+ * Ensure the sizes for the provided canvas element track CSS size changes.
  *
- *  Works by initially asking the desired CSS pixel size of the canvas and settings its
- *  physical 'width' and 'height' properties in accordance with the pixelScale, while also
- *  scaling the canvas context with the same pixelScale: this is needed to ensure a crisp display.
+ * Works by initially asking the desired CSS pixel size of the canvas and settings its
+ * physical 'width' and 'height' properties in accordance with the pixelScale, while also
+ * scaling the canvas context with the same pixelScale: this is needed to ensure a crisp display.
  *
- *  Subsequent window resize events will then re-trigger all of the above.
+ * Subsequent window resize events will then re-trigger all of the above.
  *
- *  Relies on following global objects: window
- *
- *  @param canvasElement The dom <canvas> element to ensure a correct aspect ratio for.
- *                       This element will be adapted to always return a context that will be scaled with the pixelScale.
- *  @param determineCssSizeCallback A callback function that should return an object with 'width' and 'height' properties
- *                                  indicating the desired CSS pixel size of the canvas element that is passed as argument.
- *                                  This callback function will be called initially and after each window resize event.
- *                                  If undefined, the actual CSS pixel sizes as returned from getCssPixelSize will be used.
- *  @param pixelScale The ratio of the resolution in physical pixels to the resolution in CSS pixels for the current display device.
- *                    This value could also be interpreted as the ratio of pixel sizes: the size of one CSS pixel to the size of one physical pixel.
- *                    If undefined, window.devicePixelRatio will be used.
+ * @param {HTMLCanvasElement} canvasElement The DOM canvas element to ensure a correct aspect ratio for.
+ * @param {function(HTMLCanvasElement): {width: number, height: number}} [determineCssSizeCallback] Callback returning desired CSS dimensions.
+ * @param {number} [pixelScale] Device pixel ratio scale factor.
+ * @returns {void}
  */
 export function ensureTrackingCanvasSize(canvasElement, determineCssSizeCallback, pixelScale) {
   determineCssSizeCallback = determineCssSizeCallback || getCssPixelSize;
@@ -76,13 +68,12 @@ export function ensureTrackingCanvasSize(canvasElement, determineCssSizeCallback
 // TIMING RELATED
 
 /**
- *  Execute a callback as result of an event, but ensure
- *  that, if the event triggers in quick succession, the callback
- *  is only called every ms.
+ * Execute a callback as result of an event, but ensure that the callback is only called at most once per time window.
  *
- *  @param callback The callback function to be called.
- *  @param afterMs The minimum number of milliseconds to expire before calling the callback.
- *                 Any intermediate invocations due to the event triggering, will not lead to callback being invoked.
+ * @param {function(Event): void} callback The callback function to be called.
+ * @param {number} [ms=100] The minimum number of milliseconds to expire before calling the callback.
+ * @returns {function(Event): void} Event listener throttling function.
+ * @throws {TypeError} When callback is not a function.
  */
 export function moderatedEventCallback(callback, ms) {
   if (typeof callback !== 'function') {
@@ -110,12 +101,11 @@ let documentActivatedTimer = null;
 const documentActivatedCallbacks = [];
 
 /**
- *  Register a callback function to be invoked when the document
- *  is activated (after presumeably being inactive first).
+ * Register a callback function to be invoked when the document is activated.
  *
- *  Relies on following global objects: document, window
- *
- *  @param callback The callback function to be invoked.
+ * @param {function(): void} callback The callback function to be invoked.
+ * @returns {void}
+ * @throws {TypeError} When callback is not a function.
  */
 export function onDocumentActivated(callback) {
   if (typeof callback !== 'function') {
@@ -168,15 +158,15 @@ let domReadyCallbacks = [];
 let globalDomReadyEventHandlerInstalled = false;
 
 /**
- *  Register a callback function to be invoked when the HTML DOM is ready.
- *  Multiple callbacks can get registered.
+ * Register a callback function to be invoked when the HTML DOM is ready.
+ * Multiple callbacks can get registered.
  *
- *  If the DOM is already ready when this function is invoked, the callback will be
- *  called immediately, yet asynchronously.
+ * If the DOM is already ready when this function is invoked, the callback will be
+ * called immediately, yet asynchronously.
  *
- *  Relies on following global objects: document, window
- *
- *  @param callback The callback function to be invoked.
+ * @param {function(): void} callback The callback function to be invoked.
+ * @returns {void}
+ * @throws {TypeError} When callback is not a function.
  */
 export function onDomReady(callback) {
   if (typeof callback !== 'function') {
@@ -243,9 +233,10 @@ const animFrameCallbacks = [];
 let globalAnimFrameEventHandlerInstalled = false;
 
 /**
- *  Cancel an animation function that was previously registered via onAnimFrame.
+ * Cancel an animation function that was previously registered via onAnimFrame.
  *
- *  @param id The function ID returned from onAnimFrame.
+ * @param {number} id The function ID returned from onAnimFrame.
+ * @returns {void}
  */
 export function cancelAnimFrame(id) {
   if (id >= 0 && id < animFrameCallbacks.length) {
@@ -254,12 +245,13 @@ export function cancelAnimFrame(id) {
 }
 
 /**
- *  Request a callback to be called once whenever the browser is next ready to render a frame.
+ * Request a callback to be called once whenever the browser is next ready to render a frame.
  *
- *  Similar to <c>window.requestAnimationFrame</c> but ensures to emulate
- *  this function if it doesn't exist yet (as can be case in older browsers).
+ * Similar to `window.requestAnimationFrame` but ensures to emulate
+ * this function if it doesn't exist yet (as can be case in older browsers).
  *
- *  @param callback The function to invoke whenever the browser is ready.
+ * @param {FrameRequestCallback} callback The function to invoke whenever the browser is ready.
+ * @returns {number} Request ID.
  */
 export function requestAnimationFrame(callback) {
   if (!window.requestAnimationFrame) {
@@ -277,12 +269,12 @@ export function requestAnimationFrame(callback) {
 }
 
 /**
- *  Call an animation function a number of times per second.
+ * Call an animation function a number of times per second.
  *
- *  @param callback The function to invoke repeatedly.
- *  @param fps The number of times per second the callback should get invoked.
- *
- *  @return An ID for the callback that can be used in cancelAnimFrame.
+ * @param {function(number): void} callback The function to invoke repeatedly.
+ * @param {number} [fps=60] The number of times per second the callback should get invoked.
+ * @returns {number} An ID for the callback that can be used in cancelAnimFrame.
+ * @throws {TypeError} When callback is not a function.
  */
 export function onAnimFrame(callback, fps) {
   if (typeof callback !== 'function') {
@@ -319,7 +311,7 @@ export function onAnimFrame(callback, fps) {
 }
 
 /**
- *  Invoked when another animation frame should be prepared.
+ * Invoked when another animation frame should be prepared.
  */
 function fireAnimFrame(fireTime) {
   for (let i = 0; i < animFrameCallbacks.length; i++) {
@@ -338,15 +330,14 @@ function fireAnimFrame(fireTime) {
 // PLAY
 
 /**
- *  Run a setup function once and then, fps times per second,
- *  invoke the animate callback, with as argument whatever setup returned.
+ * Run a setup function once and then, fps times per second,
+ * invoke the animate callback, with as argument whatever setup returned.
  *
- *  @param setup One-time setup function. Can return an argument for animate.
- *  @param animate The animate function that will be invoked repeatedly.
- *                 Will have the 'window' object as 'this' and the return
- *                 value of setup as argument.
- *  @param fps Frames-per-second. The number of time per second, animate should be invoked.
- *             Defaults to 60 if not specified.
+ * @param {function(): *} setup One-time setup function. Can return an argument for animate.
+ * @param {function(*): void} animate The animate function that will be invoked repeatedly.
+ * @param {number} [fps=60] Frames-per-second rate.
+ * @returns {void}
+ * @throws {TypeError} When setup or animate is not a function.
  */
 export function play(setup, animate, fps) {
   if (typeof setup !== 'function') {
@@ -366,13 +357,12 @@ export function play(setup, animate, fps) {
 // SWIPE GESTURES
 
 /**
- *  Register a callback function to be invoked when a double-tap has occurred
- *  on the target element.
+ * Register a callback function to be invoked when a double-tap has occurred on the target element.
  *
- *  Relies on following global objects: document, window
- *
- *  @param targetElement The element that is to be monitored for swipe gestures.
- *  @param dblTapCallback The callback function to be invoked whenever the double-tap has happened.
+ * @param {HTMLElement} targetElement The element that is to be monitored for swipe gestures.
+ * @param {function(): void} dblTapCallback The callback function to be invoked whenever double-tap occurs.
+ * @returns {void}
+ * @throws {TypeError} When dblTapCallback is not a function.
  */
 export function onDoubleTap(targetElement, dblTapCallback) {
   if (typeof dblTapCallback !== 'function') {
@@ -398,16 +388,13 @@ export function onDoubleTap(targetElement, dblTapCallback) {
 }
 
 /**
- *  Register a callback function to be invoked when a swipe has occurred on the target element.
+ * Register a callback function to be invoked when a swipe has occurred on the target element.
  *
- *  Relies on following global objects: document, window
- *
- *  @param targetElement The element that is to be monitored for swipe gestures.
- *  @param swipeCallback The callback function to be invoked whenever a swipe has finished.
- *                       Will get an object as argument with properties:
- *                        'dir': the swipe direction: 'up', 'down', 'left' or 'right'.
- *                        'dist': the absolute distance, in pixels, in the swipe direction
- *  @param dblTapCallback The callback function to be invoked whenever a double-tap has been detected.
+ * @param {HTMLElement} targetElement The element that is to be monitored for swipe gestures.
+ * @param {function({dir: string, dist: number, start: Object, end: Object}): void} swipeCallback Callback invoked upon swipe completion.
+ * @param {function(string): void} [dblTapCallback=null] Optional callback invoked upon double tap.
+ * @returns {void}
+ * @throws {TypeError} When swipeCallback is not a function.
  */
 export function onSwipe(targetElement, swipeCallback, dblTapCallback = null) {
   if (typeof swipeCallback !== 'function') {
@@ -535,21 +522,17 @@ export function onSwipe(targetElement, swipeCallback, dblTapCallback = null) {
 }
 
 /**
- *  Register a callback function to be invoked when a swipe/move of a min. distance has occurred on the target element.
+ * Register a callback function to be invoked when a move of a minimum distance occurs on the target element.
  *
- *  Relies on following global objects: document, window
+ * Will start tracking move distance on mousedown or touchstart, and then re-calculate move distance
+ * on subsequent mousemove or touchmove events. Whenever the traveled distance is larger than minDist,
+ * the callback will be invoked.
  *
- *  Will start tracking move distance on mouse down or touchstart, and then re-calculate 'move distance'
- *  on subsequent mousemove or touchmove events. Whenever the travelled distance is larger than minDist,
- *  the callback be invoked. If the distance travelled is smaller than minDist on mouseup or touchend, no
- *  callback will be invoked.
- *
- *  @param targetElement The element that is to be monitored for swipe gestures.
- *  @param minDist The minimum distance move for which the callback should be called.
- *  @param moveCallback The callback function to be invoked whenever the distance moved has become larger than minDist.
- *                       Will get an object as argument with properties:
- *                        'dir': the move direction: 'up', 'down', 'left' or 'right'. Or 'start' or 'stop' when just starting/stopping.
- *                        'dist': the absolute distance, in pixels, in the move direction. Will be 'null' when 'dir' is 'start' or 'stop'.
+ * @param {HTMLElement} targetElement The element that is to be monitored.
+ * @param {number} [minDist=25] The minimum distance moved in pixels before triggering callback.
+ * @param {function({dir: string, dist: ?number, start: Object, end: Object}): void} moveCallback Callback invoked upon move updates.
+ * @returns {void}
+ * @throws {TypeError} When moveCallback is not a function.
  */
 export function onMove(targetElement, minDist, moveCallback) {
   const MIN_DIST = 25; // px
@@ -729,11 +712,11 @@ export function onMove(targetElement, minDist, moveCallback) {
 }
 
 /**
- *  Turn a string representation of HTML into an HTML element.
- *  This relies on the string representating having a single root element.
+ * Turn a string representation of HTML into an HTML element.
+ * This relies on the string representation having a single root element.
  *
- *  @param htmlText The HTML text to be turned into an element (tree).
- *  @return The first (and expected only) element of the element tree created from htmlText.
+ * @param {string} htmlText The HTML text to be turned into an element tree.
+ * @returns {Element|ChildNode|null} The first element of the element tree created from htmlText.
  */
 export function htmlToElement(htmlText) {
   const template = document.createElement('template');
@@ -742,11 +725,11 @@ export function htmlToElement(htmlText) {
 }
 
 /**
- *  Insert an HTML element just after another HTML element.
+ * Insert an HTML element directly after another HTML element.
  *
- *  @param anchorHtmlEl The element to place a new element after. This element must have a parent.
- *  @param newHtmlEl The new element to be added.
- *  @return The element that was inserted or null.
+ * @param {Element} anchorHtmlEl The element to place a new element after. This element must have a parent.
+ * @param {Element} newHtmlEl The new element to be added.
+ * @returns {Element|null} The element that was inserted or null.
  */
 export function insertAfter(anchorHtmlEl, newHtmlEl) {
   return anchorHtmlEl.insertAdjacentElement('afterend', newHtmlEl);

@@ -1,11 +1,13 @@
 import * as log from './logs.mjs';
 
-// Utility for re-ordering the items in a container by dragging them around
-//
-// Requires a container with child elements that have a (descendent that has a) 'draggable'
-// attribute.
-// While dragging, the child element will get a CSS class of 'dragging'.
-//
+/**
+ * HTML5 drag-and-drop and touch-based item re-ordering within container elements.
+ *
+ * Provides the makeReordable function to enable intuitive interactive re-ordering
+ * of child elements across mouse and touch environments.
+ *
+ * @module reorder
+ */
 
 let dragState = {
   item: null,
@@ -94,10 +96,14 @@ function addRevertibleEventListener(targetElement, eventType, eventCallback, opt
 }
 
 /**
- * Make a container's child elements re-ordable by enabling dragging them into a new position.
+ * Make a container's child elements re-orderable by dragging them into a new position.
  *
- * @param containerEl The container that is expected to have child elements to be re-ordered by dragging.
- * @param dropCallBack Function to be invoked when an element is dropped. The argument will be the element being dropped.
+ * Requires child elements or descendants to have a `draggable` attribute.
+ * While being dragged, active items receive the CSS class `'dragging'`.
+ *
+ * @param {HTMLElement} containerEl The container holding draggable child elements.
+ * @param {(droppedElement: HTMLElement) => void} [dropCallBack] Function invoked when an element is dropped.
+ * @returns {void}
  */
 export function makeReordable(containerEl, dropCallBack) {
   // Container events:

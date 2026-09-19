@@ -1,4 +1,11 @@
-// Perlin noise
+/**
+ * Perlin noise generation and octave/seed configuration.
+ *
+ * Provides harmonic pseudo-random sequence generation in 1D, 2D, or 3D space
+ * for natural motion, textures, and procedural simulations.
+ *
+ * @module noise
+ */
 
 // Based on: https://mrl.nyu.edu/~perlin/noise/
 // Adapted from: https://github.com/processing/p5.js/blob/master/src/math/noise.js
@@ -48,10 +55,10 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  * the smoother the resulting noise sequence will be. Steps of 0.005-0.03
  * work best for most applications, but this will differ depending on use.
  *
- * @param  {Number} x   X-coordinate in noise space.
- * @param  {Number} [y] Y-coordinate in noise space.
- * @param  {Number} [z] Z-coordinate in noise space.
- * @return {Number}     Perlin noise value (between 0 and 1) at specified
+ * @param  {number} x   X-coordinate in noise space.
+ * @param  {number} [y=0] Y-coordinate in noise space.
+ * @param  {number} [z=0] Z-coordinate in noise space.
+ * @returns {number}     Perlin noise value (between 0 and 1) at specified
  *                      coordinates.
  */
 export function noise(x, y = 0, z = 0) {
@@ -148,8 +155,9 @@ export function noise(x, y = 0, z = 0) {
  * By changing these parameters, the signal created by the <b>noise()</b>
  * function can be adapted to fit very specific needs and characteristics.
  *
- * @param {Number} lod The number of octaves to be used by the noise.
- * @param {Number} falloff The falloff factor for each octave.
+ * @param {number} lod The number of octaves to be used by the noise.
+ * @param {number} falloff The falloff factor for each octave.
+ * @returns {void}
  */
 export function noiseDetail(lod, falloff) {
   if (lod > 0) {
@@ -166,7 +174,8 @@ export function noiseDetail(lod, falloff) {
  * <b>seed</b> parameter to a constant to return the same pseudo-random
  * numbers each time the software is run.
  *
- * @param {Number} seed The seed value.
+ * @param {number} seed The seed value.
+ * @returns {void}
  */
 export function noiseSeed(seed) {
   // Linear Congruential Generator

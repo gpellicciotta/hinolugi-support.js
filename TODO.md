@@ -15,8 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [~] T0026 [owner: @worker-1] Document the complete API surface across all modules, classes, methods, parameters, return values, and constants.
-- [ ] A0027 [needs: T0026] Make a full release and ensure it is published.
+- [ ] A0027 Make a full release and ensure it is published.
 
 ---
 

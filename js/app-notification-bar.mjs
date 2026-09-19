@@ -3,20 +3,54 @@ import { formatRelativeDateTime } from './dates.mjs';
 import { htmlToElement } from './dom.mjs';
 import { escapeHtml } from './strings.mjs';
 
+/**
+ * Application notification bar with dismiss actions, expandable drawer, and type badges.
+ *
+ * @module app-notification-bar
+ */
+
+/**
+ * Event dispatched when a new notification is added.
+ *
+ * @type {string}
+ */
 export const NOTIFICATION_ADDED_EVENT = 'notification-added';
+
+/**
+ * Event dispatched when an individual notification is deleted.
+ *
+ * @type {string}
+ */
 export const NOTIFICATION_DELETED_EVENT = 'notification-deleted';
+
+/**
+ * Event dispatched when all notifications are cleared.
+ *
+ * @type {string}
+ */
 export const NOTIFICATIONS_CLEARED_EVENT = 'notifications-cleared';
 
 /**
- *  An application notification bar, showing the latest non-dismissed notification
- *  with an expandable drawer for earlier notifications.
+ * An application notification bar, showing the latest non-dismissed notification
+ * with an expandable drawer for earlier notifications.
  */
 export default class AppNotificationBar extends AppView {
+  /**
+   * Create an AppNotificationBar instance.
+   *
+   * @param {string} id Unique component ID.
+   * @param {object} app App instance this notification bar belongs to.
+   */
   constructor(id, app) {
     super(id, app, 'Notification Bar');
     this.notificationBarItems = [];
   }
 
+  /**
+   * Generate outer notification bar component HTML markup.
+   *
+   * @returns {string} Outer component HTML template.
+   */
   createComponentUIHtml() {
     return `
       <div id="${this.id}" class="component">
@@ -24,6 +58,11 @@ export default class AppNotificationBar extends AppView {
       </div>`;
   }
 
+  /**
+   * Generate inner container HTML including the expand/collapse toggle and list.
+   *
+   * @returns {string} Inner notification bar HTML template.
+   */
   createMainUIHtml() {
     return `
       <div class="main">
@@ -38,6 +77,14 @@ export default class AppNotificationBar extends AppView {
       </div>`;
   }
 
+  /**
+   * Attach notification bar to DOM container, bind toggle and delegation events.
+   *
+   * @param {HTMLElement} el Container DOM element to attach into.
+   * @param {string} [route] Active route path.
+   * @param {*} [state] Optional navigation state.
+   * @returns {void}
+   */
   attach(el, route, state) {
     super.attach(el, route, state);
     this.expandCollapseToggle =
@@ -88,12 +135,22 @@ export default class AppNotificationBar extends AppView {
     }
   }
 
+  /**
+   * Register event listeners for notification add/delete/clear events.
+   *
+   * @returns {void}
+   */
   registerEventListeners() {
     this.registerEventListener(this.app, NOTIFICATION_ADDED_EVENT, this.updateMainUI.bind(this));
     this.registerEventListener(this.app, NOTIFICATION_DELETED_EVENT, this.updateMainUI.bind(this));
     this.registerEventListener(this.app, NOTIFICATIONS_CLEARED_EVENT, this.updateMainUI.bind(this));
   }
 
+  /**
+   * Re-render all notification rows and update container count attributes.
+   *
+   * @returns {void}
+   */
   updateMainUI() {
     if (!this.notificationBarRootEl) return;
     this.notificationBarItems = [];
@@ -123,6 +180,20 @@ export default class AppNotificationBar extends AppView {
     }
   }
 
+  /**
+   * Construct a single `<li>` notification row element from a notification descriptor.
+   *
+   * @param {Object} note Notification data object.
+   * @param {number|string} note.id Unique notification ID.
+   * @param {Date|number|string} [note.time] Timestamp when notification was created.
+   * @param {string} [note.type='info'] Notification type indicator.
+   * @param {string} [note.note] Notification text message.
+   * @param {Object} [note.action] Optional interactive action attached to notification.
+   * @param {string} [note.action.label] Button text or tooltip label.
+   * @param {string} [note.action.icon] FontAwesome icon class.
+   * @param {Function} [note.action.onClick] Click handler for the action.
+   * @returns {HTMLElement} Constructed notification `<li>` element.
+   */
   createNotificationRow(note) {
     const noteId = note.id;
     const time = note.time ? formatRelativeDateTime(note.time) : '?';

@@ -2,24 +2,26 @@ import { EventEmitter } from './events.mjs';
 import { Logger } from './logs.mjs';
 import { disable, enable } from './forms.mjs';
 
-// Modal dialog component with pluggable content/buttons, driven by DOM data-attributes.
+/**
+ * Modal dialog component with customizable buttons, backdrop overlay, and async promise resolution.
+ *
+ * Extends EventEmitter to notify callers of 'open' and 'close' events,
+ * and provides an async open() method resolving to the selected answer value.
+ *
+ * @module dialog
+ */
 
 /**
- *  Type representing a modal dialog that can be attached/de-attached from the DOM.
- *
- *  A component has following properties:
- *    - id: unique ID
- *    - app: the app it belongs to
- *    - domParentEl: when attached, the DOM element it is attached to.
+ * Modal dialog component capable of displaying interactive prompts and resolving user choices.
  */
 export default class Dialog extends EventEmitter {
   /**
-   *  Create the component.
+   * Create a Dialog instance.
    *
-   *  @param id Unique ID for this component.
-   *  @param app The app this component belongs to.
-   *  @param title The question to be answered.
-   *  @param answers The possible answers, with the value they represent.
+   * @param {string} id Unique identifier for this dialog.
+   * @param {object} app The application instance this dialog belongs to.
+   * @param {string} [title='What is your answer?'] The prompt question displayed in the dialog header.
+   * @param {Object<string, *>} [answers={ Yes: true, No: false }] Mapping of button labels to their resolved values.
    */
   constructor(id, app, title = 'What is your answer?', answers = { Yes: true, No: false }) {
     super();
@@ -34,7 +36,11 @@ export default class Dialog extends EventEmitter {
     this.registeredEvents = [];
   }
 
-  /** Should be overridden */
+  /**
+   * Generate the dialog container HTML (intended to be overridden by subclasses).
+   *
+   * @returns {string} Dialog container HTML template string.
+   */
   createDialogUIHtml() {
     return `
       <div id="${this.id}" class="dialog">
@@ -47,10 +53,20 @@ export default class Dialog extends EventEmitter {
       `;
   }
 
+  /**
+   * Generate the close button HTML element string.
+   *
+   * @returns {string} HTML markup for the close button.
+   */
   createDialogCloseButton() {
     return `<button href="#" data-answer="undefined" id="close-dialog-button" class="close-button"><i class="fa fa-xmark"></i></button>`;
   }
 
+  /**
+   * Generate HTML buttons for all configured answers.
+   *
+   * @returns {string} HTML markup for all answer buttons.
+   */
   createDialogButtons() {
     let buttonHtml = '';
     for (const answer in this.answers) {
@@ -61,6 +77,11 @@ export default class Dialog extends EventEmitter {
     return buttonHtml;
   }
 
+  /**
+   * Create and initialize the backdrop overlay DOM element.
+   *
+   * @returns {HTMLElement} The backdrop overlay element.
+   */
   createDialogOverlay() {
     const overlay = document.createElement('div');
     overlay.id = `${this.id}-overlay`;
@@ -68,6 +89,11 @@ export default class Dialog extends EventEmitter {
     return overlay;
   }
 
+  /**
+   * Create and initialize the dialog DOM element from its HTML template.
+   *
+   * @returns {HTMLElement} The dialog DOM element.
+   */
   createDialog() {
     const dialogTemplate = document.createElement('template');
     dialogTemplate.innerHTML = this.createDialogUIHtml();
@@ -76,6 +102,12 @@ export default class Dialog extends EventEmitter {
     return dialog;
   }
 
+  /**
+   * Process click events within the dialog to detect button responses.
+   *
+   * @param {MouseEvent} event The click event.
+   * @returns {void}
+   */
   onClick(event) {
     if (event && event.target) {
       let eventTarget = event.target;
@@ -91,6 +123,11 @@ export default class Dialog extends EventEmitter {
     }
   }
 
+  /**
+   * Display the modal dialog and return a Promise resolving to the selected answer value.
+   *
+   * @returns {Promise<*>} Promise resolving with the selected answer value or undefined.
+   */
   async open() {
     let attachedOverlay = document.querySelector(`#${this.id}-overlay`);
     if (!attachedOverlay) {
@@ -113,6 +150,12 @@ export default class Dialog extends EventEmitter {
     });
   }
 
+  /**
+   * Close the dialog, unregister listeners, remove overlay from DOM, and dispatch close event.
+   *
+   * @param {*} [answer] The answer value to resolve the dialog with.
+   * @returns {void}
+   */
   close(answer) {
     this.result = answer;
     disable(this.overlay);

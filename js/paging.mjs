@@ -6,14 +6,14 @@
  *
  * @template T
  * @typedef {Object} Page
- * @property {T[]} items
- * @property {number|null} pageSize
- * @property {string|null} startBookmark
- * @property {string|null} endBookmark
- * @property {boolean} hasNextPage
- * @property {boolean} hasPrevPage
- * @property {() => Promise<Page<T>|null>} nextPage
- * @property {() => Promise<Page<T>|null>} prevPage
+ * @property {T[]} items Paged collection elements.
+ * @property {number|null} pageSize Page capacity limit or null if unpaged.
+ * @property {string|null} startBookmark Opaque bookmark pointing to the start of this page.
+ * @property {string|null} endBookmark Opaque bookmark pointing to the end of this page.
+ * @property {boolean} hasNextPage True if subsequent pages are available.
+ * @property {boolean} hasPrevPage True if preceding pages are available.
+ * @property {() => Promise<Page<T>|null>} nextPage Function fetching the next page or null.
+ * @property {() => Promise<Page<T>|null>} prevPage Function fetching the previous page or null.
  */
 
 /**
@@ -21,8 +21,8 @@
  * Both nextPage() and prevPage() resolve to null.
  *
  * @template T
- * @param {T[]} [items]
- * @returns {Page<T>}
+ * @param {T[]} [items] Initial list of items in the single page.
+ * @returns {Page<T>} Fixed single page representation.
  */
 export function singlePage(items) {
   const safeItems = Array.isArray(items) ? items : items == null ? [] : [items];
@@ -46,10 +46,10 @@ export function singlePage(items) {
  * - An array of items with optional second argument paging configuration
  *
  * @template T
- * @param {Object|T[]} envelope
- * @param {(direction: 'next'|'prev'|string, bookmark: string|null) => Promise<Page<T>|null>} [fetchPageOrPaging]
- * @param {(direction: 'next'|'prev'|string, bookmark: string|null) => Promise<Page<T>|null>} [maybeFetchPage]
- * @returns {Page<T>}
+ * @param {Object|T[]} envelope Server response envelope or item array.
+ * @param {(direction: 'next'|'prev'|string, bookmark: string|null) => Promise<Page<T>|null>} [fetchPageOrPaging] Page fetch function or paging descriptor.
+ * @param {(direction: 'next'|'prev'|string, bookmark: string|null) => Promise<Page<T>|null>} [maybeFetchPage] Page fetch function when descriptor was passed.
+ * @returns {Page<T>} Standardized Page representation.
  */
 export function pagedResult(envelope, fetchPageOrPaging, maybeFetchPage) {
   if (envelope === null || envelope === undefined) {
@@ -121,10 +121,10 @@ export function pagedResult(envelope, fetchPageOrPaging, maybeFetchPage) {
  * Builds a Page<T> matching the hinolugi-counters client signature.
  *
  * @template T
- * @param {T[]} items
- * @param {{pageSize?: number, startBookmark?: string|null, endBookmark?: string|null, currentPage?: string}} paging
- * @param {(pageDirection: string, bookmark: string|null) => Promise<Page<T>|null>} fetchPage
- * @returns {Page<T>}
+ * @param {T[]} items Array of page items.
+ * @param {{pageSize?: number, startBookmark?: string|null, endBookmark?: string|null, currentPage?: string}} paging Paging envelope metadata.
+ * @param {(pageDirection: string, bookmark: string|null) => Promise<Page<T>|null>} fetchPage Callback to retrieve adjacent pages.
+ * @returns {Page<T>} Standardized Page representation.
  */
 export function bookmarkedPage(items, paging, fetchPage) {
   return pagedResult({ items, ...(paging || {}) }, fetchPage);

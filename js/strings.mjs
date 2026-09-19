@@ -23,8 +23,8 @@ export function escapeHtml(str) {
 /**
  * Capitalizes the first character of a string.
  *
- * @param {string} str
- * @returns {string}
+ * @param {string} str The string to capitalize.
+ * @returns {string} The capitalized string.
  */
 export function capitalize(str) {
   if (str) {
@@ -36,8 +36,8 @@ export function capitalize(str) {
 /**
  * Lowercases the first character of a string.
  *
- * @param {string} str
- * @returns {string}
+ * @param {string} str The string whose first character should be lowercased.
+ * @returns {string} The uncapitalized string.
  */
 export function uncapitalize(str) {
   if (str) {

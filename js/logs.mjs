@@ -21,17 +21,23 @@ function getPath() {
 // General, DOM-independent, browser-safe event logging functions. This is a separate, unrelated
 // module from the Node-only `cli-log.mjs`, which targets simple CLI tools rather than event handlers.
 
+/** Numeric log level for errors. @type {number} */
 export const ERROR_LEVEL = 1000;
+/** Numeric log level for warnings. @type {number} */
 export const WARNING_LEVEL = 900;
+/** Numeric log level for informational messages. @type {number} */
 export const INFO_LEVEL = 800;
+/** Numeric log level for trace and debug messages. @type {number} */
 export const TRACE_LEVEL = 300;
 
 const logHandlers = [];
 
 /**
- *  Register a log event handler.
+ * Register a log event handler callback.
  *
- *  @param callback The function to invoke when a log event occurs.
+ * @param {function(Object): void} callback The function to invoke when a log event occurs.
+ * @returns {void}
+ * @throws {TypeError} When callback is not a function.
  */
 export function addLogHandler(callback) {
   if (typeof callback !== 'function') {
@@ -41,11 +47,11 @@ export function addLogHandler(callback) {
 }
 
 /**
- *  Unregister a log event handler.
+ * Unregister a previously registered log event handler.
  *
- *  @param callback The previously registered function to now unregister.
- *
- *  @return True when a callback was actually removed, false if not.
+ * @param {function(Object): void} callback The previously registered handler to remove.
+ * @returns {boolean} True when a callback was actually removed, false if not found.
+ * @throws {TypeError} When callback is not a function.
  */
 export function removeLogHandler(callback) {
   if (typeof callback !== 'function') {
@@ -61,10 +67,11 @@ export function removeLogHandler(callback) {
 }
 
 /**
- *  A default log event handler that will emit all log events to the console.
- *  Will be used whenever there are no other registered handlers.
+ * A default log event handler that emits all log events to the browser/console streams.
+ * Will be used whenever there are no other registered handlers.
  *
- *  @param logEvent The log event to be handled.
+ * @param {{name?: string, level: number, message: string, time: Date, args?: Array<*>}} logEvent The log event object.
+ * @returns {void}
  */
 export function defaultHandler(logEvent) {
   let logPrefix = '';
@@ -88,7 +95,12 @@ export function defaultHandler(logEvent) {
   logFn(logPrefix + logEvent.message, ...logEvent.args);
 }
 
-/** @return The lowercase level name ('error', 'warning', 'trace', or 'info' as the default) for a numeric `level`. */
+/**
+ * Get the lowercase level name for a numeric log level.
+ *
+ * @param {number} level Numeric log level value.
+ * @returns {'error'|'warning'|'trace'|'info'} The level name.
+ */
 export function levelToLevelName(level) {
   let levelName = 'info';
   if (level >= ERROR_LEVEL) {
@@ -101,7 +113,12 @@ export function levelToLevelName(level) {
   return levelName;
 }
 
-/** @return The numeric level for a level `name` ('error', 'warning', 'info', or 'trace'), or 0 if unrecognized. */
+/**
+ * Resolve the numeric level for a named log level.
+ *
+ * @param {string} name Level name ('error', 'warning', 'info', or 'trace').
+ * @returns {number} The numeric level value or 0 if unrecognized.
+ */
 export function levelNameToLevel(name) {
   switch (name.toLowerCase().trim()) {
     case 'error':
@@ -149,17 +166,20 @@ function fireLogEvent(logEvent) {
 
 /** A named logger that dispatches log events to registered handlers (or `defaultHandler` if none). */
 export class Logger {
+  /**
+   * @param {string} [name=''] Logger identifier name.
+   * @param {number} [minLevel] Minimum numeric log level.
+   */
   constructor(name, minLevel) {
     this.name = name || '';
     this.minLevel = minLevel;
   }
 
   /**
-   *  Get or update this logger's configuration.
+   * Get or update this logger's configuration.
    *
-   *  @param props If omitted, returns the current config. Otherwise, an object optionally
-   *               containing 'name' and 'min-level' (or 'minLevel') to update.
-   *  @return The current `{ name, 'min-level' }` config when called without arguments.
+   * @param {Object} [props] Optional configuration object containing 'name' and 'min-level' (or 'minLevel').
+   * @returns {{name: string, 'min-level': ?number}|void} Current config when called without arguments.
    */
   config(props) {
     if (!props) {
@@ -186,23 +206,58 @@ export class Logger {
     }
   }
 
+  /**
+   * Log an error message.
+   *
+   * @param {string} logMsgFormat Message string or format template.
+   * @param {...*} logMsgArgs Interpolation arguments.
+   * @returns {void}
+   */
   error(logMsgFormat, ...logMsgArgs) {
     this.log(ERROR_LEVEL, logMsgFormat, ...logMsgArgs);
   }
 
+  /**
+   * Log a warning message.
+   *
+   * @param {string} logMsgFormat Message string or format template.
+   * @param {...*} logMsgArgs Interpolation arguments.
+   * @returns {void}
+   */
   warn(logMsgFormat, ...logMsgArgs) {
     this.log(WARNING_LEVEL, logMsgFormat, ...logMsgArgs);
   }
 
+  /**
+   * Log an informational message.
+   *
+   * @param {string} logMsgFormat Message string or format template.
+   * @param {...*} logMsgArgs Interpolation arguments.
+   * @returns {void}
+   */
   info(logMsgFormat, ...logMsgArgs) {
     this.log(INFO_LEVEL, logMsgFormat, ...logMsgArgs);
   }
 
+  /**
+   * Log a trace message.
+   *
+   * @param {string} logMsgFormat Message string or format template.
+   * @param {...*} logMsgArgs Interpolation arguments.
+   * @returns {void}
+   */
   trace(logMsgFormat, ...logMsgArgs) {
     this.log(TRACE_LEVEL, logMsgFormat, ...logMsgArgs);
   }
 
-  /** Log a message at `logLevel`, if at or above this logger's (or the global logger's) minimum level. */
+  /**
+   * Log a message at `logLevel`, if at or above this logger's (or the global logger's) minimum level.
+   *
+   * @param {number} logLevel Target severity level.
+   * @param {string} logMsgFormat Message string or format template.
+   * @param {...*} logMsgArgs Interpolation arguments.
+   * @returns {void}
+   */
   log(logLevel, logMsgFormat, ...logMsgArgs) {
     const actualMinLevel = this.minLevel || globalLogger.minLevel || INFO_LEVEL;
     if (actualMinLevel > logLevel) {
@@ -224,28 +279,68 @@ const globalLogger = new Logger('', INFO_LEVEL);
 
 // Module-level convenience functions delegating to a shared, unnamed global Logger instance.
 
-/** Get or update the global logger's configuration. See `Logger.config`. */
+/**
+ * Get or update the global logger's configuration. See `Logger.config`.
+ *
+ * @param {Object} [props] Config properties to update.
+ * @returns {{name: string, 'min-level': ?number}|void}
+ */
 export function config(props) {
   return globalLogger.config(props);
 }
 
+/**
+ * Log an error message via the global logger.
+ *
+ * @param {string} logMsgFormat Message string or format template.
+ * @param {...*} logMsgArgs Interpolation arguments.
+ * @returns {void}
+ */
 export function error(logMsgFormat, ...logMsgArgs) {
   globalLogger.log(ERROR_LEVEL, logMsgFormat, ...logMsgArgs);
 }
 
+/**
+ * Log a warning message via the global logger.
+ *
+ * @param {string} logMsgFormat Message string or format template.
+ * @param {...*} logMsgArgs Interpolation arguments.
+ * @returns {void}
+ */
 export function warn(logMsgFormat, ...logMsgArgs) {
   globalLogger.log(WARNING_LEVEL, logMsgFormat, ...logMsgArgs);
 }
 
+/**
+ * Log an informational message via the global logger.
+ *
+ * @param {string} logMsgFormat Message string or format template.
+ * @param {...*} logMsgArgs Interpolation arguments.
+ * @returns {void}
+ */
 export function info(logMsgFormat, ...logMsgArgs) {
   globalLogger.log(INFO_LEVEL, logMsgFormat, ...logMsgArgs);
 }
 
+/**
+ * Log a trace message via the global logger.
+ *
+ * @param {string} logMsgFormat Message string or format template.
+ * @param {...*} logMsgArgs Interpolation arguments.
+ * @returns {void}
+ */
 export function trace(logMsgFormat, ...logMsgArgs) {
   globalLogger.log(TRACE_LEVEL, logMsgFormat, ...logMsgArgs);
 }
 
-/** Log a message at `logLevel` via the global logger. See `Logger.log`. */
+/**
+ * Log a message at `logLevel` via the global logger. See `Logger.log`.
+ *
+ * @param {number} logLevel Severity level.
+ * @param {string} logMsgFormat Message string or format template.
+ * @param {...*} logMsgArgs Interpolation arguments.
+ * @returns {void}
+ */
 export function log(logLevel, logMsgFormat, ...logMsgArgs) {
   globalLogger.log(logLevel, logMsgFormat, ...logMsgArgs);
 }
@@ -277,7 +372,12 @@ export class LogLevel {
     [LogLevel.ALL, 'ALL'],
   ];
 
-  /** Format a level value as its predefined name, or its number if it has none. */
+  /**
+   * Format a level value as its predefined uppercase name, or its number if it has none.
+   *
+   * @param {number} level Numeric log level value.
+   * @returns {string} Predefined level name or stringified number.
+   */
   static toString(level) {
     for (const [value, name] of LogLevel.#NAMES) {
       if (level === value) {
@@ -287,7 +387,13 @@ export class LogLevel {
     return '' + level;
   }
 
-  /** Parse a level name (case-insensitive) or numeric string into a level value. */
+  /**
+   * Parse a level name (case-insensitive) or numeric string into a level value.
+   *
+   * @param {string} levelStr Level name or numeric string.
+   * @returns {number} Numeric log level value.
+   * @throws {Error} When value cannot be parsed as a valid level.
+   */
   static parse(levelStr) {
     const cleaned = levelStr.trim().toUpperCase();
     for (const [value, name] of LogLevel.#NAMES) {
@@ -303,7 +409,12 @@ export class LogLevel {
   }
 }
 
-/** Format severity tag with 5-character uppercase padding per dev-guidelines.md; always 11 characters wide. */
+/**
+ * Format severity tag with 5-character uppercase padding per dev-guidelines.md; always 11 characters wide.
+ *
+ * @param {string} [level] Severity name.
+ * @returns {string} Formatted indicator tag.
+ */
 export function formatSeverityIndicator(level) {
   if (!level) {
     return '';
@@ -325,13 +436,21 @@ export function formatSeverityIndicator(level) {
 }
 
 /**
- *  Format a single or multi-line log message adhering to dev-guidelines.md.
+ * Format a single or multi-line log message adhering to dev-guidelines.md.
  *
- *  In file mode:    `[YYYY-MM-DD HH:MM:SS] **[LEVEL]** <origin> First line`
- *                    `                                          Subsequent lines aligned vertically`
- *  In stdout/stderr mode (only ERROR/WARN keep a severity indicator; timestamp is always stripped):
- *                    `**[LEVEL]** <origin> First line`
- *                    `                     Subsequent lines aligned vertically`
+ * In file mode:    `[YYYY-MM-DD HH:MM:SS] **[LEVEL]** <origin> First line`
+ *                  `                                          Subsequent lines aligned vertically`
+ * In stdout/stderr mode (only ERROR/WARN keep a severity indicator; timestamp is always stripped):
+ *                  `**[LEVEL]** <origin> First line`
+ *                  `                     Subsequent lines aligned vertically`
+ *
+ * @param {string} message Log message body text.
+ * @param {Object} [options] Formatting options.
+ * @param {string} [options.level] Severity level name.
+ * @param {string} [options.origin] Component origin tag.
+ * @param {Date} [options.timestamp] Timestamp override.
+ * @param {boolean} [options.forFile=true] True for file layout; false for stdout/stderr layout.
+ * @returns {string} Formatted log line(s).
  */
 export function formatLogMessage(message, { level, origin, timestamp, forFile = true } = {}) {
   if (!message && !level && !origin) {
@@ -381,6 +500,13 @@ export function formatLogMessage(message, { level, origin, timestamp, forFile = 
 
 /** Logger handling file output, stdout/stderr, verbose progress, and debug filtering. */
 export class CliLogger {
+  /**
+   * @param {Object} [options] Logger configuration.
+   * @param {string|null} [options.logPath] Destination file path.
+   * @param {boolean} [options.verbose=false] Verbose progress flag.
+   * @param {boolean} [options.debug=false] Debug logging enable flag.
+   * @param {string} [options.origin] Component origin tag.
+   */
   constructor({ logPath, verbose = false, debug = false, origin } = {}) {
     this.logPath = logPath || null;
     this.verbose = verbose;
@@ -409,6 +535,18 @@ export class CliLogger {
     }
   }
 
+  /**
+   * Emit a log message to configured destinations.
+   *
+   * @param {string} message Log body.
+   * @param {Object} [options] Emission options.
+   * @param {string} [options.level] Severity level.
+   * @param {string} [options.origin] Origin tag override.
+   * @param {Date} [options.timestamp] Timestamp override.
+   * @param {boolean} [options.toStdout=true] Output to stdout if level allows.
+   * @param {boolean} [options.toStderr=false] Output to stderr.
+   * @returns {void}
+   */
   log(message, { level, origin, timestamp, toStdout = true, toStderr = false } = {}) {
     const ts = timestamp || new Date();
     const effectiveOrigin = origin !== undefined ? origin : this.origin;
@@ -440,28 +578,78 @@ export class CliLogger {
     }
   }
 
+  /**
+   * Log an informational message.
+   *
+   * @param {string} message Message body.
+   * @param {Object} [options] Output options.
+   * @param {string} [options.origin] Origin tag override.
+   * @param {boolean} [options.toStdout=true] Output to stdout.
+   * @returns {void}
+   */
   info(message, { origin, toStdout = true } = {}) {
     this.log(message, { level: 'INFO', origin, toStdout });
   }
 
-  /** Log operational progress to file, and to stdout only when verbose is true. */
+  /**
+   * Log operational progress to file, and to stdout only when verbose is true.
+   *
+   * @param {string} message Progress description.
+   * @param {Object} [options] Output options.
+   * @param {string} [options.origin] Origin tag override.
+   * @returns {void}
+   */
   progress(message, { origin } = {}) {
     this.log(message, { level: 'INFO', origin, toStdout: this.verbose });
   }
 
+  /**
+   * Log a warning message to stderr and file.
+   *
+   * @param {string} message Warning description.
+   * @param {Object} [options] Output options.
+   * @param {string} [options.origin] Origin tag override.
+   * @returns {void}
+   */
   warning(message, { origin } = {}) {
     this.log(message, { level: 'WARN', origin, toStdout: false, toStderr: true });
   }
 
+  /**
+   * Log an error message to stderr and file.
+   *
+   * @param {string} message Error description.
+   * @param {Object} [options] Output options.
+   * @param {string} [options.origin] Origin tag override.
+   * @returns {void}
+   */
   error(message, { origin } = {}) {
     this.log(message, { level: 'ERROR', origin, toStdout: false, toStderr: true });
   }
 
+  /**
+   * Log a debug message (file only when debug is enabled).
+   *
+   * @param {string} message Debug message text.
+   * @param {Object} [options] Output options.
+   * @param {string} [options.origin] Origin tag override.
+   * @returns {void}
+   */
   debug(message, { origin } = {}) {
     this.log(message, { level: 'DEBUG', origin, toStdout: false });
   }
 
-  /** Logs the required start-of-software multi-line message per dev-guidelines.md. */
+  /**
+   * Logs the required start-of-software multi-line message per dev-guidelines.md.
+   *
+   * @param {string} name Application or CLI name.
+   * @param {string} version Semantic version string.
+   * @param {string[]} argv Command arguments array.
+   * @param {Record<string, *>} config Configuration key-value map.
+   * @param {Object} [options] Output options.
+   * @param {string} [options.origin] Origin tag override.
+   * @returns {void}
+   */
   logStart(name, version, argv, config, { origin } = {}) {
     const configLines = Object.entries(config || {}).map(([k, v]) => `- ${k.padEnd(24)}: ${v}`);
     const cmdLine = argv.join(' ');
@@ -474,7 +662,14 @@ export class CliLogger {
     this.log(msgParts.join('\n'), { level: 'INFO', origin, toStdout: this.verbose });
   }
 
-  /** Logs the required end-of-software conclusion message per dev-guidelines.md. */
+  /**
+   * Logs the required end-of-software conclusion message per dev-guidelines.md.
+   *
+   * @param {string} [summary] Optional completion summary.
+   * @param {Object} [options] Output options.
+   * @param {string} [options.origin] Origin tag override.
+   * @returns {void}
+   */
   logEnd(summary, { origin } = {}) {
     const durationSec = Number(process.hrtime.bigint() - this.startTime) / 1e9;
     let durationStr = `${durationSec.toFixed(2)}s`;

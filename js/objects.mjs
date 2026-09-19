@@ -5,8 +5,8 @@
 /**
  * Deeply compares two values for equality.
  *
- * @param {*} obj1
- * @param {*} obj2
+ * @param {*} obj1 First value or object to compare.
+ * @param {*} obj2 Second value or object to compare.
  * @returns {boolean} True if both objects are deeply equal.
  */
 export function areEqual(obj1, obj2) {
@@ -31,8 +31,8 @@ export function areEqual(obj1, obj2) {
 /**
  * Deeply compares two arrays for element-by-element equality.
  *
- * @param {Array<*>} arr1
- * @param {Array<*>} arr2
+ * @param {Array<*>} arr1 First array to compare.
+ * @param {Array<*>} arr2 Second array to compare.
  * @returns {boolean} True if arr1 and arr2 have identical elements at every index.
  */
 export function areArraysEqual(arr1, arr2) {

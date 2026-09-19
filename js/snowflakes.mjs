@@ -2,7 +2,11 @@ import * as log from './logs.mjs';
 import { cancelAnimFrame, onAnimFrame } from './dom.mjs';
 import { random, randomElement } from './math.mjs';
 
-// Falling-snowflakes animation effect, rendered as absolutely-positioned <span> elements over the document.
+/**
+ * Falling snowflakes visual animation effect rendered over the document body.
+ *
+ * @module snowflakes
+ */
 
 // Constants
 
@@ -33,14 +37,20 @@ let createSnowFlakes = false;
 // Snowflake functions
 
 /**
- *  Start or resume creating showing snowflakes on the document.
- *  Each snow flake will be created as a <span class="snowflake">${snowflake symbol}</span> and append to the end of the document,
- *  or under an element with class 'snowflake-container', if such element exists.
+ * @typedef {Object} SnowflakesOptions
+ * @property {number} [count=30] Maximum number of snowflakes to display simultaneously.
+ * @property {string[]} [symbols] Array of snowflake character symbols (defaults to 4 unicode snowflake glyphs).
+ * @property {string[]} [colors] Array of CSS color strings for the snowflakes.
+ */
+
+/**
+ * Start or resume creating and animating falling snowflakes over the document.
  *
- *  @param options Following options are available to tweak how the snowflakes will show:
- *                  'count':   max. number of snowflakes to create. Defaults to 30.
- *                  'symbols': array of symbols to use for the snow flakes. Defaults to 4 different symbols.
- *                  'colors':  array of CSS-colors for snow flakes.
+ * Each snowflake is rendered as a `<span class="snowflake">` element appended to
+ * the document body or an element with class `.snowflake-container`.
+ *
+ * @param {SnowflakesOptions} [options] Configuration options for count, symbols, and colors.
+ * @returns {void}
  */
 export function start(options) {
   createSnowFlakes = true;
@@ -67,14 +77,18 @@ export function start(options) {
 }
 
 /**
- *  Stop creating new snowflakes, hence having the effect for fading out.
+ * Stop creating new snowflakes, allowing existing snowflakes to finish falling and fade out.
+ *
+ * @returns {void}
  */
 export function stop() {
   createSnowFlakes = false;
 }
 
 /**
- *  Stop creating and showing snowflakes immediately.
+ * Stop animating and immediately remove all snowflake elements from the DOM.
+ *
+ * @returns {void}
  */
 export function reset() {
   cancelAnimFrame(animId);

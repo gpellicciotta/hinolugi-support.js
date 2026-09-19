@@ -1,5 +1,11 @@
 import AppView from './app-view.mjs';
 
+/**
+ * Default splash / home view for unauthenticated users.
+ *
+ * @module home-view
+ */
+
 const VIEW_ID = 'home-view';
 
 /**
@@ -19,6 +25,11 @@ export default class HomeView extends AppView {
     this.neverWhenSignedIn = true;
   }
 
+  /**
+   * Generate main home view HTML markup with sign-in and account registration links.
+   *
+   * @returns {string} Home view HTML string.
+   */
   createMainUIHtml() {
     return `
       <div id="${this.id}">
@@ -27,6 +38,14 @@ export default class HomeView extends AppView {
       `;
   }
 
+  /**
+   * Attach home view to DOM container and display app splash screen.
+   *
+   * @param {HTMLElement} el Container DOM element.
+   * @param {string} [route] Active route path.
+   * @param {*} [state] Optional navigation state.
+   * @returns {void}
+   */
   attach(el, route, state) {
     super.attach(el, route, state);
     if (typeof this.app?.showSplashScreen === 'function') {

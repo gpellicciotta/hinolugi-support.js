@@ -1,6 +1,17 @@
 import Component from './component.mjs';
 import { disable, enable } from './forms.mjs';
 
+/**
+ * Application menu component rendering vertical or horizontal navigation menus with separators.
+ *
+ * @module app-menu
+ */
+
+/**
+ * Event name dispatched when an action's state changes.
+ *
+ * @type {string}
+ */
 export const ACTION_STATE_CHANGED_EVENT = 'action-state-changed';
 
 /**
@@ -20,6 +31,11 @@ export default class AppMenu extends Component {
     this.menuItems = [];
   }
 
+  /**
+   * Generate outer menu component HTML markup.
+   *
+   * @returns {string} Outer component HTML template.
+   */
   createComponentUIHtml() {
     return `
       <div id="${this.id}" class="component">
@@ -27,12 +43,25 @@ export default class AppMenu extends Component {
       </div>`;
   }
 
+  /**
+   * Generate inner ordered list HTML container for menu items.
+   *
+   * @returns {string} Inner menu list HTML template.
+   */
   createMainUIHtml() {
     return `
       <ol class="menu main">
       </ol>`;
   }
 
+  /**
+   * Attach menu to DOM container, populate items, and bind click actions.
+   *
+   * @param {HTMLElement} el Container DOM element to attach into.
+   * @param {string} [route] Active route path.
+   * @param {*} [state] Optional navigation state.
+   * @returns {void}
+   */
   attach(el, route, state) {
     super.attach(el, route, state);
     this.menuRootEl = this.componentUIEl ? this.componentUIEl.querySelector('.menu.main') : null;
@@ -78,6 +107,11 @@ export default class AppMenu extends Component {
     }
   }
 
+  /**
+   * Register event listeners for action state change events.
+   *
+   * @returns {void}
+   */
   registerEventListeners() {
     if (typeof this.app?.addEventListener === 'function') {
       const eventName = this.app?.ACTION_STATE_CHANGED_EVENT || ACTION_STATE_CHANGED_EVENT;
@@ -85,6 +119,16 @@ export default class AppMenu extends Component {
     }
   }
 
+  /**
+   * Handle action state changes by updating item disabled attributes and adjacent separators.
+   *
+   * @param {Object} e Event object.
+   * @param {Object} [e.action] Action whose state changed.
+   * @param {string} [e.action.id] Identifier of the action.
+   * @param {boolean} [e.action.disabled] Whether the action is disabled.
+   * @param {string} [e.action.disabled-reason] Reason the action is disabled.
+   * @returns {void}
+   */
   onActionStateChanged(e) {
     if (e?.action?.id) {
       let actionId = e.action.id;

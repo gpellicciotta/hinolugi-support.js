@@ -1,25 +1,36 @@
 import { Logger } from './logs.mjs';
 import { capitalize } from './strings.mjs';
 
-// Base SPA component with a DOM lifecycle (attach/detach), event-listener bookkeeping, wait/error
-// overlays, and a helper for running long-running (async) operations against that UI.
+/**
+ * Base SPA component lifecycle, event bookkeeping, and UI overlay management.
+ *
+ * Provides the Component class representing attachable/detachable DOM views
+ * with integrated progress indicators, error overlays, and asynchronous task execution.
+ *
+ * @module component
+ */
 
 const DEFAULT_WAIT_UI_DELAY_TIME = 700; // ms before the wait overlay is shown for a long-running operation
 
 /**
- *  Type representing a component that can be attached/de-attached from the DOM.
- *
- *  A component has following properties:
- *    - id: unique ID
- *    - app: the app it belongs to
- *    - domParentEl: when attached, the DOM element it is attached to.
+ * @typedef {Object} LongRunningOperationSpec
+ * @property {string} title Human-readable operation title.
+ * @property {string} [description] Detailed description shown in wait overlay.
+ * @property {() => Promise<*>} start Async function executing the operation.
+ * @property {(result: *) => void} [success] Callback invoked on successful completion.
+ * @property {(errorInfo: Object) => void} [error] Callback invoked on operation failure.
+ * @property {() => void} [always] Callback invoked regardless of outcome.
+ */
+
+/**
+ * Base class for all attachable/detachable DOM components in the application.
  */
 export default class Component {
   /**
-   *  Create the component.
+   * Create a Component instance.
    *
-   *  @param id Unique ID for this component.
-   *  @param app The app this component belongs to.
+   * @param {string} id Unique identifier for this component.
+   * @param {object} app The application instance this component belongs to.
    */
   constructor(id, app) {
     this.id = id;
@@ -33,7 +44,12 @@ export default class Component {
     this.template.innerHTML = this.createComponentUIHtml();
   }
 
-  /** Attach to DOM, register event listeners, do any additional startup */
+  /**
+   * Attach component to a DOM container, instantiate elements, and register event listeners.
+   *
+   * @param {HTMLElement} el The DOM element to attach this component into.
+   * @returns {void}
+   */
   attach(el) {
     this.log.trace(`Attach '${this.id}' to DOM...`);
     this.domParentEl = el;
@@ -55,12 +71,21 @@ export default class Component {
     this.registerEventListeners();
   }
 
+  /**
+   * Locate and initialize the main UI container element within the component.
+   *
+   * @returns {void}
+   */
   createMainUI() {
     this.mainUIEl = this.componentUIEl.lastElementChild;
     this.mainUIEl.classList.add('main'); // Ensure 'main' class
   }
 
-  /** Detach from DOM, unregister any event listeners, do any additional cleanup */
+  /**
+   * Detach component from the DOM, unregister event listeners, and perform cleanup.
+   *
+   * @returns {void}
+   */
   detach() {
     this.unregisterEventListeners();
     this.componentUIEl.remove();
@@ -68,15 +93,32 @@ export default class Component {
     this.log.trace(`Detached '${this.id}' from DOM...`);
   }
 
+  /**
+   * Register a tracked event listener that will be cleaned up automatically upon detach.
+   *
+   * @param {EventTarget} target The DOM element or event target to listen on.
+   * @param {string} eventType The event name or type.
+   * @param {EventListener|Function} cb The event handler callback.
+   * @returns {void}
+   */
   registerEventListener(target, eventType, cb) {
     target.addEventListener(eventType, cb);
     this.log.trace(`Registering event listener for event '${eventType}' in view '${this.id}'`);
     this.eventListeners.push({ target: target, eventType: eventType, handler: cb });
   }
 
-  /** Should be overridden */
+  /**
+   * Register component-specific event listeners (intended to be overridden by subclasses).
+   *
+   * @returns {void}
+   */
   registerEventListeners() {}
 
+  /**
+   * Remove all tracked event listeners previously registered via `registerEventListener`.
+   *
+   * @returns {void}
+   */
   unregisterEventListeners() {
     for (const el of this.eventListeners) {
       this.log.trace(`Unregister event listener for event '${el.eventType}' from view '${this.id}'`);
@@ -85,7 +127,11 @@ export default class Component {
     this.eventListeners = [];
   }
 
-  /** Could be overridden */
+  /**
+   * Generate the outer component HTML template string including overlays and main container.
+   *
+   * @returns {string} Outer component HTML template string.
+   */
   createComponentUIHtml() {
     return `
       <div id="${this.id}" class="component">
@@ -104,13 +150,23 @@ export default class Component {
       </div>`;
   }
 
-  /** Should be overridden / there should be a single root element. */
+  /**
+   * Generate the inner main UI HTML string (intended to be overridden by subclasses).
+   *
+   * @returns {string} Inner main UI HTML string.
+   */
   createMainUIHtml() {
     return `
       <div class="${this.id} main">
       </div>`;
   }
 
+  /**
+   * Display the main UI and hide any active wait or error overlays.
+   *
+   * @param {*} [info] Optional data object passed to `updateMainUI`.
+   * @returns {void}
+   */
   showMainUI(info) {
     if (info) {
       this.updateMainUI(info);
@@ -123,11 +179,20 @@ export default class Component {
   }
 
   /**
-   *  Should be overridden.
-   *  Invoked with the object returned from refreshData.
+   * Update the main UI using provided data (intended to be overridden by subclasses).
+   *
+   * @param {*} info Data returned from `refreshData` or provided to `showMainUI`.
+   * @returns {void}
    */
   updateMainUI(info) {}
 
+  /**
+   * Show the progress / wait overlay with an optional custom message.
+   *
+   * @param {Object} [waitInfo] Configuration for the wait overlay.
+   * @param {string} [waitInfo.progress-message] Custom wait text to display.
+   * @returns {void}
+   */
   showWaitOverlay(waitInfo) {
     if (this.componentUIEl) {
       this.componentUIEl.classList.remove('error-overlay');
@@ -139,6 +204,14 @@ export default class Component {
     }
   }
 
+  /**
+   * Show the error overlay with error title and description.
+   *
+   * @param {Object} [errInfo] Information describing the error.
+   * @param {string} [errInfo.error-title] Error title text.
+   * @param {string} [errInfo.error-description] Error description details.
+   * @returns {void}
+   */
   showErrorOverlay(errInfo) {
     if (this.componentUIEl) {
       this.componentUIEl.classList.remove('wait-overlay');
@@ -152,13 +225,21 @@ export default class Component {
   }
 
   /**
-   *  Should be overridden.
-   *  The object returned will be passed to updateMainUI.
+   * Fetch or prepare data for this component (intended to be overridden by subclasses).
+   *
+   * @returns {Promise<*>} Promise resolving with the data to pass to `updateMainUI`.
+   * @throws {Error} If not implemented by a concrete subclass.
    */
   async refreshData() {
     throw new Error('The refreshData method is not implemented');
   }
 
+  /**
+   * Initiate a UI refresh by executing `refreshData` within a managed long-running operation.
+   *
+   * @param {*} [event] Optional triggering event.
+   * @returns {void}
+   */
   refreshComponentUI(event) {
     if (!this.domParentEl) {
       return; // No refreshing if not attached
@@ -181,13 +262,11 @@ export default class Component {
   }
 
   /**
-   *  Start a long-running operation, which will run asynchronously.
+   * Start an asynchronous long-running operation with automatic progress timing, error handling, and overlays.
    *
-   *  @param longRunningOperation Can be:
-   *    - An object with title, description, start(), and optional success(), error(), always()
-   *    - A string title, combined with an async function as second argument
-   *    - A single async function
-   *  @param asyncFn Optional async function when first parameter is a title string
+   * @param {LongRunningOperationSpec|string|(() => Promise<*>)} longRunningOperation Operation spec object, title string, or async task function.
+   * @param {() => Promise<*>} [asyncFn] Async function to execute when first parameter is a title string.
+   * @returns {void}
    */
   startLongRunningOperation(longRunningOperation, asyncFn) {
     let op = longRunningOperation;

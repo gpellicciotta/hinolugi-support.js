@@ -1,6 +1,10 @@
-// Installer for the SPA (PWA install-prompt handling)
-
 import { Logger } from './logs.mjs';
+
+/**
+ * PWA installation prompt handling and state tracking.
+ *
+ * @module installer
+ */
 
 const defaultLog = new Logger('installer');
 
@@ -21,16 +25,19 @@ export default class Installer {
 
   /**
    * Whether the installer has run and the app is considered installed.
+   *
+   * @type {boolean}
    */
   get installed() {
     return this._installed;
   }
 
   /**
-   * Add a `beforeinstallprompt` event listener.
+   * Add a `beforeinstallprompt` event listener to capture the browser install prompt.
    *
    * @param {EventTarget} [ctx] The context to add the event listener to. Defaults to `window`.
    * @param {Function} [readyCallback] The callback to invoke once the app is ready for install.
+   * @returns {void}
    */
   registerBeforeInstallPromptListener(ctx, readyCallback) {
     ctx = ctx || (typeof window !== 'undefined' ? window : null);

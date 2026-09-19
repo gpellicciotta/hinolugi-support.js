@@ -6,12 +6,11 @@ import { randomFloat } from './math.mjs';
 const MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
 
 /**
- *  Give a random date between two dates.
+ * Give a random date between two dates.
  *
- *  @param min The min. value to return. If not given, will be the current date/time - 5d.
- *  @param max The max. value to return. If not given, max will be the current date/time.
- *
- *  @return A random date value in the range [min, max].
+ * @param {Date} [min] The min. value to return. If not given, will be the current date/time - 5d.
+ * @param {Date} [max] The max. value to return. If not given, max will be the current date/time.
+ * @returns {Date} A random date value in the range [min, max].
  */
 export function randomDate(min, max) {
   if (max == undefined) {
@@ -31,29 +30,12 @@ export function randomDate(min, max) {
   return result;
 }
 
-/**
- * Shuffle an array.
- *
- * @param arr The array whose elements should be shuffled into a random order.
- * @param inplace Whether the array should be updated in-place. If false, a new array will be created.
- *
- * @return The shuffled array, which can either be the originally passed-in array or a new array.
- */
-
 const datePattern = '(?<year>\\d\\d\\d\\d)[-]?(?<month>[01]\\d)[-]?(?<day>\\d\\d)';
 /**
- *  Create a date.
+ * Create a Date instance from ISO string, timestamp, year/month/day components, or existing Date.
  *
- *  Either:
- *  @param iso8601 ISO8601 date representation: yyyy-mm-dd or yyyymmdd.
- *  Or
- *  @param millisSinceEpoc UNIX timestamp.
- *  Or:
- *  @param date Already a Date object. A copy is returned.
- *  Or:
- *  @param year The year.
- *  @param month The month: 1=January, ... 12=December.
- *  @param dayInMonth In range [1, 31]
+ * @param {...(string|number|Date)} args Arguments: (iso8601String) or (millisSinceEpoch) or (date) or (year, month, dayInMonth).
+ * @returns {Date} Created Date instance.
  */
 export function date() {
   if (arguments.length === 3) {
@@ -89,14 +71,11 @@ export function date() {
 }
 
 /**
- *  Determine the number of years between two dates.
+ * Determine the number of years between two dates.
  *
- *  @param date1 First date, inclusive.
- *  @param date2 Second date, exclusive.
- *  @return The amount of years between date1 and date2. Will be negative if date2 < date1.
- *          Will be 0 if date1 and date2 fall within the same year.
- *          This doesn't take actual days into account, e.g. yearsBetween('1999-12-31', '2000-01-01') will return 1, even if
- *          these dates only differ by 1 day.
+ * @param {Date|string|number} date1 First date, inclusive.
+ * @param {Date|string|number} date2 Second date, exclusive.
+ * @returns {number} The amount of years between date1 and date2.
  */
 export function yearsDiff(date1, date2) {
   const y1 = date(date1).getFullYear();
@@ -105,14 +84,11 @@ export function yearsDiff(date1, date2) {
 }
 
 /**
- *  Determine the number of months between two dates.
+ * Determine the number of months between two dates.
  *
- *  @param date1 First date, inclusive.
- *  @param date2 Second date, exclusive.
- *  @return The amount of months between date1 and date2. Will be negative if date2 < date1.
- *          Will be 0 if date1 and date2 fall within the same year and same month.
- *          This doesn't take actual days into account, e.g. monthsBetween('1999-12-31', '2000-01-01') will return 1, even if
- *          these dates only differ by 1 day.
+ * @param {Date|string|number} date1 First date, inclusive.
+ * @param {Date|string|number} date2 Second date, exclusive.
+ * @returns {number} The amount of months between date1 and date2.
  */
 export function monthsDiff(date1, date2) {
   let d1 = date(date1);
@@ -140,22 +116,22 @@ export function monthsDiff(date1, date2) {
 }
 
 /**
- *  Determine the number of weeks between two dates.
+ * Determine the number of weeks between two dates.
  *
- *  @param date1 First date, inclusive.
- *  @param date2 Second date, exclusive.
- *  @return The amount of weeks between date1 and date2. Will be negative if date2 < date1.
+ * @param {Date|string|number} date1 First date, inclusive.
+ * @param {Date|string|number} date2 Second date, exclusive.
+ * @returns {number} The amount of weeks between date1 and date2.
  */
 export function weeksDiff(date1, date2) {
   return Math.floor(daysDiff(date1, date2) / 7);
 }
 
 /**
- *  Determine the number of days between two dates.
+ * Determine the number of days between two dates.
  *
- *  @param date1 First date, inclusive.
- *  @param date2 Second date, exclusive.
- *  @return The amount of days between date1 and date2. Will be negative if date2 < date1.
+ * @param {Date|string|number} date1 First date, inclusive.
+ * @param {Date|string|number} date2 Second date, exclusive.
+ * @returns {number} The amount of days between date1 and date2.
  */
 export function daysDiff(date1, date2) {
   date1 = date(date1);
@@ -167,38 +143,38 @@ export function daysDiff(date1, date2) {
 }
 
 /**
- *  Return a date that corresponds to tomorrow.
+ * Return a date that corresponds to tomorrow.
  *
- *  @return A date that represents the start of tomorrow.
+ * @returns {Date} A date that represents the start of tomorrow.
  */
 export function tomorrow() {
   return dateAfterDays(today(), +1);
 }
 
 /**
- *  Return a date that corresponds to today, start of the day.
+ * Return a date that corresponds to today, start of the day.
  *
- *  @return A date that represents the start of today.
+ * @returns {Date} A date that represents the start of today.
  */
 export function today() {
   return startOfDay(new Date());
 }
 
 /**
- *  Return a date that corresponds to yesterday.
+ * Return a date that corresponds to yesterday.
  *
- *  @return A date that represents the start of yesterday.
+ * @returns {Date} A date that represents the start of yesterday.
  */
 export function yesterday() {
   return dateAfterDays(today(), -1);
 }
 
 /**
- *  Return a date that is some amount of days in the future (if deltaDays is positive) or in the past (if deltaDays is negative) from another date.
+ * Return a date that is some amount of days in the future (if deltaDays is positive) or in the past (if deltaDays is negative) from another date.
  *
- *  @param refDate The reference date.
- *  @param deltaDays The number of days to add or subtract from the reference date.
- *  @return A new date that is deltaDays earlier or later than reference date or that is referenceDate if deltaDays is zero.
+ * @param {Date|string|number} refDate The reference date.
+ * @param {number} deltaDays The number of days to add or subtract from the reference date.
+ * @returns {Date} A new date that is deltaDays earlier or later than reference date or referenceDate if deltaDays is zero.
  */
 export function dateAfterDays(refDate, deltaDays) {
   refDate = date(refDate);
@@ -210,11 +186,11 @@ export function dateAfterDays(refDate, deltaDays) {
 }
 
 /**
- *  Return the days between two dates.
+ * Return the days between two dates.
  *
- *  @param date1 First date, inclusive.
- *  @param date2 Second date, exclusive.
- *  @return An array of days. Will be empty if date2 == date1.
+ * @param {Date|string|number} date1 First date, inclusive.
+ * @param {Date|string|number} date2 Second date, exclusive.
+ * @returns {Date[]} An array of Date objects for each day in the range.
  */
 export function daysBetween(date1, date2) {
   date1 = date(date1);
@@ -239,9 +215,8 @@ export function daysBetween(date1, date2) {
 /**
  * Get a date object representing midnight on the provided date.
  *
- * @param date A date object.
- * @return The date (with time component defaulting to 00:00:00.000).
- *
+ * @param {...(string|number|Date)} args Date arguments forwarded to `date()`.
+ * @returns {Date} The date with time component set to 00:00:00.000.
  * @see https://www.irt.org/articles/js052/index.htm
  */
 export function startOfDay() {
@@ -254,11 +229,10 @@ export function startOfDay() {
 }
 
 /**
- * Get a date object representing just before (i.e. one millisecond before) midnight on the provided date.
+ * Get a date object representing just before midnight on the provided date.
  *
- * @param date A date object.
- * @return The date (with time component defaulting to 23:59:59.999).
- *
+ * @param {...(string|number|Date)} args Date arguments forwarded to `date()`.
+ * @returns {Date} The date with time component set to 23:59:59.999.
  * @see https://www.irt.org/articles/js052/index.htm
  */
 export function endOfDay() {
@@ -273,9 +247,8 @@ export function endOfDay() {
 /**
  * Calculate the easter day/date in a given year.
  *
- * @param year The year to calculate easter for.
- * @return The date (with time component defaulting to zero, i.e. just after midnight) of easter in the given year.
- *
+ * @param {number} year The year to calculate easter for.
+ * @returns {Date} The date of Easter in the given year at start of day.
  * @see https://www.irt.org/articles/js052/index.htm
  */
 export function easterDay(year) {
@@ -294,11 +267,10 @@ export function easterDay(year) {
 }
 
 /**
- *  Format the date/time into a real {@link Date} object.
+ * Format the date/time into a real Date object.
  *
- *  @param dateTime The date-time value, either as a number (representin millis since epoch), a string or a {@link Date} object.
- *
- *  @return A {@link Date} object or <code>null</code>.
+ * @param {Date|string|number} dateTime The date-time value, either as a number, a string, or a Date object.
+ * @returns {Date|null} A Date object or null if input is falsy.
  */
 export function toDateTime(dateTime) {
   if (!dateTime) {
@@ -316,12 +288,12 @@ export function toDateTime(dateTime) {
 }
 
 /**
- *  Format the date/time into a normalized string.
+ * Format the date/time into a normalized string.
  *
- *  @param dateTime The exact date-time value.
- *  @param dateAndTimeSeparator The separator to use between the date and time parts. A single space by default.
- *  @param toUTC Whether to report the UTC date and time.
- *  @return A string with following form: <code>yyyy-mm-dd hh:mm:ss</code> or with an adjusted separator between the date and time parts.
+ * @param {Date|string|number} dateTime The exact date-time value.
+ * @param {string} [dateAndTimeSeparator=' '] The separator to use between the date and time parts.
+ * @param {boolean} [toUTC=false] Whether to report the UTC date and time.
+ * @returns {string} Formatted string in the form `yyyy-mm-dd hh:mm:ss` (or with custom separator).
  */
 export function formatDateTime(dateTime, dateAndTimeSeparator = ' ', toUTC = false) {
   dateTime = toDateTime(dateTime);
@@ -360,11 +332,10 @@ export function formatDateTime(dateTime, dateAndTimeSeparator = ' ', toUTC = fal
 }
 
 /**
- *  Format the date/time into a date-only string.
+ * Format the date/time into a date-only string.
  *
- *  @param dateTime The exact date-time value.
- *
- *  @return A string with following form: <code>yyyy-mm-dd</code>
+ * @param {Date|string|number} dateTime The exact date-time value.
+ * @returns {string} Formatted date string in the form `yyyy-mm-dd`.
  */
 export function formatDate(dateTime) {
   dateTime = toDateTime(dateTime);
@@ -385,11 +356,10 @@ export function formatDate(dateTime) {
 }
 
 /**
- *  Format the date/time into a time-only string.
+ * Format the date/time into a time-only string.
  *
- *  @param dateTime The exact date-time value.
- *
- *  @return A string with following form: <code>hh:mm:ss</code>
+ * @param {Date|string|number} dateTime The exact date-time value.
+ * @returns {string} Formatted time string in the form `hh:mm:ss`.
  */
 export function formatTime(dateTime) {
   dateTime = toDateTime(dateTime);
@@ -415,21 +385,10 @@ export function formatTime(dateTime) {
 }
 
 /**
- *  Give a human-friendly indication of how far in the past a certain date-time lays.
+ * Give a human-friendly indication of how far in the past or future a date-time lies.
  *
- *  @param dateTime The exact date-time value.
- *
- *  @return The first that applies:<ol>
- *            <li>The form 'now' when less than 2s ago/in the future.</li>
- *            <li>The form 'in s seconds' when less than 51s in the future</li>
- *            <li>The form 's seconds ago' when less than 51s ago</li>
- *            <li>The form 'one minute ago' when less than 121s ago</li>
- *            <li>The form 'in one minute' when less than 121s in the future</li>
- *            <li>The form 'in m minutes' when less than 1h in the future</li>
- *            <li>The form 'm minutes ago' when less than 1h ago</li>
- *            <li>The time in the form <code>hh:mm</code> if today</li>
- *            <li>The date in the form <code>yyyy-mm-dd hh:mm</code></li>
- *          </ol>
+ * @param {Date|string|number} dateTime The exact date-time value.
+ * @returns {string} Human-friendly relative date-time string.
  */
 export function formatRelativeDateTime(dateTime) {
   if (!(dateTime instanceof Date)) {
@@ -486,11 +445,10 @@ export function formatRelativeDateTime(dateTime) {
 }
 
 /**
- *  Give a human-friendly indication of an elapsed time.
+ * Give a human-friendly indication of an elapsed timespan.
  *
- *  @param elapsedTime The exact elapsed time, expressed in milliseconds.
- *
- *  @return The form {ddd}d {hh}h {mm}m {ss}s
+ * @param {number} elapsedTime The exact elapsed time in milliseconds.
+ * @returns {string} Formatted duration string `{ddd}d {hh}h {mm}m {ss}s`.
  */
 export function formatTimespan(elapsedTime) {
   const SECONDS_IN_HOUR = 60 * 60;
@@ -526,6 +484,7 @@ export function formatTimespan(elapsedTime) {
   return formattedTimespan;
 }
 
+/** English month names in calendar order (index 0 = January). */
 export const MONTH_NAMES = [
   'January',
   'February',
@@ -542,11 +501,11 @@ export const MONTH_NAMES = [
 ];
 
 /**
- *  Format a date-time value into a human-friendly string (e.g. "15 January 2026 at 09:08" or "15 January 2026").
+ * Format a date-time value into a human-friendly string (e.g. "15 January 2026 at 09:08" or "15 January 2026").
  *
- *  @param dateTime The date-time value (Date object, timestamp number, or ISO string).
- *  @param withTime Whether to include the "at HH:MM" time portion.
- *  @return A human-readable date string, or empty string if invalid.
+ * @param {Date|string|number} dateTime The date-time value.
+ * @param {boolean} [withTime=true] Whether to include the "at HH:MM" time portion.
+ * @returns {string} A human-readable date string, or empty string if invalid.
  */
 export function formatHumanDateTime(dateTime, withTime = true) {
   dateTime = toDateTime(dateTime);
@@ -565,12 +524,12 @@ export function formatHumanDateTime(dateTime, withTime = true) {
 }
 
 /**
- *  Format a date-time value into a detailed, human-friendly relative time string
- *  (e.g. "1 day, 2 hours and 15 minutes ago", "2 hours and 15 minutes ago", "15 minutes ago", "just now").
+ * Format a date-time value into a detailed, human-friendly relative time string
+ * (e.g. "1 day, 2 hours and 15 minutes ago", "2 hours and 15 minutes ago", "15 minutes ago", "just now").
  *
- *  @param dateTime The date-time value (Date object, timestamp number, or ISO string).
- *  @param now Reference date-time (defaults to current date-time).
- *  @return A descriptive relative time string.
+ * @param {Date|string|number} dateTime The date-time value.
+ * @param {Date|number} [now=new Date()] Reference date-time.
+ * @returns {string} A descriptive relative time string.
  */
 export function formatDetailedRelativeTime(dateTime, now = new Date()) {
   dateTime = toDateTime(dateTime);
@@ -635,8 +594,8 @@ export function formatDetailedRelativeTime(dateTime, now = new Date()) {
  * Serializes a Date (or date-convertible value) to a wire UTC ISO string without milliseconds
  * ('yyyy-MM-ddTHH:mm:ssZ'). Preserves null and undefined as-is.
  *
- * @param {Date|string|number|null|undefined} value
- * @returns {string|null|undefined}
+ * @param {Date|string|number|null|undefined} value Date value to serialize.
+ * @returns {string|null|undefined} ISO-8601 UTC wire date string or passthrough value.
  */
 export function toWireDate(value) {
   if (value === null || value === undefined) {
@@ -653,8 +612,8 @@ export function toWireDate(value) {
  * Parses a server UTC date-time string into a real Date. Passing an existing Date,
  * null, or undefined is a safe passthrough.
  *
- * @param {string|number|Date|null|undefined} value
- * @returns {Date|null|undefined}
+ * @param {string|number|Date|null|undefined} value Value to parse into a Date.
+ * @returns {Date|null|undefined} Parsed Date instance or passthrough value.
  */
 export function fromWireDate(value) {
   if (value === null || value === undefined || value instanceof Date) {

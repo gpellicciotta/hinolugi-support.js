@@ -1,16 +1,25 @@
-// General canvas utility functions that only rely on the canvas API
+/**
+ * Canvas drawing and raster export utilities.
+ *
+ * Provides functions for drawing rounded rectangles, text balloons,
+ * fitted and centered text with automatic font-size downscaling,
+ * grids, and client-side PNG downloads from canvas elements.
+ *
+ * @module canvas
+ */
 
 /**
- *  Draw the outline of a rectangle with rounded corners.
+ * Draw the outline of a rectangle with rounded corners.
  *
- *  Setup a strokeStyle before and stroke afterwards.
+ * Caller should set `ctx.strokeStyle` beforehand and may call `ctx.stroke()` or `ctx.fill()`.
  *
- *  @param ctx The drawing context.
- *  @param x X-coordinate of top-left corner.
- *  @param y Y-coordinate of top-left corner.
- *  @param width Width of rect.
- *  @param height Height of rect.
- *  @param radius The radius of the corners. Should be a lot smaller than Math.min(height, width).
+ * @param {CanvasRenderingContext2D} ctx The drawing context.
+ * @param {number} x X-coordinate of top-left corner.
+ * @param {number} y Y-coordinate of top-left corner.
+ * @param {number} width Width of rectangle.
+ * @param {number} height Height of rectangle.
+ * @param {number} radius The radius of the corners. Should be smaller than `Math.min(height, width) / 2`.
+ * @returns {void}
  */
 export function roundedRect(ctx, x, y, width, height, radius) {
   ctx.beginPath();
@@ -27,33 +36,32 @@ export function roundedRect(ctx, x, y, width, height, radius) {
 }
 
 /**
- *  Draw a text baloon:
+ * Draw a text balloon path on the canvas context.
  *
- *  Setup a strokeStyle before and stroke afterwards.
+ * Caller should set `ctx.strokeStyle` or `ctx.fillStyle` and stroke/fill afterwards.
  *
- *    x1,y1
- *      +-------------------------+
- *      |                         |
- *      |                         |
- *      |   x4  x5                |
- *      +---+   +-----------------+ x2, y2
- *          / /
- *         +
- *      x3, y3
+ * ```text
+ *   x1,y1
+ *     +-------------------------+
+ *     |                         |
+ *     |                         |
+ *     |   x4  x5                |
+ *     +---+   +-----------------+ x2, y2
+ *         / /
+ *        +
+ *     x3, y3
+ * ```
  *
- *  @param ctx The drawing context.
- *  @param x1 The x-coordinate of the top-left corner.
- *  @param y1 The y-coordinate of the top-left corner.
- *  @param x2 The x-coordinate of the bottom-right corner.
- *  @param y2 The y-coordinate of the bottom-right corner.
- *  @param x3 The x-coordinate of the point representing the 'mouth-tip' of the balloon.
- *            Should be > x1 and < x2. By default will be x1 + 5.
- *  @param y3 The y-coordinate of the point representing the 'mouth-tip' of the balloon.
- *            Should be > y2. By default will be y2 + 10.
- *  @param x4 The left-most x-coordinate where the tip ends in the balloon.
- *            Should be > x1 and < x5. By default will be x1 + 25.
- *  @param x5 The right-most x-coordinate where the tip ends in the balloon.
- *            Should be > x4 and < x5. By default will be x4 + 10.
+ * @param {CanvasRenderingContext2D} ctx The drawing context.
+ * @param {number} x1 The x-coordinate of the top-left corner.
+ * @param {number} y1 The y-coordinate of the top-left corner.
+ * @param {number} x2 The x-coordinate of the bottom-right corner.
+ * @param {number} y2 The y-coordinate of the bottom-right corner.
+ * @param {number} [x3] The x-coordinate of the tip point (defaults to `x1 + 5`).
+ * @param {number} [y3] The y-coordinate of the tip point (defaults to `y2 + 10`).
+ * @param {number} [x4] Left-most x-coordinate where tip meets balloon (defaults to `x1 + 25`).
+ * @param {number} [x5] Right-most x-coordinate where tip meets balloon (defaults to `x4 + 10`).
+ * @returns {void}
  */
 export function textBalloon(ctx, x1, y1, x2, y2, x3, y3, x4, x5) {
   // Defaults
@@ -76,11 +84,12 @@ export function textBalloon(ctx, x1, y1, x2, y2, x3, y3, x4, x5) {
 }
 
 /**
- *  Make an image of the current canvas contents and request this png image to be downloaded.
+ * Capture current canvas content as a PNG image and trigger browser download.
  *
- *  @param document The document to use for creating a &lt;a&gt; tag.
- *  @param canvas The image to take an image of.
- *  @param imageName The name to give to the image. Will be shown by the browser while downloading.
+ * @param {Document} document The document object used to construct temporary download anchor.
+ * @param {HTMLCanvasElement} canvas The canvas element to export.
+ * @param {string} [imageName='download.png'] File name presented in the browser download dialog.
+ * @returns {void}
  */
 export function downloadAsImage(document, canvas, imageName = 'download.png') {
   const link = document.createElement('a');
@@ -93,18 +102,20 @@ export function downloadAsImage(document, canvas, imageName = 'download.png') {
 }
 
 /**
- *  Draw text centered in the provided box.
+ * Draw text filled and centered in the specified bounding box, automatically downscaling font size if needed.
  *
- *  @param ctx The drawing context.
- *  @param txt The text to be draw within the provided box, on a single line.
- *  @param x1 The x-coordinate of the top-left corner.
- *  @param y1 The y-coordinate of the top-left corner.
- *  @param width The width of the box in which the text must be drawn.
- *  @param height The height of the box in which the text must be drawn.
- *  @param fontFamily The font family to be used.
- *  @param fontSize The desired font-size. A smaller fontsize will be used if needed.
- *
- *  @return The font-size used.
+ * @param {CanvasRenderingContext2D} ctx The drawing context.
+ * @param {string} txt The text to be drawn on a single line.
+ * @param {number} x1 The x-coordinate of the top-left corner.
+ * @param {number} y1 The y-coordinate of the top-left corner.
+ * @param {number} width The width of the bounding box.
+ * @param {number} height The height of the bounding box.
+ * @param {string} [fontFamily='Courier New'] The font family name.
+ * @param {number} [fontSize=32] Desired initial font size in pixels.
+ * @param {CanvasTextAlign} [textAlign='center'] Canvas text alignment.
+ * @param {CanvasTextBaseline} [textBaseline='middle'] Canvas text baseline.
+ * @param {string} [fontStyle='normal normal'] Font weight and style prefix.
+ * @returns {number} The actual font size used.
  */
 export function drawCenteredText(
   ctx,
@@ -139,18 +150,20 @@ export function drawCenteredText(
 }
 
 /**
- *  Draw the outline of text centered in the provided box.
+ * Draw stroked outline of text centered in the specified bounding box, downscaling font size if needed.
  *
- *  @param ctx The drawing context.
- *  @param txt The text to be drawn within the provided box, on a single line.
- *  @param x1 The x-coordinate of the top-left corner.
- *  @param y1 The y-coordinate of the top-left corner.
- *  @param width The width of the box in which the text must be drawn.
- *  @param height The height of the box in which the text must be drawn.
- *  @param fontFamily The font family to be used.
- *  @param fontSize The desired font-size. A smaller fontsize will be used if needed.
- *
- *  @return The font-size used.
+ * @param {CanvasRenderingContext2D} ctx The drawing context.
+ * @param {string} txt The text to be drawn on a single line.
+ * @param {number} x1 The x-coordinate of the top-left corner.
+ * @param {number} y1 The y-coordinate of the top-left corner.
+ * @param {number} width The width of the bounding box.
+ * @param {number} height The height of the bounding box.
+ * @param {string} [fontFamily='Courier New'] The font family name.
+ * @param {number} [fontSize=32] Desired initial font size in pixels.
+ * @param {CanvasTextAlign} [textAlign='center'] Canvas text alignment.
+ * @param {CanvasTextBaseline} [textBaseline='middle'] Canvas text baseline.
+ * @param {string} [fontStyle='normal normal'] Font weight and style prefix.
+ * @returns {number} The actual font size used.
  */
 export function drawCenteredTextOutline(
   ctx,
@@ -185,17 +198,18 @@ export function drawCenteredTextOutline(
 }
 
 /**
- *  Draw a grid in the provided box.
+ * Draw a grid within the specified bounding box.
  *
- *  Setup a strokeStyle before and stroke afterwards.
+ * Caller should set `ctx.strokeStyle` beforehand.
  *
- *  @param ctx The drawing context.
- *  @param gridX The x-coordinate of the top-left corner of the grid.
- *  @param gridY The y-coordinate of the top-left corner of the grid.
- *  @param gridColumns The number of grid columns.
- *  @param gridRows The number of grid rows.
- *  @param boxWidth The width of a single grid box.
- *  @param boxHeight The height of single grid box.
+ * @param {CanvasRenderingContext2D} ctx The drawing context.
+ * @param {number} gridX The x-coordinate of the top-left corner of the grid.
+ * @param {number} gridY The y-coordinate of the top-left corner of the grid.
+ * @param {number} gridColumns The number of grid columns.
+ * @param {number} gridRows The number of grid rows.
+ * @param {number} boxWidth The width of a single grid cell.
+ * @param {number} boxHeight The height of a single grid cell.
+ * @returns {void}
  */
 export function drawGrid(ctx, gridX, gridY, gridColumns, gridRows, boxWidth, boxHeight) {
   ctx.save();

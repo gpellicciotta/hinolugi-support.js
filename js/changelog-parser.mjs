@@ -1,4 +1,8 @@
-// Utility for parsing repository CHANGELOG.md into structured release objects
+/**
+ * Markdown CHANGELOG.md parser for extracting structured release and change models.
+ *
+ * @module changelog-parser
+ */
 
 /**
  * @typedef {Object} ChangelogEntry
@@ -19,10 +23,11 @@
 
 /**
  * Parses markdown changelog text into an array of release models.
+ *
  * @param {string} markdownText - Raw markdown content
- * @param {Object} [options]
+ * @param {Object} [options] - Parsing configuration options
  * @param {number} [options.maxReleases=20] - Max number of releases to parse
- * @returns {ChangelogRelease[]}
+ * @returns {ChangelogRelease[]} Array of parsed release descriptors.
  */
 export function parseChangelog(markdownText, options = {}) {
   const maxReleases = options.maxReleases || 20;

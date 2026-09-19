@@ -1,15 +1,23 @@
 import { decimalString, randomFloat } from './math.mjs';
 
-// Matrix class and functions
+/**
+ * 2D matrix mathematics, transformations, and linear algebra operations.
+ *
+ * Provides the Matrix class for creating, manipulating, multiplying,
+ * transposing, and mapping 2D numeric matrices.
+ *
+ * @module matrix
+ */
 
 /**
- *  A matrix class.
+ * A 2D numeric matrix supporting arithmetic, scalar operations, and matrix algebra.
  */
 export class Matrix {
   /**
-   *  Create a Matrix based on the provided array.
+   * Create a Matrix based on the provided 2D array.
    *
-   *  @param array The 2d-array to turn into a Matrix. It should be a regular array having the same number of cols for each row.
+   * @param {number[][]} array The 2D array to turn into a Matrix (must have rectangular dimensions).
+   * @returns {Matrix} The newly created Matrix instance.
    */
   static fromArray(array) {
     const rows = array.length;
@@ -18,10 +26,11 @@ export class Matrix {
   }
 
   /**
-   *  Create an identity Matrix.
+   * Create an identity Matrix of specified dimensions.
    *
-   *  @param rows The number of rows.
-   *  @param cols The number of columns.
+   * @param {number} rows The number of rows.
+   * @param {number} cols The number of columns.
+   * @returns {Matrix} An identity Matrix with ones along the main diagonal and zeros elsewhere.
    */
   static identity(rows, cols) {
     const initializerF = function (r, c) {
@@ -31,12 +40,13 @@ export class Matrix {
   }
 
   /**
-   *  Create a Matrix with random values.
+   * Create a Matrix populated with random float values.
    *
-   *  @param rows The number of rows.
-   *  @param cols The number of columns.
-   *  @param minValue The min. random value for each element, inclusive.
-   *  @param maxValue The max. random value for each element, inclusive.
+   * @param {number} rows The number of rows.
+   * @param {number} cols The number of columns.
+   * @param {number} [minVal=0.0] The minimum random value for each element (inclusive).
+   * @param {number} [maxVal=1.0] The maximum random value for each element (inclusive).
+   * @returns {Matrix} A new Matrix with random entries.
    */
   static random(rows, cols, minVal = 0.0, maxVal = 1.0) {
     const initializerF = function () {
@@ -46,15 +56,11 @@ export class Matrix {
   }
 
   /**
-   *  Create a new matrix.
+   * Create a new matrix with specified dimensions and initial fill values.
    *
-   *  @param rows The number of rows.
-   *  @param cols The number of columns.
-   *  @param fillValue Can be either
-   *                    a) a scalar value or
-   *                    b) a function producing a scalar value, or
-   *                    c) a compatible Matrix object, or
-   *                    d) a compatible 2d-Array
+   * @param {number} rows The number of rows.
+   * @param {number} cols The number of columns.
+   * @param {number|Function|Matrix|number[][]} [fillValue=0.0] Can be a scalar number, a function `(row, col) => number`, a compatible Matrix, or a 2D array.
    */
   constructor(rows, cols, fillValue = 0.0) {
     this._rows = rows;
@@ -66,26 +72,39 @@ export class Matrix {
     this.fill(fillValue);
   }
 
+  /**
+   * Number of rows in the matrix.
+   *
+   * @type {number}
+   */
   get rows() {
     return this._rows;
   }
 
+  /**
+   * Number of columns in the matrix.
+   *
+   * @type {number}
+   */
   get columns() {
     return this._cols;
   }
 
+  /**
+   * Total number of elements in the matrix (rows * columns).
+   *
+   * @type {number}
+   */
   get elementCount() {
     return this._rows * this._cols;
   }
 
   /**
-   *  Fill a matrix with either a scalar value or based on a compatible Matrix or Array.
+   * Fill the matrix with a scalar value, a generator function, or from a compatible Matrix or 2D array.
    *
-   *  @param fillValue Can be either
-   *                    a) a scalar value or
-   *                    b) a function producing a scalar value, or
-   *                    c) a compatible Matrix object, or
-   *                    d) a compatible 2d-Array
+   * @param {number|Function|Matrix|number[][]} [fillValue=0.0] Value or generator used to populate all elements.
+   * @throws {Error} If dimensions of provided Matrix or array do not match.
+   * @returns {void}
    */
   fill(fillValue = 0.0) {
     if (fillValue instanceof Matrix) {
@@ -136,6 +155,12 @@ export class Matrix {
     }
   }
 
+  /**
+   * Multiply each element in this matrix in-place by a scalar number.
+   *
+   * @param {number} numberToMultiply The scalar factor.
+   * @returns {void}
+   */
   multiplyEachElement(numberToMultiply) {
     for (let r = 0; r < this._rows; r++) {
       for (let c = 0; c < this._cols; c++) {
@@ -144,6 +169,12 @@ export class Matrix {
     }
   }
 
+  /**
+   * Add a scalar number in-place to each element in this matrix.
+   *
+   * @param {number} numberToAdd The scalar increment.
+   * @returns {void}
+   */
   addToEachElement(numberToAdd) {
     for (let r = 0; r < this._rows; r++) {
       for (let c = 0; c < this._cols; c++) {
@@ -152,6 +183,15 @@ export class Matrix {
     }
   }
 
+  /**
+   * Verify that the given argument is a Matrix instance with expected row and column counts.
+   *
+   * @param {*} matrix Candidate matrix to validate.
+   * @param {number} expectedRows Expected number of rows.
+   * @param {number} expectedCols Expected number of columns.
+   * @throws {Error} If argument is not a Matrix or dimensions do not match.
+   * @returns {void}
+   */
   checkDimensions(matrix, expectedRows, expectedCols) {
     if (!(matrix instanceof Matrix)) {
       throw new Error('Matrix expected but received ' + typeof matrix);
@@ -164,6 +204,12 @@ export class Matrix {
     }
   }
 
+  /**
+   * Check whether this matrix equals another matrix (element-wise) or a scalar.
+   *
+   * @param {Matrix|number} other The matrix or scalar value to compare against.
+   * @returns {boolean} True if all elements match, false otherwise.
+   */
   equal(other) {
     if (other instanceof Matrix) {
       this.checkDimensions(other, this._rows, this._cols);
@@ -186,6 +232,12 @@ export class Matrix {
     return true;
   }
 
+  /**
+   * Add another matrix (element-wise) or a scalar to this matrix, returning a new Matrix.
+   *
+   * @param {Matrix|number} other The matrix or scalar to add.
+   * @returns {Matrix} A new Matrix containing the sum.
+   */
   plus(other) {
     const result = new Matrix(this._rows, this._cols);
     if (other instanceof Matrix) {
@@ -205,6 +257,12 @@ export class Matrix {
     return result;
   }
 
+  /**
+   * Subtract another matrix (element-wise) or a scalar from this matrix, returning a new Matrix.
+   *
+   * @param {Matrix|number} other The matrix or scalar to subtract.
+   * @returns {Matrix} A new Matrix containing the difference.
+   */
   minus(other) {
     const result = new Matrix(this._rows, this._cols);
     if (other instanceof Matrix) {
@@ -224,6 +282,12 @@ export class Matrix {
     return result;
   }
 
+  /**
+   * Multiply another matrix (element-wise) or a scalar with this matrix, returning a new Matrix.
+   *
+   * @param {Matrix|number} other The matrix (element-wise) or scalar factor.
+   * @returns {Matrix} A new Matrix containing the element-wise product.
+   */
   multiply(other) {
     const result = new Matrix(this._rows, this._cols);
     if (other instanceof Matrix) {
@@ -243,6 +307,14 @@ export class Matrix {
     return result;
   }
 
+  /**
+   * Validate dimensions for matrix multiplication (this.columns === other.rows).
+   *
+   * @param {*} matrix Candidate matrix to validate.
+   * @param {number} expectedRows Expected number of rows (matching this matrix's column count).
+   * @throws {Error} If matrix is invalid or rows don't match expectedRows.
+   * @returns {void}
+   */
   checkMatrixMultiplyDimensions(matrix, expectedRows) {
     if (!(matrix instanceof Matrix)) {
       throw new Error('Matrix expected but received ' + typeof matrix);
@@ -253,7 +325,10 @@ export class Matrix {
   }
 
   /**
-   *  Matrix multiplication.
+   * Perform matrix multiplication (dot product of rows with columns).
+   *
+   * @param {Matrix} other The right-hand Matrix to multiply by.
+   * @returns {Matrix} A new Matrix representing the matrix product.
    */
   matrixMultiply(other) {
     this.checkMatrixMultiplyDimensions(other, this._cols);
@@ -270,6 +345,12 @@ export class Matrix {
     return result;
   }
 
+  /**
+   * Divide this matrix by another matrix (element-wise) or a scalar divisor.
+   *
+   * @param {Matrix|number} other The matrix (element-wise) or scalar divisor.
+   * @returns {Matrix} A new Matrix containing the element-wise quotient.
+   */
   divide(other) {
     const result = new Matrix(this._rows, this._cols);
     if (other instanceof Matrix) {
@@ -289,6 +370,12 @@ export class Matrix {
     return result;
   }
 
+  /**
+   * Transform each element of the matrix with a mapping function.
+   *
+   * @param {Function} mapF Function invoked with `(value, row, col)` returning the new element value.
+   * @returns {Matrix} A new Matrix with mapped values.
+   */
   map(mapF) {
     const result = new Matrix(this._rows, this._cols);
     for (let r = 0; r < this._rows; r++) {
@@ -299,6 +386,11 @@ export class Matrix {
     return result;
   }
 
+  /**
+   * Transpose this matrix, swapping rows and columns.
+   *
+   * @returns {Matrix} A new transposed Matrix.
+   */
   transpose() {
     const result = new Matrix(this._cols, this._rows);
     for (let r = 0; r < this._rows; r++) {
@@ -309,14 +401,30 @@ export class Matrix {
     return result;
   }
 
+  /**
+   * Return a shallow copy of the underlying 2D array of values.
+   *
+   * @returns {number[][]} The 2D array of rows and columns.
+   */
   toArray() {
     return this._vals.slice();
   }
 
+  /**
+   * Return a shallow copy of the underlying 2D array of values (for JavaScript valueOf protocol).
+   *
+   * @returns {number[][]} The 2D array of rows and columns.
+   */
   valueOf() {
     return this._vals.slice();
   }
 
+  /**
+   * Format the matrix into a human-readable multi-line string.
+   *
+   * @param {number} [decimals=0] The number of decimals to format each element with.
+   * @returns {string} Formatted multi-line matrix string.
+   */
   toString(decimals = 0) {
     let str = '';
     for (let r = 0; r < this._rows; r++) {
@@ -330,6 +438,12 @@ export class Matrix {
     return str;
   }
 
+  /**
+   * Print this matrix to the console via console.table.
+   *
+   * @param {string} [msg] Optional header message to log before table output.
+   * @returns {void}
+   */
   log(msg) {
     msg = msg || this._rows + 'x' + this._cols + ' matrix:';
     console.log(msg);

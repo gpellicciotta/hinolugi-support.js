@@ -3,6 +3,15 @@ import { htmlToElement } from './dom.mjs';
 import { escapeHtml } from './strings.mjs';
 
 /**
+ * Collection item editor helper and DOM lifecycle manager.
+ *
+ * Manages header input strips, row addition, multi-item selection/deletion,
+ * and empty state toggles for sub-list collection editors.
+ *
+ * @module collection-editor
+ */
+
+/**
  * Reusable DOM helper and lifecycle manager for sub-list / collection item editors.
  *
  * Manages the canonical visual pattern for embedded collection editors:
@@ -46,6 +55,8 @@ export default class CollectionEditor {
 
   /**
    * Wire up event handlers for header controls, creation inputs, and list interactions.
+   *
+   * @returns {void}
    */
   init() {
     // Add button click:
@@ -114,6 +125,8 @@ export default class CollectionEditor {
 
   /**
    * Clean up registered event listeners.
+   *
+   * @returns {void}
    */
   destroy() {
     this._eventCleanups.forEach((cleanup) => cleanup());
@@ -123,7 +136,7 @@ export default class CollectionEditor {
   /**
    * Get all currently rendered item row elements in the list.
    *
-   * @return {Array<HTMLElement>}
+   * @returns {HTMLElement[]} All rendered item row elements.
    */
   getItemElements() {
     if (!this.listEl) {
@@ -135,7 +148,7 @@ export default class CollectionEditor {
   /**
    * Get total number of item rows in the list.
    *
-   * @return {number}
+   * @returns {number} The count of item rows.
    */
   getItemCount() {
     return this.getItemElements().length;
@@ -144,7 +157,7 @@ export default class CollectionEditor {
   /**
    * Get all currently selected (checked) item row elements.
    *
-   * @return {Array<HTMLElement>}
+   * @returns {HTMLElement[]} Array of selected `<li>` elements.
    */
   getSelectedElements() {
     if (!this.listEl) {
@@ -159,7 +172,7 @@ export default class CollectionEditor {
   /**
    * Get number of selected items.
    *
-   * @return {number}
+   * @returns {number} The count of selected items.
    */
   getSelectedCount() {
     return this.getSelectedElements().length;
@@ -169,6 +182,7 @@ export default class CollectionEditor {
    * Update delete button enabled/disabled state and notify onSelectionChange.
    *
    * @param {boolean} [notify=true] Whether to invoke onSelectionChange callback if selection changed.
+   * @returns {void}
    */
   updateSelectionState(notify = true) {
     if (this._isUpdatingSelection) {
@@ -204,6 +218,7 @@ export default class CollectionEditor {
    * Update empty state and list visibility based on current item count.
    *
    * @param {number} [count] Explicit item count override.
+   * @returns {void}
    */
   updateEmptyState(count) {
     const total = typeof count === 'number' ? count : this.getItemCount();
@@ -226,8 +241,9 @@ export default class CollectionEditor {
   /**
    * Set and render all items in the list.
    *
-   * @param {Array} items Collection of item data objects.
+   * @param {Array<*>} items Collection of item data objects.
    * @param {Function} renderRowFn Function converting item data into a DOM element: `(item, index) => HTMLElement`.
+   * @returns {void}
    */
   setItems(items, renderRowFn) {
     if (!this.listEl) {
@@ -252,6 +268,7 @@ export default class CollectionEditor {
    *
    * @param {HTMLElement} rowEl The item row element.
    * @param {boolean} [prepend=false] Whether to insert at the beginning.
+   * @returns {void}
    */
   addItem(rowEl, prepend = false) {
     if (!this.listEl || !rowEl) {
@@ -269,7 +286,7 @@ export default class CollectionEditor {
   /**
    * Remove all currently selected item row elements from the DOM.
    *
-   * @return {number} Number of deleted items.
+   * @returns {number} Number of deleted items.
    */
   removeSelectedItems() {
     const selected = this.getSelectedElements();
@@ -281,6 +298,8 @@ export default class CollectionEditor {
 
   /**
    * Clear all creation input values.
+   *
+   * @returns {void}
    */
   clearInputs() {
     const inputList = Array.isArray(this.inputs) ? this.inputs : Object.values(this.inputs);
@@ -302,7 +321,7 @@ export default class CollectionEditor {
    *   @param {string} [config.actionsHtml] Right-hand action button HTML.
    *   @param {string} [config.checkboxId] Custom ID for the deletion checkbox input.
    *   @param {boolean} [config.isChecked=false] Initial checkbox state.
-   * @return {HTMLElement} Constructed `<li>` DOM element.
+   * @returns {HTMLElement} Constructed `<li>` DOM element.
    */
   static createItemRow(config = {}) {
     const {

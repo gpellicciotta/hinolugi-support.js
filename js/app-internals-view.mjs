@@ -4,17 +4,78 @@ import { disable, enable } from './forms.mjs';
 import * as log from './logs.mjs';
 import { random, randomElement } from './math.mjs';
 
+/**
+ * App internals developer and diagnostics dashboard view.
+ *
+ * Provides inspection panels for sign-in state, PWA / service worker installation,
+ * registered actions, views, notifications, runtime logging, and an interactive API test center.
+ *
+ * @module app-internals-view
+ */
+
 const VIEW_ID = 'app-internals-view';
 
+/**
+ * Event dispatched when the user sign-in state changes.
+ *
+ * @type {string}
+ */
 export const SIGN_IN_STATE_CHANGED_EVENT = 'sign-in-state-changed';
+
+/**
+ * Event dispatched when the PWA installability state changes.
+ *
+ * @type {string}
+ */
 export const APP_INSTALL_STATE_CHANGED_EVENT = 'app-install-state-changed';
+
+/**
+ * Event dispatched when service worker registration or update state changes.
+ *
+ * @type {string}
+ */
 export const SW_INSTALL_STATE_CHANGED_EVENT = 'sw-install-state-changed';
+
+/**
+ * Event dispatched when an application action changes its enabled state.
+ *
+ * @type {string}
+ */
 export const ACTION_STATE_CHANGED_EVENT = 'action-state-changed';
+
+/**
+ * Event dispatched when a new action is dynamically added to the application.
+ *
+ * @type {string}
+ */
 export const ACTION_ADDED_EVENT = 'action-added';
+
+/**
+ * Event dispatched when all application notifications are cleared.
+ *
+ * @type {string}
+ */
 export const NOTIFICATIONS_CLEARED_EVENT = 'notifications-cleared';
+
+/**
+ * Event dispatched when an individual application notification is deleted.
+ *
+ * @type {string}
+ */
 export const NOTIFICATION_DELETED_EVENT = 'notification-deleted';
+
+/**
+ * Event dispatched when a new application notification is added.
+ *
+ * @type {string}
+ */
 export const NOTIFICATION_ADDED_EVENT = 'notification-added';
 
+/**
+ * Default API routes presented in the API Test Center datalist.
+ *
+ * @type {string[]}
+ */
 export const DEFAULT_API_ROUTES = [
   '/api/status',
   '/api/version',

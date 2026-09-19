@@ -7,9 +7,9 @@
  */
 export class ApiError extends Error {
   /**
-   * @param {string} message
-   * @param {number} status
-   * @param {*} [body]
+   * @param {string} message Human-readable error description.
+   * @param {number} status HTTP status code.
+   * @param {*} [body=null] Optional parsed response body payload.
    */
   constructor(message, status, body = null) {
     super(message);
@@ -40,16 +40,17 @@ export class ConflictError extends ApiError {}
 
 /**
  * Regex patterns matched against 400 response messages to infer NotFoundError.
+ * @type {RegExp[]}
  */
 export const NOT_FOUND_PATTERNS = [/invalid.*id/i, /no .* with id/i, /not found/i, /does not exist/i, /is not valid/i];
 
 /**
  * Maps an HTTP status code + parsed error envelope into the appropriate ApiError subclass.
  *
- * @param {number} status
- * @param {string} [message]
- * @param {*} [body]
- * @returns {ApiError}
+ * @param {number} status HTTP response status code.
+ * @param {string} [message] Error message string.
+ * @param {*} [body=null] Optional response payload.
+ * @returns {ApiError} Instance of ApiError or appropriate subclass.
  */
 export function mapError(status, message, body = null) {
   const text = message || '';
@@ -71,10 +72,10 @@ export function mapError(status, message, body = null) {
 /**
  * Builds a target URL from a base URL, path, and optional query parameters.
  *
- * @param {string} baseUrl
- * @param {string} path
- * @param {Record<string, string|number|boolean|Array<string|number>|null|undefined>} [query]
- * @returns {string}
+ * @param {string} baseUrl Origin or root API URL.
+ * @param {string} path Endpoint path relative to base.
+ * @param {Record<string, string|number|boolean|Array<string|number>|null|undefined>} [query] Query parameters object.
+ * @returns {string} Serialized absolute URL.
  */
 export function buildUrl(baseUrl, path, query) {
   const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
@@ -96,9 +97,9 @@ export function buildUrl(baseUrl, path, query) {
 /**
  * Generates an `Authorization: Basic ...` header value.
  *
- * @param {string} userName
- * @param {string} [password]
- * @returns {string}
+ * @param {string} userName Username or client ID.
+ * @param {string} [password] Password or secret.
+ * @returns {string} HTTP Basic authorization header string.
  */
 export function basicAuthHeader(userName, password) {
   const str = `${userName}:${password ?? ''}`;
@@ -109,8 +110,8 @@ export function basicAuthHeader(userName, password) {
 /**
  * Generates an `Authorization: Bearer ...` header value.
  *
- * @param {string} token
- * @returns {string}
+ * @param {string} token Bearer or access token.
+ * @returns {string} HTTP Bearer authorization header string.
  */
 export function bearerAuthHeader(token) {
   return `Bearer ${token}`;
@@ -119,17 +120,18 @@ export function bearerAuthHeader(token) {
 /**
  * Issues one HTTP request and returns the parsed result, throwing an ApiError subclass for non-2xx responses.
  *
- * @param {string} baseUrl
- * @param {string} method
- * @param {string} path
- * @param {Object} [options]
- * @param {Record<string, *>} [options.query]
- * @param {*} [options.jsonBody]
- * @param {string} [options.authHeader]
- * @param {Record<string, string>} [options.headers]
- * @param {'follow'|'manual'|'error'} [options.redirect]
- * @param {RequestCredentials} [options.credentials]
- * @returns {Promise<{status: number, data: *, headers: Headers}>}
+ * @param {string} baseUrl Target origin or base URL.
+ * @param {string} method HTTP verb ('GET', 'POST', 'PUT', etc.).
+ * @param {string} path Path to endpoint.
+ * @param {Object} [options] Optional request options.
+ * @param {Record<string, *>} [options.query] Query parameters.
+ * @param {*} [options.jsonBody] Payload to serialize as JSON body.
+ * @param {string} [options.authHeader] Authorization header string.
+ * @param {Record<string, string>} [options.headers] Additional headers.
+ * @param {'follow'|'manual'|'error'} [options.redirect='follow'] Fetch redirect behavior.
+ * @param {RequestCredentials} [options.credentials='same-origin'] Fetch credentials mode.
+ * @returns {Promise<{status: number, data: *, headers: Headers}>} Resolved response object.
+ * @throws {ApiError} When response status is outside 2xx range.
  */
 export async function sendRequest(baseUrl, method, path, options = {}) {
   const {

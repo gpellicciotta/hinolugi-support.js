@@ -2,15 +2,29 @@ import { distance } from './math.mjs';
 import { Vector } from './vector.mjs';
 
 /**
- *  Clamp a value within a certain range.
- *  Works both for scalars and Vectors.
- *  When working on vectors, both the x and y parts will be clamped separately.
+ * 2D geometric collision detection, orientation, and line intersection algorithms.
  *
- *  @param val The value to restrict.
- *  @param min The min. value. If val < min, min will be returned.
- *  @param max The max. value. If val > max, max will be returned.
+ * Provides functions for bounding box, circle-to-rect, line-to-line,
+ * and point-to-segment proximity and collision evaluations.
  *
- *  @return Number|Vector: the clamped value.
+ * @module collisions
+ */
+
+/**
+ * @typedef {Object} Point2D
+ * @property {number} x Horizontal coordinate.
+ * @property {number} y Vertical coordinate.
+ */
+
+/**
+ * Clamp a value within a minimum and maximum range.
+ *
+ * Works on numeric scalars and Vector instances (clamping x and y independently).
+ *
+ * @param {number|Vector} val The value or vector to restrict.
+ * @param {number|Vector} min The minimum bound.
+ * @param {number|Vector} max The maximum bound.
+ * @returns {number|Vector} The clamped scalar or vector.
  */
 export function clamp(val, min, max) {
   if (val instanceof Vector) {
@@ -32,33 +46,28 @@ function _scalarClamp(val, min, max) {
   return val;
 }
 
-// Given three colinear points p, q, r, the function checks if
-// point q lies on line segment 'pr'
-
 /**
- *  Determine whether a point p lies on the line segment between points a and b.
- *  This will be true if the distance |pa| + |pb| == |ab|.
+ * Determine whether a point `p` lies on the line segment between points `a` and `b`.
  *
- *  @param p Point to check. Assumed to have 'x' and 'y' properties.
- *  @param a Start-point of the line-segment ab. Assumed to have 'x' and 'y' properties.
- *  @param b End-point of the line-segment ab. Assumed to have 'x' and 'y' properties.
+ * Evaluation holds true if distance `|pa| + |pb| === |ab|`.
  *
- *  @return Boolean: true if the given point resides on the given line segment, false otherwise.
+ * @param {Point2D} p Point to check.
+ * @param {Point2D} a Start point of segment.
+ * @param {Point2D} b End point of segment.
+ * @returns {boolean} True if point lies on segment, false otherwise.
  */
 export function pointOnLineSegment(p, a, b) {
   return distance(p, a) + distance(p, b) === distance(a, b);
 }
 
 /**
- *  Determine the orientation of three points.
+ * Determine the orientation of three ordered points in 2D space.
  *
- *  @param p1 First point. Assumed to have 'x' and 'y' properties.
- *  @param p2 Second point. Assumed to have 'x' and 'y' properties.
- *  @param p3 Third point. Assumed to have 'x' and 'y' properties.
- *
- *  @return String: 'clockwise', 'counterclockwise' or 'collinear'.
- *
- *  See https://www.geeksforgeeks.org/orientation-3-ordered-points/
+ * @param {Point2D} p1 First point.
+ * @param {Point2D} p2 Second point.
+ * @param {Point2D} p3 Third point.
+ * @returns {'clockwise'|'counterclockwise'|'collinear'} The orientation classification.
+ * @see {@link https://www.geeksforgeeks.org/orientation-3-ordered-points/}
  */
 export function pointOrientation(p1, p2, p3) {
   const slope12 = (p2.y - p1.y) / (p2.x - p1.x);
@@ -85,14 +94,13 @@ function onSegment(p, q, r) {
 }
 
 /**
- *  Determine whether two line segments |p1 q1| and |p2 q2| intersect, i.e. share at least one point.
+ * Determine whether two line segments |p1 q1| and |p2 q2| intersect.
  *
- *  @param p1 The start point of the first segment. Assumed to have 'x' and 'y' properties.
- *  @param q1 The end point of the first segment. Assumed to have 'x' and 'y' properties.
- *  @param p2 The start point of the second segment. Assumed to have 'x' and 'y' properties.
- *  @param q2 The end point of the second segment. Assumed to have 'x' and 'y' properties.
- *
- *  @return Boolean: true if both line segments intersect, false otherwise.
+ * @param {Point2D} p1 Start point of first line segment.
+ * @param {Point2D} p2 End point of first line segment.
+ * @param {Point2D} q1 Start point of second line segment.
+ * @param {Point2D} q2 End point of second line segment.
+ * @returns {boolean} True if line segments intersect, false otherwise.
  */
 export function lineSegmentsIntersect(p1, p2, q1, q2) {
   // Find the four orientations needed for general and special cases
@@ -125,14 +133,13 @@ export function lineSegmentsIntersect(p1, p2, q1, q2) {
 }
 
 /**
- *  Determine whether two lines |p1 p2| and |q1 q2| are parallel.
+ * Determine whether two infinite lines passing through |p1 p2| and |q1 q2| are parallel.
  *
- *  @param p1 The start point of the first segment. Assumed to have 'x' and 'y' properties.
- *  @param p2 The end point of the first segment. Assumed to have 'x' and 'y' properties.
- *  @param q1 The start point of the second segment. Assumed to have 'x' and 'y' properties.
- *  @param q2 The end point of the second segment. Assumed to have 'x' and 'y' properties.
- *
- *  @return Boolean: true if parallel, false otherwise.
+ * @param {Point2D} p1 First point on line 1.
+ * @param {Point2D} p2 Second point on line 1.
+ * @param {Point2D} q1 First point on line 2.
+ * @param {Point2D} q2 Second point on line 2.
+ * @returns {boolean} True if lines are parallel, false otherwise.
  */
 export function linesAreParallel(p1, p2, q1, q2) {
   const dpx = p2.x - p1.x;
@@ -144,15 +151,14 @@ export function linesAreParallel(p1, p2, q1, q2) {
 }
 
 /**
- *  Determine the intersection point of two lines |p1 p2| and |q1 q2|.
- *  Based on: http://paulbourke.net/geometry/pointlineplane/javascript.txt
+ * Determine the intersection point of two infinite lines passing through |p1 p2| and |q1 q2|.
  *
- *  @param p1 A first point of the first line. Assumed to have 'x' and 'y' properties.
- *  @param p2 Another point of the first line. Assumed to have 'x' and 'y' properties.
- *  @param q1 A first point of the second line. Assumed to have 'x' and 'y' properties.
- *  @param q2 The end point of the second line. Assumed to have 'x' and 'y' properties.
- *
- *  @return Point: the intersection point or null if both lines are parallel.
+ * @param {Point2D} p1 First point on line 1.
+ * @param {Point2D} p2 Second point on line 1.
+ * @param {Point2D} q1 First point on line 2.
+ * @param {Point2D} q2 Second point on line 2.
+ * @returns {Point2D|null} The intersection point, or null if lines are parallel.
+ * @see {@link http://paulbourke.net/geometry/pointlineplane/javascript.txt}
  */
 export function intersectionPointOfLines(p1, p2, q1, q2) {
   const dpx = p2.x - p1.x;
@@ -172,15 +178,14 @@ export function intersectionPointOfLines(p1, p2, q1, q2) {
 }
 
 /**
- *  Determine the intersection point of two line segments |p1 p2| and |q1 q2|.
- *  Based on: http://paulbourke.net/geometry/pointlineplane/javascript.txt
+ * Determine the intersection point of two line segments |p1 p2| and |q1 q2|.
  *
- *  @param p1 The start point of the first segment. Assumed to have 'x' and 'y' properties.
- *  @param p2 The end point of the first segment. Assumed to have 'x' and 'y' properties.
- *  @param q1 The start point of the second segment. Assumed to have 'x' and 'y' properties.
- *  @param q2 The end point of the second segment. Assumed to have 'x' and 'y' properties.
- *
- *  @return Point: the intersection point or null if both line segments don't intersect.
+ * @param {Point2D} p1 Start point of segment 1.
+ * @param {Point2D} p2 End point of segment 1.
+ * @param {Point2D} q1 Start point of segment 2.
+ * @param {Point2D} q2 End point of segment 2.
+ * @returns {Point2D|null} The intersection point, or null if line segments do not intersect.
+ * @see {@link http://paulbourke.net/geometry/pointlineplane/javascript.txt}
  */
 export function intersectionPointOfLineSegments(p1, p2, q1, q2) {
   const dpx = p2.x - p1.x;
@@ -204,14 +209,13 @@ export function intersectionPointOfLineSegments(p1, p2, q1, q2) {
 }
 
 /**
- *  Determine the shortest distance from point p to the line determined by points |a b|.
- *  Based on: http://paulbourke.net/geometry/pointlineplane/
+ * Determine the shortest distance from a point `p` to the line segment bounded by points `a` and `b`.
  *
- *  @param p The point to determine the shortest distance from.
- *  @param a A point on the line. Assumed to have 'x' and 'y' properties.
- *  @param b Another point on the line. Assumed to have 'x' and 'y' properties.
- *
- *  @return Number: the shortest distance. Will be zero if p is actually on the line determined by |a b|.
+ * @param {Point2D} p The point to measure distance from.
+ * @param {Point2D} a First point of the line segment.
+ * @param {Point2D} b Second point of the line segment.
+ * @returns {number} The shortest Euclidean distance to the line segment.
+ * @see {@link http://paulbourke.net/geometry/pointlineplane/}
  */
 export function shortestDistanceToLineSegment(p, a, b) {
   const dx = b.x - a.x;
@@ -236,12 +240,12 @@ export function shortestDistanceToLineSegment(p, a, b) {
 }
 
 /**
- *  Determine whether a circular objects collides with a rectangular object.
+ * Determine whether a circular object collides with an axis-aligned rectangular object.
  *
- *  @param circle Circular object with 'x', 'y' (denoting the center) and 'radius' properties.
- *  @param rect Rectangular object with 'x', 'y' (denoting top left point), 'width' and 'height' properties.
- *
- *  @return Boolean: true if both objects collide, false otherwise.
+ * @param {{x: number, y: number, radius: number}} circle Circular object with center coordinates (x, y) and radius.
+ * @param {{x: number, y: number, width: number, height: number}} rect Rectangular object with top-left (x, y), width, and height.
+ * @returns {boolean} True if both objects collide or overlap, false otherwise.
+ * @see {@link https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-detection}
  */
 export function circleRectCollision(circle, rect) {
   // See https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-detection for a good explanation
@@ -256,12 +260,11 @@ export function circleRectCollision(circle, rect) {
 }
 
 /**
- *  Determine whether a rectangular objects collide with one another.
+ * Determine whether two axis-aligned rectangular objects overlap.
  *
- *  @param rect1 Rectangular object with 'x', 'y' (denoting top left point), 'width' and 'height' properties.
- *  @param rect2 Rectangular object with 'x', 'y' (denoting top left point), 'width' and 'height' properties.
- *
- *  @return Boolean: true if both objects collide, false otherwise.
+ * @param {{x: number, y: number, width: number, height: number}} rect1 First rectangle with top-left (x, y), width, and height.
+ * @param {{x: number, y: number, width: number, height: number}} rect2 Second rectangle with top-left (x, y), width, and height.
+ * @returns {boolean} True if rectangles collide on both axes, false otherwise.
  */
 export function rectRectCollision(rect1, rect2) {
   // See https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-detection for a good explanation
@@ -272,14 +275,11 @@ export function rectRectCollision(rect1, rect2) {
 }
 
 /**
- *  Determine the direction that maximally coincides with a specific object direction.
+ * Determine the direction label whose unit vector maximally aligns with a given direction vector.
  *
- *  @param objectDirection The direction of a certain object, as a Vector.
- *  @param possibleDirections A Map with as keys the names of the directions and as value direction Vectors.
- *                            The magnitude of all direction vectors must be 1.
- *                            If undefined, the compass directions 'north' (0, -1), 'west' (-1, 0), 'east' (+1, 0), 'south' (0, +1) will be used.
- *
- *  @return Key: The key in possibleDirection of the direction that max. coincides with the object direction.
+ * @param {Vector} objectDirection The direction of an object as a Vector.
+ * @param {Map<string, Vector>} [possibleDirections] Map of direction labels to unit Vectors (magnitude 1). Defaults to compass directions: north (0, -1), south (0, +1), east (+1, 0), west (-1, 0).
+ * @returns {string|null} The key in `possibleDirections` that maximally coincides with `objectDirection`.
  */
 export function maxCollisionDirection(objectDirection, possibleDirections) {
   const normDir = objectDirection.normalized();

@@ -1,20 +1,32 @@
 import * as log from './logs.mjs';
 
-// General event registration and firing
+/**
+ * Event emission, listener registration, and dispatching infrastructure.
+ *
+ * Provides the EventEmitter class and corresponding global convenience functions
+ * for subscribing to and dispatching custom application events.
+ *
+ * @module events
+ */
 
 /**
- *  A class with objects capable of keeping track of and firing typed events.
+ * Event emitter supporting typed listener registration and event dispatching.
  */
 export class EventEmitter {
+  /**
+   * Create an EventEmitter instance.
+   */
   constructor() {
     this.eventListeners = {};
   }
 
   /**
-   *  Register a callback for a custom event.
+   * Register a callback for a custom event type.
    *
-   *  @param eventType The event to register for.
-   *  @param callback The function to invoke when the event occurs.
+   * @param {string} eventType The event type or name to register for.
+   * @param {Function} callback The callback function to invoke when the event occurs.
+   * @throws {TypeError} If eventType is not a string or callback is not a function.
+   * @returns {void}
    */
   addEventListener(eventType, callback) {
     if (typeof eventType !== 'string') {
@@ -30,12 +42,12 @@ export class EventEmitter {
   }
 
   /**
-   *  Unregister a callback for a custom event.
+   * Unregister a callback for a custom event type.
    *
-   *  @param eventType The event to unregister for.
-   *  @param callback The previously registered function to now unregister.
-   *
-   *  @return True when a callback was actually removed, false if not.
+   * @param {string} eventType The event type or name to unregister from.
+   * @param {Function} callback The previously registered callback function.
+   * @throws {TypeError} If callback is not a function.
+   * @returns {boolean} True when a callback was actually removed, false if not.
    */
   removeEventListener(eventType, callback) {
     if (typeof callback !== 'function') {
@@ -55,12 +67,11 @@ export class EventEmitter {
   }
 
   /**
-   *  Dispatch an event of a specific type to all registered callbacks.
+   * Dispatch an event of a specific type to all registered callbacks.
    *
-   *  @param event The event to dispatch. Must minimally have a 'type' property.
-   *  @param thisObject The object to call the callback on.
-   *
-   *  @return The number of callbacks invoked successfully.
+   * @param {{type: string, [key: string]: *}} event The event object containing minimally a 'type' property.
+   * @param {Object|null} [thisObject=null] Context object to bind as `this` when invoking callbacks.
+   * @returns {number} The number of callbacks invoked successfully.
    */
   dispatchEvent(event, thisObject = null) {
     if (!(event.type in this.eventListeners)) {
@@ -83,34 +94,33 @@ export class EventEmitter {
 const globalEventEmitter = new EventEmitter();
 
 /**
- *  Register a global callback for a custom event.
+ * Register a global callback for a custom event.
  *
- *  @param eventType The event to register for.
- *  @param callback The function to invoke when the event occurs.
+ * @param {string} eventType The event type to register for.
+ * @param {Function} callback The callback function to invoke when the event occurs.
+ * @returns {void}
  */
 export function addEventListener(eventType, callback) {
   return globalEventEmitter.addEventListener(eventType, callback);
 }
 
 /**
- *  Unregister a global callback for a custom event.
+ * Unregister a global callback for a custom event.
  *
- *  @param eventType The event to unregister for.
- *  @param callback The previously registered function to now unregister.
- *
- *  @return True when a callback was actually removed, false if not.
+ * @param {string} eventType The event type to unregister from.
+ * @param {Function} callback The previously registered callback function.
+ * @returns {boolean} True when a callback was actually removed, false if not.
  */
 export function removeEventListener(eventType, callback) {
   return globalEventEmitter.removeEventListener(eventType, callback);
 }
 
 /**
- *  Dispatch an event of a specific type to all globally registered callbacks.
+ * Dispatch an event of a specific type to all globally registered callbacks.
  *
- *  @param event The event to dispatch. Must minimally have a 'type' property.
- *  @param thisObject The object to call the callback on.
- *
- *  @return The number of callbacks invoked.
+ * @param {{type: string, [key: string]: *}} event The event object containing minimally a 'type' property.
+ * @param {Object|null} [thisObject=null] Context object to bind as `this`.
+ * @returns {number} The number of callbacks invoked.
  */
 export function dispatchEvent(event, thisObject = null) {
   return globalEventEmitter.dispatchEvent(event, thisObject);

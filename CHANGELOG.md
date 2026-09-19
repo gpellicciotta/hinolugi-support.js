@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 > for the versioning and changelog conventions used across the HiNoLuGi projects.
 
 ## v2.0.0-pre
+- Docs: Documented complete API surface across all JavaScript modules and classes.
 - BackEnd: Refactored JavaScript modules into domain-centric units, unifying logging, storage, networking, dates, forms, and utilities.
 
 ## v1.0.0 [released: 2026-09-19]

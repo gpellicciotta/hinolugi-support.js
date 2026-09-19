@@ -1,5 +1,8 @@
-// Lightweight, zero-dependency headless Mock DOM utility for Node test environments.
-// Supports MockElement, MockDocument, MockDocumentFragment, and global installer hooks.
+/**
+ * Lightweight, zero-dependency headless Mock DOM utility for test environments.
+ * Supports MockElement, MockDocument, MockDocumentFragment, and global installer hooks.
+ * @module mock-dom
+ */
 
 function escapeHtml(val) {
   return String(val == null ? '' : val)
@@ -459,7 +462,14 @@ function createDatasetProxy(element) {
   );
 }
 
+/**
+ * Mock representation of a DOM Text node.
+ */
 export class MockTextNode {
+  /**
+   * Creates an instance of MockTextNode.
+   * @param {string} [text=''] - Initial text content.
+   */
   constructor(text = '') {
     this.nodeType = 3;
     this.textContent = String(text);
@@ -467,23 +477,50 @@ export class MockTextNode {
     this._ownerDocument = null;
   }
 
+  /**
+   * Gets the text data.
+   * @returns {string} Text content.
+   */
   get data() {
     return this.textContent;
   }
+
+  /**
+   * Sets the text data.
+   * @param {*} val - New text data.
+   */
   set data(val) {
     this.textContent = String(val);
   }
+
+  /**
+   * Gets the node value.
+   * @returns {string} Text content.
+   */
   get nodeValue() {
     return this.textContent;
   }
+
+  /**
+   * Sets the node value.
+   * @param {*} val - New node value.
+   */
   set nodeValue(val) {
     this.textContent = String(val);
   }
 
+  /**
+   * Clones this text node.
+   * @returns {MockTextNode} New clone of this text node.
+   */
   cloneNode() {
     return new MockTextNode(this.textContent);
   }
 
+  /**
+   * Removes this text node from its parent.
+   * @returns {void}
+   */
   remove() {
     if (this.parentNode) {
       this.parentNode.removeChild(this);
@@ -491,7 +528,14 @@ export class MockTextNode {
   }
 }
 
+/**
+ * Mock representation of a DOM Element for headless testing.
+ */
 export class MockElement {
+  /**
+   * Creates an instance of MockElement.
+   * @param {string} [tagName='div'] - Element tag name.
+   */
   constructor(tagName = 'div') {
     this.nodeType = 1;
     this.tagName = String(tagName || 'div').toUpperCase();
@@ -574,9 +618,17 @@ export class MockElement {
     }
   }
 
+  /**
+   * Gets the element ID.
+   * @returns {string} Element ID attribute.
+   */
   get id() {
     return this.getAttribute('id') || '';
   }
+  /**
+   * Sets the element ID.
+   * @param {*} val - ID value.
+   */
   set id(val) {
     if (val != null && val !== '') {
       this.setAttribute('id', val);
@@ -585,9 +637,17 @@ export class MockElement {
     }
   }
 
+  /**
+   * Gets the element title.
+   * @returns {string} Element title attribute.
+   */
   get title() {
     return this.getAttribute('title') || '';
   }
+  /**
+   * Sets the element title.
+   * @param {*} val - Title value.
+   */
   set title(val) {
     if (val != null && val !== '') {
       this.setAttribute('title', val);
@@ -596,23 +656,47 @@ export class MockElement {
     }
   }
 
+  /**
+   * Gets the class name string.
+   * @returns {string} Space-delimited list of classes.
+   */
   get className() {
     return this.classList.value;
   }
+  /**
+   * Sets the class name string.
+   * @param {*} val - New class name value.
+   */
   set className(val) {
     this.classList.value = val;
   }
 
+  /**
+   * Gets the element value.
+   * @returns {string} Input or element value.
+   */
   get value() {
     return this._value !== undefined ? this._value : this.getAttribute('value') || '';
   }
+  /**
+   * Sets the element value.
+   * @param {*} val - New value.
+   */
   set value(val) {
     this._value = String(val == null ? '' : val);
   }
 
+  /**
+   * Gets whether element is disabled.
+   * @returns {boolean} True if disabled.
+   */
   get disabled() {
     return Boolean(this._disabled || this.hasAttribute('disabled'));
   }
+  /**
+   * Sets whether element is disabled.
+   * @param {*} val - Disabled state.
+   */
   set disabled(val) {
     this._disabled = Boolean(val);
     if (this._disabled) {
@@ -622,9 +706,17 @@ export class MockElement {
     }
   }
 
+  /**
+   * Gets whether element is checked.
+   * @returns {boolean} True if checked.
+   */
   get checked() {
     return Boolean(this._checked || this.hasAttribute('checked'));
   }
+  /**
+   * Sets whether element is checked.
+   * @param {*} val - Checked state.
+   */
   set checked(val) {
     this._checked = Boolean(val);
     if (this._checked) {
@@ -634,6 +726,10 @@ export class MockElement {
     }
   }
 
+  /**
+   * Gets the text content of the element and its descendants.
+   * @returns {string} Combined text content.
+   */
   get textContent() {
     if (this.childNodes.length > 0) {
       return this.childNodes.map((n) => n.textContent).join('');
@@ -646,6 +742,10 @@ export class MockElement {
     }
     return this._innerHTML || '';
   }
+  /**
+   * Sets the text content of the element.
+   * @param {*} val - New text content.
+   */
   set textContent(val) {
     this._textContent = String(val == null ? '' : val);
     this.children = [];
@@ -659,13 +759,25 @@ export class MockElement {
     this._innerHTMLStale = false;
   }
 
+  /**
+   * Gets the inner text of the element.
+   * @returns {string} Inner text.
+   */
   get innerText() {
     return this.textContent;
   }
+  /**
+   * Sets the inner text of the element.
+   * @param {*} val - Inner text.
+   */
   set innerText(val) {
     this.textContent = val;
   }
 
+  /**
+   * Gets the serialized HTML content within the element.
+   * @returns {string} Inner HTML.
+   */
   get innerHTML() {
     if (!this._innerHTMLStale && this._innerHTML !== '') {
       return this._innerHTML;
@@ -678,6 +790,10 @@ export class MockElement {
     }
     return this._innerHTML || '';
   }
+  /**
+   * Sets the HTML content within the element, parsing it into child nodes.
+   * @param {*} val - HTML string.
+   */
   set innerHTML(val) {
     this._innerHTML = val == null ? '' : String(val);
     this._innerHTMLStale = false;
@@ -699,33 +815,72 @@ export class MockElement {
     }
   }
 
+  /**
+   * Gets the first child node.
+   * @returns {MockElement|MockTextNode|null} First child node or null.
+   */
   get firstChild() {
     return this.childNodes[0] || this.children[0] || null;
   }
+
+  /**
+   * Gets the last child node.
+   * @returns {MockElement|MockTextNode|null} Last child node or null.
+   */
   get lastChild() {
     return this.childNodes[this.childNodes.length - 1] || this.children[this.children.length - 1] || null;
   }
+
+  /**
+   * Gets the first child element.
+   * @returns {MockElement|null} First element child or null.
+   */
   get firstElementChild() {
     return this.children[0] || null;
   }
+
+  /**
+   * Gets the last child element.
+   * @returns {MockElement|null} Last element child or null.
+   */
   get lastElementChild() {
     return this.children[this.children.length - 1] || null;
   }
+
+  /**
+   * Gets the count of child elements.
+   * @returns {number} Number of child elements.
+   */
   get childElementCount() {
     return this.children.length;
   }
 
+  /**
+   * Gets the next sibling element.
+   * @returns {MockElement|null} Next sibling element or null.
+   */
   get nextElementSibling() {
     if (!this.parentNode) return null;
     const idx = this.parentNode.children.indexOf(this);
     return idx >= 0 && idx < this.parentNode.children.length - 1 ? this.parentNode.children[idx + 1] : null;
   }
+
+  /**
+   * Gets the previous sibling element.
+   * @returns {MockElement|null} Previous sibling element or null.
+   */
   get previousElementSibling() {
     if (!this.parentNode) return null;
     const idx = this.parentNode.children.indexOf(this);
     return idx > 0 ? this.parentNode.children[idx - 1] : null;
   }
 
+  /**
+   * Sets an attribute value.
+   * @param {string} name - Attribute name.
+   * @param {*} val - Attribute value.
+   * @returns {void}
+   */
   setAttribute(name, val) {
     const strVal = String(val == null ? '' : val);
     this.attributes.set(name, strVal);
@@ -741,6 +896,11 @@ export class MockElement {
     this._innerHTMLStale = true;
   }
 
+  /**
+   * Gets an attribute value.
+   * @param {string} name - Attribute name.
+   * @returns {string|null} Attribute value or null if not present.
+   */
   getAttribute(name) {
     if (name === 'class' && this.classList._classes.size > 0) {
       return this.classList.value;
@@ -748,6 +908,11 @@ export class MockElement {
     return this.attributes.has(name) ? this.attributes.get(name) : null;
   }
 
+  /**
+   * Checks whether the element has an attribute.
+   * @param {string} name - Attribute name.
+   * @returns {boolean} True if attribute exists.
+   */
   hasAttribute(name) {
     if (name === 'class') {
       return this.classList._classes.size > 0 || this.attributes.has('class');
@@ -755,6 +920,11 @@ export class MockElement {
     return this.attributes.has(name);
   }
 
+  /**
+   * Removes an attribute.
+   * @param {string} name - Attribute name.
+   * @returns {void}
+   */
   removeAttribute(name) {
     this.attributes.delete(name);
     if (name === 'class') {
@@ -767,6 +937,11 @@ export class MockElement {
     this._innerHTMLStale = true;
   }
 
+  /**
+   * Appends a child node to this element.
+   * @param {MockElement|MockTextNode|MockDocumentFragment} child - Child node to append.
+   * @returns {MockElement|MockTextNode|MockDocumentFragment} Appended child node.
+   */
   appendChild(child) {
     if (!child) return child;
     if (child.nodeType === 11 || child instanceof MockDocumentFragment) {
@@ -790,6 +965,11 @@ export class MockElement {
     return child;
   }
 
+  /**
+   * Removes a child node from this element.
+   * @param {MockElement|MockTextNode} child - Child node to remove.
+   * @returns {MockElement|MockTextNode} Removed child node.
+   */
   removeChild(child) {
     const childIdx = this.children.indexOf(child);
     if (childIdx >= 0) {
@@ -804,6 +984,12 @@ export class MockElement {
     return child;
   }
 
+  /**
+   * Inserts a node before a reference child node.
+   * @param {MockElement|MockTextNode|MockDocumentFragment} newNode - Node to insert.
+   * @param {MockElement|MockTextNode|null} referenceNode - Node before which newNode is inserted.
+   * @returns {MockElement|MockTextNode|MockDocumentFragment} Inserted node.
+   */
   insertBefore(newNode, referenceNode) {
     if (!newNode) return newNode;
     if (newNode.nodeType === 11 || newNode instanceof MockDocumentFragment) {
@@ -846,18 +1032,33 @@ export class MockElement {
     return newNode;
   }
 
+  /**
+   * Replaces an existing child node with a new child node.
+   * @param {MockElement|MockTextNode|MockDocumentFragment} newChild - Replacement node.
+   * @param {MockElement|MockTextNode} oldChild - Child node being replaced.
+   * @returns {MockElement|MockTextNode} Replaced old child node.
+   */
   replaceChild(newChild, oldChild) {
     this.insertBefore(newChild, oldChild);
     this.removeChild(oldChild);
     return oldChild;
   }
 
+  /**
+   * Removes this element from its parent node.
+   * @returns {void}
+   */
   remove() {
     if (this.parentNode) {
       this.parentNode.removeChild(this);
     }
   }
 
+  /**
+   * Clones this element.
+   * @param {boolean} [deep=false] - Whether to clone child nodes recursively.
+   * @returns {MockElement} Cloned element.
+   */
   cloneNode(deep = false) {
     const clone = new MockElement(this.tagName.toLowerCase());
     for (const [k, v] of this.attributes.entries()) {
@@ -885,6 +1086,13 @@ export class MockElement {
     return clone;
   }
 
+  /**
+   * Registers an event listener on this element.
+   * @param {string} type - Event type.
+   * @param {Function} listener - Event callback.
+   * @param {Object} [options] - Event listener options.
+   * @returns {void}
+   */
   addEventListener(type, listener, options) {
     if (typeof listener !== 'function') return;
     if (!this._listeners.has(type)) {
@@ -894,6 +1102,12 @@ export class MockElement {
     this._listeners.get(type).push({ fn: listener, once });
   }
 
+  /**
+   * Removes a registered event listener from this element.
+   * @param {string} type - Event type.
+   * @param {Function} listener - Event callback.
+   * @returns {void}
+   */
   removeEventListener(type, listener) {
     if (!this._listeners.has(type)) return;
     const list = this._listeners.get(type);
@@ -901,6 +1115,12 @@ export class MockElement {
     if (idx >= 0) list.splice(idx, 1);
   }
 
+  /**
+   * Directly dispatches an event to registered listeners without bubbling.
+   * @param {string} evt - Event name.
+   * @param {*} [eventObj] - Event object or detail payload.
+   * @returns {void}
+   */
   dispatch(evt, eventObj) {
     const listeners = this._listeners.get(evt) || [];
     for (const entry of [...listeners]) {
@@ -908,6 +1128,11 @@ export class MockElement {
     }
   }
 
+  /**
+   * Dispatches an event through the DOM hierarchy, handling bubbling and cancellation.
+   * @param {Object|string} event - Event object or event name.
+   * @returns {boolean} True if the event was not cancelled by preventDefault.
+   */
   dispatchEvent(event) {
     const evt = typeof event === 'object' && event !== null ? event : { type: String(event) };
     if (!evt.type) return true;
@@ -964,6 +1189,11 @@ export class MockElement {
     return !evt.defaultPrevented;
   }
 
+  /**
+   * Returns the first descendant matching the CSS selector.
+   * @param {string} sel - CSS selector.
+   * @returns {MockElement|null} Matching element or null.
+   */
   querySelector(sel) {
     for (const child of this.children) {
       if (matchesSelector(child, sel)) return child;
@@ -973,6 +1203,11 @@ export class MockElement {
     return null;
   }
 
+  /**
+   * Returns all descendants matching the CSS selector.
+   * @param {string} sel - CSS selector.
+   * @returns {MockElement[]} Matching elements.
+   */
   querySelectorAll(sel) {
     const results = [];
     function collect(node) {
@@ -985,6 +1220,11 @@ export class MockElement {
     return results;
   }
 
+  /**
+   * Finds the closest matching ancestor element (or self).
+   * @param {string} sel - CSS selector.
+   * @returns {MockElement|null} Closest matching element or null.
+   */
   closest(sel) {
     let cur = this;
     while (cur) {
@@ -994,6 +1234,10 @@ export class MockElement {
     return null;
   }
 
+  /**
+   * Focuses this element and dispatches a focus event.
+   * @returns {void}
+   */
   focus() {
     if (this._ownerDocument) {
       this._ownerDocument.activeElement = this;
@@ -1003,6 +1247,10 @@ export class MockElement {
     this.dispatchEvent({ type: 'focus', target: this });
   }
 
+  /**
+   * Blurs this element and dispatches a blur event.
+   * @returns {void}
+   */
   blur() {
     if (this._ownerDocument && this._ownerDocument.activeElement === this) {
       this._ownerDocument.activeElement = null;
@@ -1012,17 +1260,33 @@ export class MockElement {
     this.dispatchEvent({ type: 'blur', target: this });
   }
 
+  /**
+   * Simulates clicking this element.
+   * @returns {void}
+   */
   click() {
     this.dispatchEvent({ type: 'click', bubbles: true, target: this });
   }
 }
 
+/**
+ * Mock representation of a DocumentFragment.
+ * @extends MockElement
+ */
 export class MockDocumentFragment extends MockElement {
+  /**
+   * Creates an instance of MockDocumentFragment.
+   */
   constructor() {
     super('#document-fragment');
     this.nodeType = 11;
   }
 
+  /**
+   * Clones this document fragment.
+   * @param {boolean} [deep=false] - Whether to clone child nodes recursively.
+   * @returns {MockDocumentFragment} Cloned fragment.
+   */
   cloneNode(deep = false) {
     const clone = new MockDocumentFragment();
     if (deep) {
@@ -1034,7 +1298,13 @@ export class MockDocumentFragment extends MockElement {
   }
 }
 
+/**
+ * Mock representation of a DOM Document for headless testing.
+ */
 export class MockDocument {
+  /**
+   * Creates an instance of MockDocument.
+   */
   constructor() {
     this.nodeType = 9;
     this.documentElement = new MockElement('html');
@@ -1046,24 +1316,43 @@ export class MockDocument {
     this._listeners = new Map();
   }
 
+  /**
+   * Creates an element with the given tag name.
+   * @param {string} tagName - Tag name for the new element.
+   * @returns {MockElement} Created element.
+   */
   createElement(tagName) {
     const el = new MockElement(tagName);
     el._ownerDocument = this;
     return el;
   }
 
+  /**
+   * Creates a new empty DocumentFragment.
+   * @returns {MockDocumentFragment} Created fragment.
+   */
   createDocumentFragment() {
     const frag = new MockDocumentFragment();
     frag._ownerDocument = this;
     return frag;
   }
 
+  /**
+   * Creates a new Text node with the given text content.
+   * @param {string} text - Initial text.
+   * @returns {MockTextNode} Created text node.
+   */
   createTextNode(text) {
     const textNode = new MockTextNode(text);
     textNode._ownerDocument = this;
     return textNode;
   }
 
+  /**
+   * Finds an element by its ID attribute.
+   * @param {string} id - Element ID.
+   * @returns {MockElement|null} Found element or null.
+   */
   getElementById(id) {
     const targetId = id.startsWith('#') ? id.slice(1) : id;
     function search(node) {
@@ -1079,6 +1368,11 @@ export class MockDocument {
     return search(this.documentElement);
   }
 
+  /**
+   * Finds the first element in the document matching the selector.
+   * @param {string} selector - CSS selector.
+   * @returns {MockElement|null} Matching element or null.
+   */
   querySelector(selector) {
     if (matchesSelector(this.documentElement, selector)) {
       return this.documentElement;
@@ -1086,6 +1380,11 @@ export class MockDocument {
     return this.documentElement.querySelector(selector);
   }
 
+  /**
+   * Finds all elements in the document matching the selector.
+   * @param {string} selector - CSS selector.
+   * @returns {MockElement[]} Matching elements.
+   */
   querySelectorAll(selector) {
     const results = [];
     if (matchesSelector(this.documentElement, selector)) {
@@ -1095,15 +1394,32 @@ export class MockDocument {
     return results;
   }
 
+  /**
+   * Finds all elements with the given tag name.
+   * @param {string} tagName - Tag name to match.
+   * @returns {MockElement[]} Matching elements.
+   */
   getElementsByTagName(tagName) {
     const upper = tagName.toUpperCase();
     return this.querySelectorAll(upper === '*' ? '*' : tagName);
   }
 
+  /**
+   * Finds all elements with the given class name.
+   * @param {string} className - Class name to match.
+   * @returns {MockElement[]} Matching elements.
+   */
   getElementsByClassName(className) {
     return this.querySelectorAll('.' + className);
   }
 
+  /**
+   * Registers an event listener on the document.
+   * @param {string} type - Event type.
+   * @param {Function} listener - Event callback.
+   * @param {Object} [options] - Listener options.
+   * @returns {void}
+   */
   addEventListener(type, listener, options) {
     if (typeof listener !== 'function') return;
     if (!this._listeners.has(type)) {
@@ -1113,6 +1429,12 @@ export class MockDocument {
     this._listeners.get(type).push({ fn: listener, once });
   }
 
+  /**
+   * Removes an event listener from the document.
+   * @param {string} type - Event type.
+   * @param {Function} listener - Event callback.
+   * @returns {void}
+   */
   removeEventListener(type, listener) {
     if (!this._listeners.has(type)) return;
     const list = this._listeners.get(type);
@@ -1120,6 +1442,11 @@ export class MockDocument {
     if (idx >= 0) list.splice(idx, 1);
   }
 
+  /**
+   * Dispatches an event on the document.
+   * @param {Object|string} event - Event object or event name.
+   * @returns {boolean} Always true.
+   */
   dispatchEvent(event) {
     const evt = typeof event === 'object' && event !== null ? event : { type: String(event) };
     evt.target ||= this;
@@ -1153,6 +1480,21 @@ function createMockStorage() {
 
 const restoreStack = [];
 
+/**
+ * @typedef {Object} MockDomOptions
+ * @property {MockDocument} [document] - Custom mock document instance.
+ * @property {Object} [sessionStorage] - Custom mock sessionStorage implementation.
+ * @property {Object} [localStorage] - Custom mock localStorage implementation.
+ * @property {string} [url] - Initial URL for mock window.location.
+ * @property {string} [html] - Initial HTML markup to set on document.body.
+ * @property {Record<string, *>} [customGlobals] - Extra global variables to register during the mock session.
+ */
+
+/**
+ * Installs headless Mock DOM globals onto globalThis.
+ * @param {MockDomOptions} [options={}] - Configuration options for mock DOM environment.
+ * @returns {() => void} Function that restores the previous globals when invoked.
+ */
 export function installMockDom(options = {}) {
   const previousGlobals = {
     window: globalThis.window,
@@ -1275,6 +1617,10 @@ export function installMockDom(options = {}) {
   return restore;
 }
 
+/**
+ * Restores the most recently installed Mock DOM environment, reverting globalThis.
+ * @returns {void}
+ */
 export function uninstallMockDom() {
   const restore = restoreStack.pop();
   if (restore) {

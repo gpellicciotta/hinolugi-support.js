@@ -1,8 +1,12 @@
-// English words
+/**
+ * Simple English words dataset.
+ * @module englishwords
+ */
 
 /**
- *  From: https://en.wikipedia.org/wiki/Dolch_word_list
- *  @return An array of a subset of all english words that can be considered 'simple'.
+ * An array of a subset of all English words that can be considered 'simple' (Dolch word list).
+ * Source: https://en.wikipedia.org/wiki/Dolch_word_list
+ * @type {string[]}
  */
 export const SIMPLE_ENGLISH_WORDS = [
   'Christmas',

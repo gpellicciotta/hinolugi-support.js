@@ -1,13 +1,31 @@
 import Component from './component.mjs';
 import { disable, enable } from './forms.mjs';
 
+/**
+ * Application action bar component rendering horizontal action buttons and dynamic sync badges.
+ *
+ * @module app-action-bar
+ */
+
+/**
+ * Event name dispatched when an action's state (enabled/disabled) changes.
+ *
+ * @type {string}
+ */
 export const ACTION_STATE_CHANGED_EVENT = 'action-state-changed';
 
 /**
- *  An application action bar, rendering standard horizontal action buttons and separators
- *  and responding dynamically to action state changes.
+ * An application action bar, rendering standard horizontal action buttons and separators
+ * and responding dynamically to action state changes.
  */
 export default class AppActionBar extends Component {
+  /**
+   * Create an AppActionBar instance.
+   *
+   * @param {string} id Unique component ID.
+   * @param {object} app The application instance this bar belongs to.
+   * @param {Array<string|null>} [actionIds=[]] List of action IDs or null separators to display.
+   */
   constructor(id, app, actionIds = []) {
     super(id, app);
     this.actionBarActionIds = [...(actionIds || [])];
@@ -16,6 +34,11 @@ export default class AppActionBar extends Component {
     this.currentSyncData = { state: 'online', pendingCount: 0, failedCount: 0, pending: [], failed: [] };
   }
 
+  /**
+   * Generate outer action bar component HTML markup.
+   *
+   * @returns {string} Outer component HTML template.
+   */
   createComponentUIHtml() {
     return `
       <div id="${this.id}" class="component">
@@ -23,12 +46,25 @@ export default class AppActionBar extends Component {
       </div>`;
   }
 
+  /**
+   * Generate inner ordered list HTML container for action items.
+   *
+   * @returns {string} Inner action bar HTML template.
+   */
   createMainUIHtml() {
     return `
       <ol class="action-bar main">
       </ol>`;
   }
 
+  /**
+   * Attach action bar to DOM container, populate items, and bind action buttons.
+   *
+   * @param {HTMLElement} el The container DOM element.
+   * @param {string} [route] Active route path.
+   * @param {*} [state] Optional navigation state.
+   * @returns {void}
+   */
   attach(el, route, state) {
     super.attach(el, route, state);
     this.actionBarRootEl = this.componentUIEl?.querySelector('.action-bar.main');
@@ -109,12 +145,27 @@ export default class AppActionBar extends Component {
     this.initSyncStatusListener();
   }
 
+  /**
+   * Register event listeners for action state change notifications.
+   *
+   * @returns {void}
+   */
   registerEventListeners() {
     if (typeof this.app?.addEventListener === 'function') {
       this.registerEventListener(this.app, ACTION_STATE_CHANGED_EVENT, this.onActionStateChanged.bind(this));
     }
   }
 
+  /**
+   * Handle action state changed events by enabling/disabling the matching item.
+   *
+   * @param {Object} e Event object.
+   * @param {Object} [e.action] Action whose state changed.
+   * @param {string} [e.action.id] Identifier of the action.
+   * @param {boolean} [e.action.disabled] Disabled status.
+   * @param {string} [e.action.disabled-reason] Explanation of why action is disabled.
+   * @returns {void}
+   */
   onActionStateChanged(e) {
     if (!e?.action?.id) return;
     const actionId = e.action.id;
@@ -132,6 +183,11 @@ export default class AppActionBar extends Component {
     this.updateSeparators();
   }
 
+  /**
+   * Update visibility / active state of separators based on adjacent enabled action buttons.
+   *
+   * @returns {void}
+   */
   updateSeparators() {
     let activeElementsSinceLastSeparator = 0;
     for (const item of this.actionBarItems) {
@@ -151,6 +207,11 @@ export default class AppActionBar extends Component {
     }
   }
 
+  /**
+   * Initialize subscription to application synchronization status changes.
+   *
+   * @returns {void}
+   */
   initSyncStatusListener() {
     const coordinator = typeof this.app?.getSyncCoordinator === 'function' ? this.app.getSyncCoordinator() : null;
     if (!coordinator) return;
@@ -168,6 +229,15 @@ export default class AppActionBar extends Component {
     }
   }
 
+  /**
+   * Update the sync status button badge and tooltip according to synchronization state.
+   *
+   * @param {Object} syncData Synchronization state payload.
+   * @param {'online'|'offline'|'syncing'|'error'} [syncData.state='online'] Current connectivity / synchronization state.
+   * @param {number} [syncData.pendingCount=0] Count of mutations pending synchronization.
+   * @param {number} [syncData.failedCount=0] Count of mutations that failed synchronization.
+   * @returns {void}
+   */
   updateSyncBadge(syncData) {
     if (!this.syncBadgeBtn || !syncData) return;
     const { state = 'online', pendingCount = 0, failedCount = 0 } = syncData;
@@ -193,6 +263,11 @@ export default class AppActionBar extends Component {
     }
   }
 
+  /**
+   * Detach action bar from DOM, unsubscribe from sync updates, and perform cleanup.
+   *
+   * @returns {void}
+   */
   detach() {
     if (this.syncUnsubscribe) {
       this.syncUnsubscribe();

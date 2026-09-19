@@ -1,7 +1,11 @@
-// Dutch words
+/**
+ * Simple Dutch words dataset.
+ * @module dutchwords
+ */
 
 /**
- *  @return An array of a subset of all dutch words that can be considered 'simple'.
+ * An array of a subset of all Dutch words that can be considered 'simple'.
+ * @type {string[]}
  */
 export const SIMPLE_DUTCH_WORDS = ["aan","aanbod","aanraken","aanval","aap","aardappel","aarde","aardig","acht","achter","actief","activiteit",
   "ademen","af","afgelopen","afhangen","afmaken","afname","afspraak","afval","al","algemeen","alleen","alles","als","alsjeblieft",
