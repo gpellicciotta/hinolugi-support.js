@@ -9,13 +9,14 @@ An overview of all tasks and their planning.
 > Owner: `@name` shown only when active/blocked/needs-review.
 > Dependencies: `(needs Tnnnn)` shown only when unresolved.
 
-**Next ID:** 0025
+**Next ID:** 0027
 
 ---
 
 ## Next Milestone
 
-*(Currently no tasks)*
+- [~] T0025 [owner: @worker-1] Refactor JavaScript modules into logical, self-contained, and composeable units.
+- [ ] T0026 [needs: T0025] Make sure the whole API surface is properly documented: all modules, classes, methods, method parameters and return values, enum values and constants have a clear indication of what they do.
 
 ---
 
