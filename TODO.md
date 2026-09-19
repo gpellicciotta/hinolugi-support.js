@@ -15,7 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [~] A0027 [owner: @antigravity] Make a full release and ensure it is published.
+*(Currently no tasks)*
 
 ---
 
