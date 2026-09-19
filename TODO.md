@@ -9,13 +9,14 @@ An overview of all tasks and their planning.
 > Owner: `@name` shown only when active/blocked/needs-review.
 > Dependencies: `(needs Tnnnn)` shown only when unresolved.
 
-**Next ID:** 0027
+**Next ID:** 0028
 
 ---
 
 ## Next Milestone
 
-- [ ] T0026 Make sure the whole API surface is properly documented: all modules, classes, methods, method parameters and return values, enum values and constants have a clear indication of what they do.
+- [~] T0026 [owner: @worker-1] Document the complete API surface across all modules, classes, methods, parameters, return values, and constants.
+- [ ] A0027 [needs: T0026] Make a full release and ensure it is published.
 
 ---
 
