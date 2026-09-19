@@ -9,7 +9,23 @@ All notable changes to this project are documented here.
 
 ## v2.0.0 [released: 2026-09-19]
 - Docs: Documented complete API surface across all JavaScript modules and classes.
-- BackEnd: Refactored JavaScript modules into domain-centric units, unifying logging, storage, networking, dates, forms, and utilities.
+- BackEnd: [breaking] Decommissioned monolithic grab-bag and fragmented modules in favor of domain-centric units.
+- BackEnd: [breaking] Removed utils.mjs, moving utilities into objects.mjs, strings.mjs, math.mjs, colors.mjs, dates.mjs, and forms.mjs.
+- BackEnd: [breaking] Removed http.mjs, errors.mjs, and auth-redirect, consolidating transport and errors into net.mjs.
+- BackEnd: [breaking] Removed formutils.mjs, consolidating form validation and loading state helpers into forms.mjs.
+- BackEnd: [breaking] Removed domutils.mjs, relocating DOM and animation frame helpers into dom.mjs.
+- BackEnd: [breaking] Removed page.mjs, relocating pagination envelopes and navigation helpers into paging.mjs.
+- BackEnd: [breaking] Removed log.mjs and cli-log.mjs, consolidating CLI and browser logging into logs.mjs.
+- BackEnd: [breaking] Removed offline-storage.mjs and local-usage-tracking.mjs, consolidating storage adapters and usage into storages.mjs.
+- Docs: Documented downstream REST client migration instructions in docs/specs/client-upgrade-guide.md.
+
+### Migration Guide
+
+- Update client imports from removed utils.mjs to objects.mjs, strings.mjs, math.mjs, colors.mjs, dates.mjs, or forms.mjs.
+- Update client imports from http.mjs, errors.mjs, and hinolugi-auth-redirect.mjs to net.mjs and dates.mjs.
+- Update client imports from formutils.mjs, domutils.mjs, and page.mjs to forms.mjs, dom.mjs, and paging.mjs.
+- Update client imports from log.mjs, cli-log.mjs, offline-storage.mjs, and local-usage-tracking.mjs to logs.mjs and storages.mjs.
+- Consult [client-upgrade-guide.md](docs/specs/client-upgrade-guide.md) for detailed downstream REST client upgrade instructions.
 
 ## v1.0.0 [released: 2026-09-19]
 - DevEx: Added reusable static dev/test server and Playwright tour recorder in scripts/lib/.
