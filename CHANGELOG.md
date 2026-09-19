@@ -5,6 +5,8 @@ All notable changes to this project are documented here.
 > See [coordinating work guidelines](https://github.com/gpellicciotta/dev-guidelines/blob/main/guidelines/coordinating-work-guidelines.md)
 > for the versioning and changelog conventions used across the HiNoLuGi projects.
 
+## v2.0.1-pre
+
 ## v2.0.0 [released: 2026-09-19]
 - Docs: Documented complete API surface across all JavaScript modules and classes.
 - BackEnd: Refactored JavaScript modules into domain-centric units, unifying logging, storage, networking, dates, forms, and utilities.
