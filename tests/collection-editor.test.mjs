@@ -9,8 +9,8 @@ class MockDOMElement {
     this.attributes = new Map();
     this.classList = {
       _classes: new Set(),
-      add: (...cls) => cls.forEach(c => this.classList._classes.add(c)),
-      remove: (...cls) => cls.forEach(c => this.classList._classes.delete(c)),
+      add: (...cls) => cls.forEach((c) => this.classList._classes.add(c)),
+      remove: (...cls) => cls.forEach((c) => this.classList._classes.delete(c)),
       contains: (c) => this.classList._classes.has(c),
       toggle: (c, force) => {
         if (force !== undefined) {
@@ -20,7 +20,7 @@ class MockDOMElement {
           if (this.classList.contains(c)) this.classList.remove(c);
           else this.classList.add(c);
         }
-      }
+      },
     };
     this.dataset = {};
     this._listeners = new Map();
@@ -45,7 +45,10 @@ class MockDOMElement {
 
   set className(val) {
     this.classList._classes.clear();
-    String(val || '').split(/\s+/).filter(Boolean).forEach(c => this.classList.add(c));
+    String(val || '')
+      .split(/\s+/)
+      .filter(Boolean)
+      .forEach((c) => this.classList.add(c));
   }
 
   setAttribute(name, val) {
@@ -108,7 +111,7 @@ class MockDOMElement {
 
   dispatchEvent(evt) {
     const listeners = this._listeners.get(evt.type) || [];
-    listeners.forEach(fn => fn(evt));
+    listeners.forEach((fn) => fn(evt));
     if (this.parentNode && !evt.cancelBubble) {
       this.parentNode.dispatchEvent(evt);
     }
@@ -149,7 +152,7 @@ class MockDOMElement {
     if (s.startsWith('#')) return this.attributes.get('id') === s.slice(1);
     if (s.startsWith('.')) {
       const parts = s.split('.').filter(Boolean);
-      return parts.every(c => this.classList.contains(c));
+      return parts.every((c) => this.classList.contains(c));
     }
     if (s === '[data-action]') return !!this.dataset.action;
     return false;
@@ -226,12 +229,12 @@ global.document = {
           const parsed = parseSimpleHtml(html);
           el.content.children = [parsed];
           parsed.parentNode = el.content;
-        }
+        },
       });
       return el;
     }
     return new MockDOMElement(tag);
-  }
+  },
 };
 
 const CollectionEditor = (await import('../js/collection-editor.mjs')).default;
@@ -243,7 +246,7 @@ test('CollectionEditor Unit Suite in hinolugi-support.js', async (t) => {
       className: 'webhook',
       dataAttributes: { 'webhook-id': 42 },
       contentHtml: '<span class="target-url">https://example.com</span>',
-      actionsHtml: '<button data-action="toggle">Toggle</button>'
+      actionsHtml: '<button data-action="toggle">Toggle</button>',
     });
 
     assert.ok(row, 'Row element created');
@@ -268,7 +271,7 @@ test('CollectionEditor Unit Suite in hinolugi-support.js', async (t) => {
       listEl,
       emptyStateEl,
       deleteButtonEl,
-      itemSelector: 'li.unit'
+      itemSelector: 'li.unit',
     });
 
     assert.equal(editor.getItemCount(), 0);
@@ -278,7 +281,7 @@ test('CollectionEditor Unit Suite in hinolugi-support.js', async (t) => {
 
     const items = [
       { name: '100g', value: 89 },
-      { name: 'Piece', value: 105 }
+      { name: 'Piece', value: 105 },
     ];
 
     editor.setItems(items, (item) => {
@@ -313,7 +316,7 @@ test('CollectionEditor Unit Suite in hinolugi-support.js', async (t) => {
       itemSelector: 'li.unit',
       onSelectionChange: (count) => {
         notifiedCount = count;
-      }
+      },
     });
 
     const row1 = new MockDOMElement('li');
@@ -365,7 +368,7 @@ test('CollectionEditor Unit Suite in hinolugi-support.js', async (t) => {
     input2.value = 'grams';
 
     const editor = new CollectionEditor({
-      inputs: [input1, input2]
+      inputs: [input1, input2],
     });
 
     editor.clearInputs();
@@ -383,7 +386,7 @@ test('CollectionEditor Unit Suite in hinolugi-support.js', async (t) => {
       addButtonEl: addButton,
       onAdd: () => {
         addTriggered += 1;
-      }
+      },
     });
 
     input.dispatchEvent({ type: 'keydown', key: 'Enter', preventDefault: () => {} });
@@ -395,4 +398,3 @@ test('CollectionEditor Unit Suite in hinolugi-support.js', async (t) => {
     editor.destroy();
   });
 });
-

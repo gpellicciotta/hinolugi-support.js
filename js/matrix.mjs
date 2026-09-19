@@ -1,4 +1,4 @@
-import * as utils from './utils.mjs';
+import { decimalString, randomFloat } from './math.mjs';
 
 // Matrix class and functions
 
@@ -40,7 +40,7 @@ export class Matrix {
    */
   static random(rows, cols, minVal = 0.0, maxVal = 1.0) {
     const initializerF = function () {
-      return utils.randomFloat(minVal, maxVal);
+      return randomFloat(minVal, maxVal);
     };
     return new Matrix(rows, cols, initializerF);
   }
@@ -323,7 +323,7 @@ export class Matrix {
       str += '\n';
       const row = this._vals[r];
       for (let c = 0; c < this._cols; c++) {
-        str += utils.decimalString(row[c], decimals);
+        str += decimalString(row[c], decimals);
         str += '  ';
       }
     }

@@ -6,16 +6,13 @@ import {
   basicAuthHeader,
   bearerAuthHeader,
   sendRequest,
-  toWireDate,
-  fromWireDate,
-  parseDate,
-} from '../js/http.mjs';
-import {
-  toWireDate as utilsToWireDate,
-  fromWireDate as utilsFromWireDate,
-  parseDate as utilsParseDate,
-} from '../js/utils.mjs';
-import { ApiError, AuthenticationError, ValidationError, NotFoundError, ConflictError } from '../js/errors.mjs';
+  ApiError,
+  AuthenticationError,
+  ValidationError,
+  NotFoundError,
+  ConflictError,
+} from '../js/net.mjs';
+import { toWireDate, fromWireDate, parseDate } from '../js/dates.mjs';
 
 test('buildUrl handles baseUrl slashes and query parameter variants', () => {
   assert.equal(buildUrl('https://api.example.com', '/users'), 'https://api.example.com/users');
@@ -80,13 +77,6 @@ test('toWireDate and fromWireDate / parseDate handle server date formats safely'
   // parseDate is an alias to fromWireDate
   assert.equal(parseDate, fromWireDate);
   assert.equal(parseDate('2026-09-06T10:15:30Z').toISOString(), '2026-09-06T10:15:30.000Z');
-
-  // Re-exported in js/utils.mjs
-  assert.equal(utilsToWireDate, toWireDate);
-  assert.equal(utilsFromWireDate, fromWireDate);
-  assert.equal(utilsParseDate, parseDate);
-  assert.equal(utilsToWireDate(testDate), '2026-09-06T10:15:30Z');
-  assert.equal(utilsFromWireDate('2026-09-06T10:15:30Z').toISOString(), '2026-09-06T10:15:30.000Z');
 });
 
 test('sendRequest performs successful GET request and returns status, data, headers', async () => {

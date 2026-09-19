@@ -16,26 +16,24 @@ Functional and technical requirements for the `hinolugi-support.js` project.
 
 ## Functional Requirements
 
-### CLI Logging (Node.js)
-- Provide `LogLevel`, `formatSeverityIndicator`/`formatLogMessage`, and a `CliLogger` class implementing the
-  guideline-compliant CLI log format, API-similar to the `LogLevel`/`Log` (Java) and `LogLevel`/`CliLogger`
-  (Python) implementations in the sibling support libraries (`js/cli-log.mjs`).
-
-### Browser Logging and Eventing
-- Provide a browser-safe, handler-based event logger (`js/log.mjs`) and a general event registration/firing
-  mechanism (`js/events.mjs`), independent of any DOM or global-object dependency where possible.
+### CLI and Browser Logging
+- Provide a unified logging module (`js/logs.mjs`) featuring `LogLevel`, `formatSeverityIndicator`/`formatLogMessage`, `CliLogger`, and browser event logging (`Logger`).
 
 ### DOM and Forms
-- Provide DOM-related utility functions that rely on the global `document`/`window` objects (`js/domutils.mjs`).
-- Provide form-related validation/marking helper functions (`js/formutils.mjs`).
+- Provide DOM-related utility functions that rely on the global `document`/`window` objects (`js/dom.mjs`).
+- Provide form-related validation/marking helper functions (`js/forms.mjs`).
 - Provide a drag-to-reorder utility for container items (`js/reorder.mjs`).
 - Provide a dialog component (`js/dialog.mjs`).
 
-### General Utilities
-- Provide general-purpose helper functions with no global-object or DOM dependency (`js/utils.mjs`).
+### General Utilities and Core Domains
+- Provide specialized core modules: `js/objects.mjs` (equality, deepClone), `js/strings.mjs` (escaping, capitalization), `js/math.mjs` (numerics, clamping, random, formatting), `js/colors.mjs` (color conversions, contrast), and `js/dates.mjs` (diffs, formatting, wire serialization).
 - Provide changelog parsing from markdown into structured release objects (`js/changelog-parser.mjs`).
 - Provide `Vector` and `Matrix` classes for 2D/3D math (`js/vector.mjs`, `js/matrix.mjs`).
 - Provide Perlin noise generation (`js/noise.mjs`).
+
+### Storage and Paging
+- Provide zero-dependency offline storage adapters and usage tracking (`js/storages.mjs`).
+- Provide uniform pagination envelopes and navigation helpers (`js/paging.mjs`).
 
 ### Canvas and Games
 - Provide canvas-drawing utility functions relying only on the Canvas API (`js/canvas.mjs`).
@@ -47,8 +45,7 @@ Functional and technical requirements for the `hinolugi-support.js` project.
   `js/englishwords.mjs`).
 
 ### REST Client Transport and Errors
-- Provide a typed error hierarchy (`ApiError`, `AuthenticationError`, `ValidationError`, `NotFoundError`, `ConflictError`, `mapError`) for REST API responses (`js/errors.mjs`).
-- Provide an HTTP transport module (`buildUrl`, `basicAuthHeader`, `bearerAuthHeader`, `sendRequest`, `toWireDate`, `fromWireDate`, `parseDate`) for fetch-based API clients (`js/http.mjs`).
+- Provide a typed error hierarchy (`ApiError`, `AuthenticationError`, `ValidationError`, `NotFoundError`, `ConflictError`, `mapError`) and HTTP transport (`buildUrl`, `basicAuthHeader`, `bearerAuthHeader`, `sendRequest`, `redirectToHinolugiAuth`) for fetch-based API clients (`js/net.mjs`).
 - See [REST Client Upgrade Guide](specs/client-upgrade-guide.md) for downstream migration details.
 
 ### Styling

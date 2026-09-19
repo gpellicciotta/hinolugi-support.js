@@ -1,6 +1,6 @@
-import * as formutils from './formutils.mjs';
-import * as domutils from './domutils.mjs';
-import * as utils from './utils.mjs';
+import { disable, enable } from './forms.mjs';
+import { htmlToElement } from './dom.mjs';
+import { escapeHtml } from './strings.mjs';
 
 /**
  * Reusable DOM helper and lifecycle manager for sub-list / collection item editors.
@@ -151,7 +151,7 @@ export default class CollectionEditor {
       return [];
     }
     const checked = Array.from(
-      this.listEl.querySelectorAll(`${this.itemSelector} .mark-for-deletion-action > input:checked`)
+      this.listEl.querySelectorAll(`${this.itemSelector} .mark-for-deletion-action > input:checked`),
     );
     return checked.map((chEl) => chEl.closest(this.itemSelector)).filter(Boolean);
   }
@@ -181,9 +181,9 @@ export default class CollectionEditor {
 
       if (this.deleteButtonEl) {
         if (count > 0) {
-          formutils.enable(this.deleteButtonEl, count === 1 ? 'Delete the selected item' : `Delete the ${count} selected items`);
+          enable(this.deleteButtonEl, count === 1 ? 'Delete the selected item' : `Delete the ${count} selected items`);
         } else {
-          formutils.disable(this.deleteButtonEl, 'No items have been selected for deletion');
+          disable(this.deleteButtonEl, 'No items have been selected for deletion');
         }
       }
 
@@ -206,19 +206,19 @@ export default class CollectionEditor {
    * @param {number} [count] Explicit item count override.
    */
   updateEmptyState(count) {
-    const total = (typeof count === 'number') ? count : this.getItemCount();
+    const total = typeof count === 'number' ? count : this.getItemCount();
     if (this.emptyStateEl) {
       if (total > 0) {
-        formutils.disable(this.emptyStateEl);
+        disable(this.emptyStateEl);
       } else {
-        formutils.enable(this.emptyStateEl);
+        enable(this.emptyStateEl);
       }
     }
     if (this.listEl) {
       if (total > 0) {
-        formutils.enable(this.listEl);
+        enable(this.listEl);
       } else {
-        formutils.disable(this.listEl);
+        disable(this.listEl);
       }
     }
   }
@@ -312,12 +312,12 @@ export default class CollectionEditor {
       contentHtml = '',
       actionsHtml = '',
       checkboxId = `mark-for-deletion-${id}`,
-      isChecked = false
+      isChecked = false,
     } = config;
 
     let dataAttrsStr = '';
     for (const [key, val] of Object.entries(dataAttributes)) {
-      dataAttrsStr += ` data-${key}="${utils.escapeHtml(String(val))}"`;
+      dataAttrsStr += ` data-${key}="${escapeHtml(String(val))}"`;
     }
 
     const html = `
@@ -333,7 +333,6 @@ export default class CollectionEditor {
         ${actionsHtml ? `<span class="toggle-action actions">${actionsHtml}</span>` : ''}
       </li>`;
 
-    return domutils.htmlToElement(html);
+    return htmlToElement(html);
   }
 }
-

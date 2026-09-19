@@ -1,5 +1,5 @@
 import Component from './component.mjs';
-import * as formutils from './formutils.mjs';
+import { disable, enable } from './forms.mjs';
 
 export const ACTION_STATE_CHANGED_EVENT = 'action-state-changed';
 
@@ -56,9 +56,9 @@ export default class AppActionBar extends Component {
 
         const isEnabled = this.app?.isActionEnabled ? this.app.isActionEnabled(actionId) : true;
         if (!isEnabled) {
-          formutils.disable(liEl, action?.['disabled-reason']);
+          disable(liEl, action?.['disabled-reason']);
         } else {
-          formutils.enable(liEl);
+          enable(liEl);
         }
 
         if (action?.href) {
@@ -122,9 +122,9 @@ export default class AppActionBar extends Component {
     for (const item of this.actionBarItems) {
       if (item.actionId === actionId && item.rootElement) {
         if (e.action.disabled) {
-          formutils.disable(item.rootElement, e.action['disabled-reason']);
+          disable(item.rootElement, e.action['disabled-reason']);
         } else {
-          formutils.enable(item.rootElement);
+          enable(item.rootElement);
         }
       }
     }
@@ -142,9 +142,9 @@ export default class AppActionBar extends Component {
         }
       } else {
         if (activeElementsSinceLastSeparator > 0) {
-          formutils.enable(item.rootElement);
+          enable(item.rootElement);
         } else {
-          formutils.disable(item.rootElement);
+          disable(item.rootElement);
         }
         activeElementsSinceLastSeparator = 0;
       }

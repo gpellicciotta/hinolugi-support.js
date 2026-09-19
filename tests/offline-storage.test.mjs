@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { StorageAdapter, MemoryStorageAdapter, IndexedDbStorageAdapter } from '../js/offline-storage.mjs';
+import { StorageAdapter, MemoryStorageAdapter, IndexedDbStorageAdapter } from '../js/storages.mjs';
 
 test('StorageAdapter base interface contract', async (t) => {
   const adapter = new StorageAdapter();

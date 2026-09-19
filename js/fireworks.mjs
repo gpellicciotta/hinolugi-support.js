@@ -1,6 +1,6 @@
-import * as log from './log.mjs';
-import * as utils from './utils.mjs';
-import * as domutils from './domutils.mjs';
+import { cancelAnimFrame, moderatedEventCallback, onAnimFrame } from './dom.mjs';
+import * as log from './logs.mjs';
+import { distance, random, randomElement } from './math.mjs';
 import { Vector, vectorFromPolar, vectorFromCartesian } from './vector.mjs';
 
 // Canvas-based fireworks animation effect, rendered onto a caller-provided <canvas> element.
@@ -68,7 +68,7 @@ export function start(canvasEl, options) {
   fireworksInfo.mainCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
 
   // Ensure this aspect ratio is kept despite resize operations:
-  const rescale = domutils.moderatedEventCallback(() => {
+  const rescale = moderatedEventCallback(() => {
     const { canvasWidth, canvasHeight } = setCanvasSizes(canvasEl);
     fireworksInfo.canvasWidth = canvasWidth;
     fireworksInfo.canvasHeight = canvasHeight;
@@ -89,7 +89,7 @@ export function start(canvasEl, options) {
   fireworksInfo.lastIgniteTime = 0;
 
   // Start animation:
-  fireworksInfo.animFrameId = domutils.onAnimFrame(() => {
+  fireworksInfo.animFrameId = onAnimFrame(() => {
     step(fireworksInfo);
   }, FRAMES_PER_SECOND);
 }
@@ -106,7 +106,7 @@ export function stop(canvasEl) {
     const fireworksInfo = fireworksById.get(fireworksId);
     if (fireworksInfo) {
       window.removeEventListener('resize', fireworksInfo.rescale);
-      domutils.cancelAnimFrame(fireworksInfo.animFrameId);
+      cancelAnimFrame(fireworksInfo.animFrameId);
     }
   }
 }
@@ -169,12 +169,12 @@ class FireworkBox {
   }
 
   startNewFirework(target) {
-    const hue = utils.random(0, 360);
+    const hue = random(0, 360);
     const xOrig = Math.floor(this._width / 2);
     const origin = new Vector(xOrig, this._height);
 
-    const xTarget = target ? target.x : utils.random(this._width * 0.1, this._width * 0.9); // between 20-80% of width
-    const yTarget = target ? target.y : utils.random(this._height * 0.2, this._height * 0.4); // between 60-80% of height
+    const xTarget = target ? target.x : random(this._width * 0.1, this._width * 0.9); // between 20-80% of width
+    const yTarget = target ? target.y : random(this._height * 0.2, this._height * 0.4); // between 60-80% of height
 
     const t = 2 * FRAMES_PER_SECOND; // 2s to reach target
 
@@ -243,10 +243,7 @@ class Firework {
     if (!this._exploded) {
       this._particles[0].step();
       // If vertical velocity is zero or target is reached:
-      if (
-        this._particles[0]._vel.y >= 0.0 ||
-        (this._target && utils.distance(this._target, this._particles[0]._pos) < 10)
-      ) {
+      if (this._particles[0]._vel.y >= 0.0 || (this._target && distance(this._target, this._particles[0]._pos) < 10)) {
         // No longer rising
         this._exploded = true;
         const explosionCenter = this._particles[0]._pos;
@@ -270,7 +267,7 @@ class Firework {
     const shape =
       this._shape !== 'random'
         ? this._shape
-        : utils.randomElement(['hearts', 'normal', 'donuts', 'roses', 'circles', 'stars', 'svg-path']);
+        : randomElement(['hearts', 'normal', 'donuts', 'roses', 'circles', 'stars', 'svg-path']);
     switch (shape) {
       case 'hearts':
       case 'heart':
@@ -401,7 +398,7 @@ class Firework {
   }
 
   explodeAsTwinkle(origin) {
-    const arms = utils.random(4, 7);
+    const arms = random(4, 7);
     const radiuses = [4, 3, 1];
     const angle = Math.PI / arms;
     for (let i = 0; i < 3 * arms; i++) {
@@ -477,7 +474,7 @@ class Firework {
       [6, 9],
       [7, 9],
     ];
-    const kVal = utils.randomElement(K_VALS);
+    const kVal = randomElement(K_VALS);
     const n = kVal[0];
     const d = kVal[1];
     const k = n / d;

@@ -1,4 +1,4 @@
-import * as log from './log.mjs';
+import * as log from './logs.mjs';
 
 // General event registration and firing
 

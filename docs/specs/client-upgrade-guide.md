@@ -8,20 +8,23 @@ to the shared transport and error hierarchy modules in `@gpellicciotta/hinolugi-
 ## Overview
 
 The `hinolugi-auth` and `hinolugi-counters` client packages previously maintained independent,
-near-identical copies of:
-- `http.mjs`: URL construction, authorization header generation, wire date helpers, and `fetch`-based request execution.
-- `errors.mjs`: `ApiError` base class, typed subclasses (`AuthenticationError`, `ValidationError`, `NotFoundError`, `ConflictError`), and status-to-exception mapping (`mapError`).
-
-The shared modules in `@gpellicciotta/hinolugi-support.js` combine both feature sets into a unified,
-backward-compatible implementation.
+near-identical copies of transport and error handling.
+In v2.0.0, `@gpellicciotta/hinolugi-support.js` consolidates these into:
+- `net.mjs`: URL construction, authorization header generation, `fetch`-based request execution, and the complete `ApiError` hierarchy.
+- `dates.mjs`: wire date serialization (`toWireDate`, `fromWireDate`, `parseDate`) and relative/human formatting.
 
 ---
 
 ## Shared Modules Architecture
 
-### `js/errors.mjs`
+### `js/net.mjs`
 
 Exports:
+- `sendRequest(baseUrl, method, path, options)`: executes request via `fetch`, preserving auth's `options.headers` merging over default `Accept: application/json`, handling optional `redirect: 'manual'`, and returning `{ status, data, headers }`.
+- `buildUrl(baseUrl, path, query)`: constructs query string handling scalar values and arrays.
+- `basicAuthHeader(userName, password)`: generates standard `Basic <base64>` header value.
+- `bearerAuthHeader(token)`: generates standard `Bearer <token>` header value.
+- `redirectToHinolugiAuth(loginUrl, returnUrl)`: redirects browser to centralized auth.
 - `ApiError`: base class carrying `message`, `status`, and parsed `body`.
 - `AuthenticationError`: status 401.
 - `ValidationError`: status 400.
@@ -30,23 +33,18 @@ Exports:
 - `NOT_FOUND_PATTERNS`: regex patterns matching missing resource identifiers.
 - `mapError(status, message, body)`: factory function mapping status code and message to the appropriate class.
 
-### `js/http.mjs`
+### `js/dates.mjs`
 
-Exports:
-- `buildUrl(baseUrl, path, query)`: constructs query string handling scalar values and arrays.
-- `basicAuthHeader(userName, password)`: generates standard `Basic <base64>` header value.
-- `bearerAuthHeader(token)`: generates standard `Bearer <token>` header value.
-- `sendRequest(baseUrl, method, path, options)`: executes request via `fetch`, preserving auth's `options.headers` merging over default `Accept: application/json`, handling optional `redirect: 'manual'`, and returning `{ status, data, headers }`.
+Exports wire date helpers:
 - `toWireDate(value)`: serializes Date objects to UTC ISO strings without milliseconds (`yyyy-MM-ddTHH:mm:ssZ`).
 - `fromWireDate(value)`: deserializes server date strings into `Date` instances.
 - `parseDate(value)`: alias for `fromWireDate`.
-- `mapError`: re-exported from `errors.mjs`.
 
 ---
 
 ## Upgrading `hinolugi-auth`
 
-### 1. Update Dependencies
+### Update Dependencies
 
 In `clients/js/package.json`, add `@gpellicciotta/hinolugi-support.js` under `dependencies`:
 
@@ -58,23 +56,23 @@ In `clients/js/package.json`, add `@gpellicciotta/hinolugi-support.js` under `de
 }
 ```
 
-### 2. Update `clients/js/src/errors.mjs`
+### Re-export Errors
 
 Replace local implementation with re-exports from the shared library:
 
 ```javascript
-export * from '@gpellicciotta/hinolugi-support.js/errors.mjs';
+export * from '@gpellicciotta/hinolugi-support.js/net.mjs';
 ```
 
-### 3. Update `clients/js/src/http.mjs`
+### Re-export HTTP Transport
 
 Replace local implementation with re-exports from the shared library:
 
 ```javascript
-export * from '@gpellicciotta/hinolugi-support.js/http.mjs';
+export * from '@gpellicciotta/hinolugi-support.js/net.mjs';
 ```
 
-### 4. Verification
+### Verify Auth Client
 
 Run the test suite in `clients/js/`:
 
@@ -88,7 +86,7 @@ All authentication, model conversion, and client request tests must pass without
 
 ## Upgrading `hinolugi-counters`
 
-### 1. Update Dependencies
+### Update Dependencies
 
 In `clients/js/package.json`, add `@gpellicciotta/hinolugi-support.js` under `dependencies`:
 
@@ -100,25 +98,25 @@ In `clients/js/package.json`, add `@gpellicciotta/hinolugi-support.js` under `de
 }
 ```
 
-### 2. Update `clients/js/src/errors.mjs`
+### Re-export Errors
 
 Re-export from the shared library:
 
 ```javascript
-export * from '@gpellicciotta/hinolugi-support.js/errors.mjs';
+export * from '@gpellicciotta/hinolugi-support.js/net.mjs';
 ```
 
-### 3. Update `clients/js/src/http.mjs`
+### Re-export HTTP Transport
 
 Re-export from the shared library:
 
 ```javascript
-export * from '@gpellicciotta/hinolugi-support.js/http.mjs';
+export * from '@gpellicciotta/hinolugi-support.js/net.mjs';
 ```
 
 Note: `parseDate` is exported as an alias to `fromWireDate`, ensuring full compatibility with existing counters client code.
 
-### 4. Synchronize Client Files to Webapp
+### Synchronize Client Files to Webapp
 
 Run the synchronization script to update webapp client copies:
 
@@ -126,7 +124,7 @@ Run the synchronization script to update webapp client copies:
 node clients/js/scripts/sync-client.mjs
 ```
 
-### 5. Verification
+### Verify Counters Client
 
 Run the client test suite:
 

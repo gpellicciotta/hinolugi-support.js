@@ -1,6 +1,6 @@
 {
   "name": "@gpellicciotta/hinolugi-support.js",
-  "version": "1.0.1-pre",
+  "version": "2.0.0-pre",
   "description": "General-purpose Javascript support code, both for client and server-side use",
   "type": "module",
   "exports": {

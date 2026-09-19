@@ -26,9 +26,11 @@ npm install @gpellicciotta/hinolugi-support.js
 Each module is importable as a subpath, e.g.:
 
 ```js
-import { CliLogger } from '@gpellicciotta/hinolugi-support.js/cli-log.mjs';
-import { sendRequest, buildUrl } from '@gpellicciotta/hinolugi-support.js/http.mjs';
-import { ApiError, mapError } from '@gpellicciotta/hinolugi-support.js/errors.mjs';
+import { CliLogger, Logger } from '@gpellicciotta/hinolugi-support.js/logs.mjs';
+import { sendRequest, buildUrl, ApiError, mapError } from '@gpellicciotta/hinolugi-support.js/net.mjs';
+import { parseDate, formatDateTime } from '@gpellicciotta/hinolugi-support.js/dates.mjs';
+import { StorageAdapter, IndexedDbStorageAdapter } from '@gpellicciotta/hinolugi-support.js/storages.mjs';
+import { pagedResult, singlePage } from '@gpellicciotta/hinolugi-support.js/paging.mjs';
 ```
 
 ## Publishing

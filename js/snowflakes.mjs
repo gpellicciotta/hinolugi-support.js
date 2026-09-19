@@ -1,6 +1,6 @@
-import * as log from './log.mjs';
-import * as utils from './utils.mjs';
-import * as domutils from './domutils.mjs';
+import * as log from './logs.mjs';
+import { cancelAnimFrame, onAnimFrame } from './dom.mjs';
+import { random, randomElement } from './math.mjs';
 
 // Falling-snowflakes animation effect, rendered as absolutely-positioned <span> elements over the document.
 
@@ -62,7 +62,7 @@ export function start(options) {
     }
 
     // Start new animation:
-    animId = domutils.onAnimFrame(snowStep, FRAMES_PER_SECOND);
+    animId = onAnimFrame(snowStep, FRAMES_PER_SECOND);
   }
 }
 
@@ -77,7 +77,7 @@ export function stop() {
  *  Stop creating and showing snowflakes immediately.
  */
 export function reset() {
-  domutils.cancelAnimFrame(animId);
+  cancelAnimFrame(animId);
   document.querySelectorAll('span.snowflake').forEach((el) => {
     el.remove();
   });
@@ -103,7 +103,7 @@ function snowStep() {
     let xPos = snowFlake.xPos;
     let yPos = snowFlake.yPos;
     // Calculate new position
-    xPos += utils.random(0, 1) * snowFlake.dir;
+    xPos += random(0, 1) * snowFlake.dir;
     yPos += snowFlake.fallSpeed;
     // Check window boundaries: reset
     if (yPos > screenHeight) {
@@ -112,8 +112,8 @@ function snowStep() {
         snowFlakes.splice(i, 1);
         continue;
       }
-      xPos = utils.random(0, screenWidth);
-      yPos = 0 - utils.random(10, 20);
+      xPos = random(0, screenWidth);
+      yPos = 0 - random(10, 20);
     }
     // Set position (= move the snowflake)
     snowFlake.xPos = xPos;
@@ -129,17 +129,17 @@ function createSnowFlake() {
 
   // Create new object with meta-data and document element:
   const newElement = document.createElement('span');
-  const xPos = utils.random(0, screenWidth);
-  const yPos = 0 - utils.random(10, screenWidth / 2);
-  const size = utils.random(16, 32);
-  const zIndex = utils.random(500, 1000);
+  const xPos = random(0, screenWidth);
+  const yPos = 0 - random(10, screenWidth / 2);
+  const size = random(16, 32);
+  const zIndex = random(500, 1000);
   const newSnowFlake = {
     id: `snowflake-${snowFlakes.length}`,
     element: newElement,
     xPos: xPos,
     yPos: yPos,
-    dir: utils.randomElement([-1, 1]),
-    fallSpeed: utils.randomElement([1, 2]),
+    dir: randomElement([-1, 1]),
+    fallSpeed: randomElement([1, 2]),
   };
   snowFlakes.push(newSnowFlake);
   // Style the document el:
@@ -147,13 +147,13 @@ function createSnowFlake() {
   newElement.style.position = 'fixed';
   newElement.style.top = `${yPos}px`;
   newElement.style.right = `${xPos}px`;
-  newElement.style.color = utils.randomElement(snowOptions.colors);
+  newElement.style.color = randomElement(snowOptions.colors);
   newElement.style.fontSize = `${size}px`;
   //newElement.style.width = `${size}px`;
   newElement.style.height = `${size}px`;
   newElement.style.zIndex = `${zIndex}`;
   newElement.style.pointerEvents = 'none';
-  newElement.innerText = utils.randomElement(snowOptions.symbols); // + `sp:${newSnowFlake.fallSpeed},d:${newSnowFlake.dir}`;
+  newElement.innerText = randomElement(snowOptions.symbols); // + `sp:${newSnowFlake.fallSpeed},d:${newSnowFlake.dir}`;
   // Append to document:
   snowFlakeContainer.appendChild(newElement);
   log.trace(`${snowFlakes.length} snowflakes have been created now`);

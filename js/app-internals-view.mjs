@@ -1,7 +1,8 @@
 import AppView from './app-view.mjs';
-import * as utils from './utils.mjs';
-import * as formutils from './formutils.mjs';
-import * as log from './log.mjs';
+import { formatDateTime } from './dates.mjs';
+import { disable, enable } from './forms.mjs';
+import * as log from './logs.mjs';
+import { random, randomElement } from './math.mjs';
 
 const VIEW_ID = 'app-internals-view';
 
@@ -387,8 +388,8 @@ export default class AppInternalsView extends AppView {
   }
 
   addRandomNotification() {
-    let msg = 'A random message ' + utils.random(10, 30);
-    let msgType = utils.randomElement(['warning', 'info', 'error', 'question']);
+    let msg = 'A random message ' + random(10, 30);
+    let msgType = randomElement(['warning', 'info', 'error', 'question']);
     if (typeof this.app?.addNotification === 'function') {
       this.app.addNotification(msg, msgType);
     }
@@ -407,8 +408,8 @@ export default class AppInternalsView extends AppView {
   }
 
   addRandomLogMessage() {
-    let msg = 'A random message ' + utils.random(10, 30);
-    let level = utils.randomElement([log.TRACE_LEVEL, log.INFO_LEVEL, log.WARNING_LEVEL, log.ERROR_LEVEL]);
+    let msg = 'A random message ' + random(10, 30);
+    let level = randomElement([log.TRACE_LEVEL, log.INFO_LEVEL, log.WARNING_LEVEL, log.ERROR_LEVEL]);
     log.log(level, msg);
   }
 
@@ -425,9 +426,9 @@ export default class AppInternalsView extends AppView {
     this.logTableBodyElement.querySelectorAll('.log-event').forEach((itemEl) => {
       const eventText = itemEl.innerText.toLowerCase();
       if (!filterVal || eventText.indexOf(filterVal.toLowerCase()) >= 0) {
-        formutils.enable(itemEl);
+        enable(itemEl);
       } else {
-        formutils.disable(itemEl);
+        disable(itemEl);
       }
     });
     this.logTableBodyElement.dataset.lastFilterVal = filterVal;
@@ -483,13 +484,13 @@ export default class AppInternalsView extends AppView {
     let appInstallState = 'App. install state is being determined...';
     if (this.app?.isAppInstalled && this.app.isAppInstalled()) {
       appInstallState = 'App. has been installed';
-      if (this.installAppButton) formutils.disable(this.installAppButton);
+      if (this.installAppButton) disable(this.installAppButton);
     } else if (this.app?.isAppInstallable && this.app.isAppInstallable()) {
       appInstallState = 'App. has been not been installed yet';
-      if (this.installAppButton) formutils.enable(this.installAppButton);
+      if (this.installAppButton) enable(this.installAppButton);
     } else {
       appInstallState = 'App. install state cannot currently be determined';
-      if (this.installAppButton) formutils.disable(this.installAppButton);
+      if (this.installAppButton) disable(this.installAppButton);
     }
     this.appInstallStateElement.innerHTML = appInstallState;
 
@@ -499,16 +500,16 @@ export default class AppInternalsView extends AppView {
       typeof this.app?.getServiceWorkerRegistration === 'function' ? this.app.getServiceWorkerRegistration() : null;
     if (!sw) {
       swInstallState = 'No service worker has been registered yet';
-      if (this.checkForSwUpdateButton) formutils.disable(this.checkForSwUpdateButton);
-      if (this.installSwUpdateButton) formutils.disable(this.installSwUpdateButton);
+      if (this.checkForSwUpdateButton) disable(this.checkForSwUpdateButton);
+      if (this.installSwUpdateButton) disable(this.installSwUpdateButton);
     } else if (sw.waiting) {
       swInstallState = 'SW is ready for install';
-      if (this.checkForSwUpdateButton) formutils.disable(this.checkForSwUpdateButton);
-      if (this.installSwUpdateButton) formutils.enable(this.installSwUpdateButton);
+      if (this.checkForSwUpdateButton) disable(this.checkForSwUpdateButton);
+      if (this.installSwUpdateButton) enable(this.installSwUpdateButton);
     } else if (sw.active) {
       swInstallState = 'SW has been installed and is active';
-      if (this.checkForSwUpdateButton) formutils.enable(this.checkForSwUpdateButton);
-      if (this.installSwUpdateButton) formutils.disable(this.installSwUpdateButton);
+      if (this.checkForSwUpdateButton) enable(this.checkForSwUpdateButton);
+      if (this.installSwUpdateButton) disable(this.installSwUpdateButton);
     }
     this.swInstallStateElement.innerHTML = swInstallState;
   }
@@ -535,7 +536,7 @@ export default class AppInternalsView extends AppView {
   doInstallServiceWorkerUpdate(event) {
     this.log.trace('Installing service worker update...');
     if (event && typeof event.preventDefault === 'function') event.preventDefault();
-    if (this.installSwUpdateButton) formutils.disable(this.installSwUpdateButton);
+    if (this.installSwUpdateButton) disable(this.installSwUpdateButton);
     if (typeof this.app?.runAction === 'function') {
       this.app.runAction('install-app-update');
     }
@@ -658,7 +659,7 @@ export default class AppInternalsView extends AppView {
             <td>${note.id}</td>
             <td>${note.type}</td>
             <td>${note.note}</td>
-            <td>${utils.formatDateTime(note.time)}</td>
+            <td>${formatDateTime(note.time)}</td>
             <td><button class="delete-action action" data-notification-id="${note.id}"><i class="icon fas fa-trash"></i><i class="text">Delete</i></button></td>
           </tr>`;
       });
@@ -685,7 +686,7 @@ export default class AppInternalsView extends AppView {
       this.logEvents.forEach((logEvent, index) => {
         logTableRows = `
           <li class="log-event">
-            <span class="time">${utils.formatDateTime(logEvent.time)}</span>
+            <span class="time">${formatDateTime(logEvent.time)}</span>
             <span class="name">${logEvent.name}</span>
             <span class="type">${log.levelToLevelName(logEvent.level)}</span>
             <span class="message">${logEvent.message.replace('<', '&lt;').replace('>', '&gt;')}</span>

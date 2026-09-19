@@ -1,6 +1,9 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  isValidEmailAddress,
+  isValidPassword,
+  validPasswordDescription,
   isEnabled,
   isDisabled,
   disable,
@@ -14,7 +17,7 @@ import {
   validatePasswordField,
   handlePasswordDisclosure,
   setButtonLoading,
-} from '../js/formutils.mjs';
+} from '../js/forms.mjs';
 
 // Minimal fake DOM element, just enough to exercise formutils.mjs without a jsdom dependency.
 class FakeElement {
@@ -336,5 +339,25 @@ describe('setButtonLoading', () => {
 
     setButtonLoading(button, false);
     assert.equal(button.innerHTML, '<span class="text">Submit Form</span>');
+  });
+});
+
+describe('validation helpers', () => {
+  test('isValidEmailAddress validates email format', () => {
+    assert.equal(isValidEmailAddress('test@example.com'), true);
+    assert.equal(isValidEmailAddress('invalid-email'), false);
+    assert.equal(isValidEmailAddress(''), false);
+    assert.equal(isValidEmailAddress(null), false);
+  });
+
+  test('isValidPassword rejects short passwords', () => {
+    assert.equal(isValidPassword(''), false);
+    assert.equal(isValidPassword(null), false);
+    assert.equal(isValidPassword('12345'), false);
+    assert.equal(isValidPassword('123456'), true);
+  });
+
+  test('validPasswordDescription returns rule description', () => {
+    assert.equal(validPasswordDescription(), 'minimally 6 letters');
   });
 });

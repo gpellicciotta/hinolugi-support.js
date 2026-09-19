@@ -1,6 +1,6 @@
 import { test, describe, mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { addLogHandler, removeLogHandler, error, ERROR_LEVEL } from '../js/log.mjs';
+import { addLogHandler, removeLogHandler, error, ERROR_LEVEL } from '../js/logs.mjs';
 
 describe('fireLogEvent', () => {
   test('routes a failing handler to defaultHandler as an ERROR-level event, not the raw exception', () => {

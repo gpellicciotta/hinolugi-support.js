@@ -1,4 +1,4 @@
-import * as log from './log.mjs';
+import * as log from './logs.mjs';
 
 // DOM related utility functions. These often rely on the global 'document' and 'window' objects.
 

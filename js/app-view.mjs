@@ -1,5 +1,5 @@
 import Component from './component.mjs';
-import * as utils from './utils.mjs';
+import { escapeRegex } from './strings.mjs';
 
 /**
  * Type representing an application content view.
@@ -33,7 +33,7 @@ export default class AppView extends Component {
   constructor(id, app, title, routeRegex) {
     super(id, app);
     this.title = title;
-    this.routeRegex = routeRegex || new RegExp('^/' + utils.escapeRegex(id) + '(/.*)?$', 'i');
+    this.routeRegex = routeRegex || new RegExp('^/' + escapeRegex(id) + '(/.*)?$', 'i');
     this.actions = [];
     this.attachCount = 0;
     this.ctxActionBarId = null;

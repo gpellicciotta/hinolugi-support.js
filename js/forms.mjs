@@ -1,24 +1,70 @@
-import * as utils from './utils.mjs';
+/**
+ * Form element state, validity marking, loading states, and field validation.
+ */
 
-// Form related utility functions.
+/**
+ * Checks whether a string is a valid email address.
+ *
+ * @param {string} email
+ * @returns {boolean} True if email is non-empty and matches standard email format.
+ */
+export function isValidEmailAddress(email) {
+  if (!email) {
+    return false;
+  }
+  if (email.indexOf('@') <= 0) {
+    return false;
+  }
+  return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+}
 
-/** @return True if `el` does not have the 'disabled' class. */
+/**
+ * Checks whether a string is a valid password (at least 6 characters).
+ *
+ * @param {string} password
+ * @returns {boolean}
+ */
+export function isValidPassword(password) {
+  if (!password || password.length < 6) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Human-readable description of what constitutes a valid password.
+ *
+ * @returns {string}
+ */
+export function validPasswordDescription() {
+  return 'minimally 6 letters';
+}
+
+/**
+ * Returns true if element does not have the 'disabled' class.
+ *
+ * @param {HTMLElement} el
+ * @returns {boolean}
+ */
 export function isEnabled(el) {
   return !el.classList.contains('disabled');
 }
 
-/** @return True if `el` has the 'disabled' class. */
+/**
+ * Returns true if element has the 'disabled' class.
+ *
+ * @param {HTMLElement} el
+ * @returns {boolean}
+ */
 export function isDisabled(el) {
   return el.classList.contains('disabled');
 }
 
 /**
- *  Disable an element: add the 'disabled' class, mark it read-only, and set its title to
- *  `disableText`, remembering the previous title so `enable` can restore it.
+ * Disables an element: adds the 'disabled' class, marks it read-only, and sets title to disableText.
  *
- *  @param el The element to disable.
- *  @param disableText Title to show while disabled. Defaults to `el.dataset.disabledText`
- *                      or a generic message.
+ * @param {HTMLElement} el
+ * @param {string} [disableText]
  */
 export function disable(el, disableText) {
   let title = null;
@@ -38,11 +84,10 @@ export function disable(el, disableText) {
 }
 
 /**
- *  Re-enable an element previously disabled via `disable`: remove the 'disabled' class,
- *  clear read-only, and restore (or override with `enableText`) its title.
+ * Re-enables an element previously disabled via disable().
  *
- *  @param el The element to enable.
- *  @param enableText Title to restore. Defaults to the title remembered by `disable`.
+ * @param {HTMLElement} el
+ * @param {string} [enableText]
  */
 export function enable(el, enableText) {
   const enabledText = enableText || el.dataset.enabledText;
@@ -54,14 +99,22 @@ export function enable(el, enableText) {
   el.readOnly = false;
 }
 
-/** Reset `el` to its empty, enabled, unmarked state: clears its value, removes validity marks, and re-enables it. */
+/**
+ * Resets an element to its empty, enabled, unmarked state.
+ *
+ * @param {HTMLElement} el
+ */
 export function reset(el) {
   el.value = null;
   removeValidityMarks(el);
   enable(el);
 }
 
-/** Remove both the 'valid' and 'invalid' classes from the closest '.input-group' ancestor of `el`. */
+/**
+ * Removes both 'valid' and 'invalid' classes from the closest '.input-group' ancestor.
+ *
+ * @param {HTMLElement} el
+ */
 export function removeValidityMarks(el) {
   const inputGroupEl = el.closest('.input-group');
   if (inputGroupEl) {
@@ -70,7 +123,11 @@ export function removeValidityMarks(el) {
   }
 }
 
-/** Mark the closest '.input-group' ancestor of `el` as valid. */
+/**
+ * Marks the closest '.input-group' ancestor of el as valid.
+ *
+ * @param {HTMLElement} el
+ */
 export function markValid(el) {
   const inputGroupEl = el.closest('.input-group');
   if (inputGroupEl) {
@@ -80,10 +137,10 @@ export function markValid(el) {
 }
 
 /**
- *  Mark the closest '.input-group' ancestor of `el` as invalid, updating its '.error-text' element if present.
+ * Marks the closest '.input-group' ancestor of el as invalid and sets error text.
  *
- *  @param el The field element whose input-group should be marked invalid.
- *  @param errorText The error message to show in the '.error-text' element, if one exists.
+ * @param {HTMLElement} el
+ * @param {string} errorText
  */
 export function markInvalid(el, errorText) {
   const inputGroupEl = el.closest('.input-group');
@@ -98,10 +155,10 @@ export function markInvalid(el, errorText) {
 }
 
 /**
- *  Validate a required, free-form input field and mark it valid/invalid accordingly.
+ * Validates a required, free-form input field and marks it valid/invalid.
  *
- *  @param inputEl The input element to validate.
- *  @return True if the field's value is acceptable.
+ * @param {HTMLInputElement} inputEl
+ * @returns {boolean}
  */
 export function validateInputField(inputEl) {
   const valueAvailable = inputEl.value.trim();
@@ -114,7 +171,7 @@ export function validateInputField(inputEl) {
       return true;
     }
   }
-  if (!utils.isValidEmailAddress(valueAvailable)) {
+  if (!isValidEmailAddress(valueAvailable)) {
     markInvalid(inputEl, 'This is not a valid email address');
     return false;
   } else {
@@ -124,10 +181,10 @@ export function validateInputField(inputEl) {
 }
 
 /**
- *  Validate an email input field and mark it valid/invalid accordingly.
+ * Validates an email input field and marks it valid/invalid.
  *
- *  @param emailInputEl The email input element to validate.
- *  @return True if the field's value is a valid email address (or empty and not required).
+ * @param {HTMLInputElement} emailInputEl
+ * @returns {boolean}
  */
 export function validateEmailField(emailInputEl) {
   const valueAvailable = emailInputEl.value.trim();
@@ -140,7 +197,7 @@ export function validateEmailField(emailInputEl) {
       return true;
     }
   }
-  if (!utils.isValidEmailAddress(valueAvailable)) {
+  if (!isValidEmailAddress(valueAvailable)) {
     markInvalid(emailInputEl, 'This is not a valid email address');
     return false;
   } else {
@@ -150,10 +207,10 @@ export function validateEmailField(emailInputEl) {
 }
 
 /**
- *  Validate a password input field and mark it valid/invalid accordingly.
+ * Validates a password input field and marks it valid/invalid.
  *
- *  @param passwordInputEl The password input element to validate.
- *  @return True if the field's value is a valid password (or empty and not required).
+ * @param {HTMLInputElement} passwordInputEl
+ * @returns {boolean}
  */
 export function validatePasswordField(passwordInputEl) {
   const valueAvailable = passwordInputEl.value.trim();
@@ -166,8 +223,8 @@ export function validatePasswordField(passwordInputEl) {
       return true;
     }
   }
-  if (!utils.isValidPassword(valueAvailable)) {
-    markInvalid(passwordInputEl, 'A valid password needs: ' + utils.validPasswordDescription());
+  if (!isValidPassword(valueAvailable)) {
+    markInvalid(passwordInputEl, 'A valid password needs: ' + validPasswordDescription());
     return false;
   } else {
     markValid(passwordInputEl);
@@ -176,13 +233,9 @@ export function validatePasswordField(passwordInputEl) {
 }
 
 /**
- *  Assuming following HTML structure:
- *    <... class="icon-input">
- *      <input type='password' ...>
- *      <button><i class='icon fa fa-eye'></i></button>
- *    </...>
+ * Switches password visibility on a password input paired with an eye toggle button.
  *
- *  Make sure the button switches between revealing/disclosing the password input text.
+ * @param {HTMLElement} el
  */
 export function handlePasswordDisclosure(el) {
   const iconInputEl = el.closest('.icon-input');
@@ -201,7 +254,7 @@ export function handlePasswordDisclosure(el) {
   buttonEl.addEventListener('click', (ev) => {
     ev.preventDefault();
     ev.stopPropagation();
-    const iconButtonEl = buttonEl.querySelector('.icon'); // Need to do again, since the element might have changed from an <i> to an <svg?>
+    const iconButtonEl = buttonEl.querySelector('.icon');
     if (passwordEl.type === 'password') {
       passwordEl.setAttribute('type', 'text');
       iconButtonEl.classList.remove('fa-eye');
@@ -215,12 +268,11 @@ export function handlePasswordDisclosure(el) {
 }
 
 /**
- *  Toggle an inline loading state on a button during async operations.
- *  Preserves the original HTML structure and restores it when loading ends.
+ * Toggles an inline loading state on a button during async operations.
  *
- *  @param {HTMLElement} buttonEl The button element to toggle
- *  @param {boolean} isLoading Whether the button is in the loading state
- *  @param {string|null} loadingText Optional label to show during loading
+ * @param {HTMLElement} buttonEl The button element to toggle
+ * @param {boolean} [isLoading=true]
+ * @param {string|null} [loadingText=null]
  */
 export function setButtonLoading(buttonEl, isLoading = true, loadingText = null) {
   if (!buttonEl) return;

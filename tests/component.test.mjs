@@ -1,7 +1,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import Component from '../js/component.mjs';
-import { Logger } from '../js/log.mjs';
+import { Logger } from '../js/logs.mjs';
 
 // Minimal fake DOM element, just enough to exercise component.mjs without a jsdom dependency.
 class FakeElement {

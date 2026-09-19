@@ -1,6 +1,7 @@
 import AppView from './app-view.mjs';
-import * as utils from './utils.mjs';
-import * as domutils from './domutils.mjs';
+import { formatRelativeDateTime } from './dates.mjs';
+import { htmlToElement } from './dom.mjs';
+import { escapeHtml } from './strings.mjs';
 
 export const NOTIFICATION_ADDED_EVENT = 'notification-added';
 export const NOTIFICATION_DELETED_EVENT = 'notification-deleted';
@@ -124,16 +125,16 @@ export default class AppNotificationBar extends AppView {
 
   createNotificationRow(note) {
     const noteId = note.id;
-    const time = note.time ? utils.formatRelativeDateTime(note.time) : '?';
+    const time = note.time ? formatRelativeDateTime(note.time) : '?';
     const type = note.type ? note.type : '?';
     const actionButtonHtml = note.action
-      ? `<button class="action-button" data-action="notification-action" title="${utils.escapeHtml(note.action.label)}">${
-          note.action.icon ? `<i class="${note.action.icon}"></i>` : utils.escapeHtml(note.action.label)
+      ? `<button class="action-button" data-action="notification-action" title="${escapeHtml(note.action.label)}">${
+          note.action.icon ? `<i class="${note.action.icon}"></i>` : escapeHtml(note.action.label)
         }</button>`
       : '';
-    const newNote = domutils.htmlToElement(`
+    const newNote = htmlToElement(`
       <li class="notification" data-notification-id="${noteId}" title="${type} notification created ${time}">
-        <span class="message">${utils.escapeHtml(note.note || '')}</span>
+        <span class="message">${escapeHtml(note.note || '')}</span>
         <span class="tags">
           <span class="type" data-type="${type}">${type}</span>
           <span class="creation time">${time}</span>

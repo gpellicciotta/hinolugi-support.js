@@ -1,7 +1,5 @@
-// Game utility functions w.r.t. collisions between shapes.
-
+import { distance } from './math.mjs';
 import { Vector } from './vector.mjs';
-import * as utils from './utils.mjs';
 
 /**
  *  Clamp a value within a certain range.
@@ -48,7 +46,7 @@ function _scalarClamp(val, min, max) {
  *  @return Boolean: true if the given point resides on the given line segment, false otherwise.
  */
 export function pointOnLineSegment(p, a, b) {
-  return utils.distance(p, a) + utils.distance(p, b) === utils.distance(a, b);
+  return distance(p, a) + distance(p, b) === distance(a, b);
 }
 
 /**
@@ -220,7 +218,7 @@ export function shortestDistanceToLineSegment(p, a, b) {
   const dy = b.y - a.y;
   if (dx === 0 && dy === 0) {
     // Points a and b coincide so this is a simple point-to-point distance calculation
-    return utils.distance(p, a);
+    return distance(p, a);
   }
   const u = ((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy);
   let closestPoint;
@@ -234,7 +232,7 @@ export function shortestDistanceToLineSegment(p, a, b) {
       y: b.y + u * dy,
     };
   }
-  return utils.distance(p, closestPoint);
+  return distance(p, closestPoint);
 }
 
 /**

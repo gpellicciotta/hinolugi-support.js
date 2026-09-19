@@ -1,6 +1,6 @@
 // Installer for the SPA (PWA install-prompt handling)
 
-import { Logger } from './log.mjs';
+import { Logger } from './logs.mjs';
 
 const defaultLog = new Logger('installer');
 

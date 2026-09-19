@@ -15,8 +15,7 @@ An overview of all tasks and their planning.
 
 ## Next Milestone
 
-- [~] T0025 [owner: @worker-1] Refactor JavaScript modules into logical, self-contained, and composeable units.
-- [ ] T0026 [needs: T0025] Make sure the whole API surface is properly documented: all modules, classes, methods, method parameters and return values, enum values and constants have a clear indication of what they do.
+- [ ] T0026 Make sure the whole API surface is properly documented: all modules, classes, methods, method parameters and return values, enum values and constants have a clear indication of what they do.
 
 ---
 

@@ -1,5 +1,5 @@
-import { Logger } from './log.mjs';
-import * as utils from './utils.mjs';
+import { Logger } from './logs.mjs';
+import { capitalize } from './strings.mjs';
 
 // Base SPA component with a DOM lifecycle (attach/detach), event-listener bookkeeping, wait/error
 // overlays, and a helper for running long-running (async) operations against that UI.
@@ -257,7 +257,7 @@ export default class Component {
         }
         let errMsg = err?.message;
         if (errMsg) {
-          errMsg = utils.capitalize(errMsg);
+          errMsg = capitalize(errMsg);
         }
         const errorInfo = {
           'error-title': op.title,

@@ -1,4 +1,4 @@
-import * as log from './log.mjs';
+import * as log from './logs.mjs';
 
 // Utility for re-ordering the items in a container by dragging them around
 //

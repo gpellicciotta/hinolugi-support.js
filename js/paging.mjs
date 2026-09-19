@@ -85,11 +85,11 @@ export function pagedResult(envelope, fetchPageOrPaging, maybeFetchPage) {
 
   const hasPagingInfo = Boolean(
     actualEnvelope.currentPage ||
-      actualEnvelope['current-page'] ||
-      actualEnvelope.page ||
-      startBookmark !== null ||
-      endBookmark !== null ||
-      typeof fetchPage === 'function'
+    actualEnvelope['current-page'] ||
+    actualEnvelope.page ||
+    startBookmark !== null ||
+    endBookmark !== null ||
+    typeof fetchPage === 'function',
   );
 
   const rawCurrentPage = actualEnvelope.currentPage ?? actualEnvelope['current-page'] ?? actualEnvelope.page;

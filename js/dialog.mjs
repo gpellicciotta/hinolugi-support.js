@@ -1,6 +1,6 @@
 import { EventEmitter } from './events.mjs';
-import { Logger } from './log.mjs';
-import * as formutils from './formutils.mjs';
+import { Logger } from './logs.mjs';
+import { disable, enable } from './forms.mjs';
 
 // Modal dialog component with pluggable content/buttons, driven by DOM data-attributes.
 
@@ -101,7 +101,7 @@ export default class Dialog extends EventEmitter {
     this.registeredEvents.push({ target: this.dialog, type: 'click', callback: ce });
     this.dialog.addEventListener('click', ce);
     this.result = null;
-    formutils.enable(this.overlay);
+    enable(this.overlay);
     this.dispatchEvent({ type: 'open', dialog: this });
     const dlg = this;
     return new Promise((resolve) => {
@@ -115,7 +115,7 @@ export default class Dialog extends EventEmitter {
 
   close(answer) {
     this.result = answer;
-    formutils.disable(this.overlay);
+    disable(this.overlay);
     this.dispatchEvent({ type: 'close', dialog: this, result: this.result });
     for (const er of this.registeredEvents) {
       er.target.removeEventListener(er.type, er.callback);

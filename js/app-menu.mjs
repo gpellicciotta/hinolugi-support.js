@@ -1,5 +1,5 @@
 import Component from './component.mjs';
-import * as formutils from './formutils.mjs';
+import { disable, enable } from './forms.mjs';
 
 export const ACTION_STATE_CHANGED_EVENT = 'action-state-changed';
 
@@ -53,9 +53,9 @@ export default class AppMenu extends Component {
         let aEl = document.createElement(action.href ? 'a' : 'button');
         aEl.setAttribute('data-action', actionId);
         if (typeof this.app?.isActionEnabled === 'function' && !this.app.isActionEnabled(actionId)) {
-          formutils.disable(liEl, action['disabled-reason']);
+          disable(liEl, action['disabled-reason']);
         } else {
-          formutils.enable(liEl);
+          enable(liEl);
         }
         if (action.href) {
           aEl.setAttribute('href', action.href);
@@ -96,9 +96,9 @@ export default class AppMenu extends Component {
           (menuItem.aElement.dataset.action === actionId || menuItem.aElement.getAttribute('data-action') === actionId)
         ) {
           if (e.action.disabled) {
-            formutils.disable(menuItem.rootElement, e.action['disabled-reason']);
+            disable(menuItem.rootElement, e.action['disabled-reason']);
           } else {
-            formutils.enable(menuItem.rootElement);
+            enable(menuItem.rootElement);
           }
         }
       }
@@ -113,9 +113,9 @@ export default class AppMenu extends Component {
           } else {
             // Check whether the separator should be disabled
             if (activeElementsSinceLastSeparator) {
-              formutils.enable(menuItem.rootElement);
+              enable(menuItem.rootElement);
             } else {
-              formutils.disable(menuItem.rootElement);
+              disable(menuItem.rootElement);
             }
             activeElementsSinceLastSeparator = 0;
           }

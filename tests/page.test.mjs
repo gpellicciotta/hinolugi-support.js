@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { singlePage, pagedResult, bookmarkedPage } from '../js/page.mjs';
+import { singlePage, pagedResult, bookmarkedPage } from '../js/paging.mjs';
 
 test('singlePage creates a non-navigable single page shape', async () => {
   const page = singlePage(['alpha', 'beta', 'gamma']);
@@ -191,7 +191,7 @@ test('pagedResult supports 3-argument signature (items, paging, fetchPage)', asy
     async (dir, bm) => {
       calls.push({ dir, bm });
       return singlePage([`res-${dir}`]);
-    }
+    },
   );
 
   assert.deepEqual(page.items, ['item-a', 'item-b']);
@@ -212,7 +212,7 @@ test('bookmarkedPage creates compatible Page matching hinolugi-counters client c
   const paged = bookmarkedPage(
     ['item1', 'item2'],
     { pageSize: 2, startBookmark: 'bm1', endBookmark: 'bm2', currentPage: 'first' },
-    async (dir, bm) => singlePage([`next-${dir}-${bm}`])
+    async (dir, bm) => singlePage([`next-${dir}-${bm}`]),
   );
   assert.equal(paged.hasNextPage, true);
   assert.equal(paged.hasPrevPage, false);
@@ -248,7 +248,7 @@ test('sequential multi-page navigation across forward and backward steps', async
           return makePage(index - 1);
         }
         return null;
-      }
+      },
     );
   }
 
